@@ -1,0 +1,64 @@
+---
+import { readFile } from 'node:fs/promises'
+import Base from '../layouts/Base.astro'
+
+interface SkillEntry {
+  name: string
+  version: string
+  fileName: string
+  size: number
+  sha256: string
+  updatedAt: string
+}
+
+let entries: SkillEntry[] = []
+try {
+  const raw = await readFile(new URL('../../public/skills.json', import.meta.url), 'utf8')
+  entries = (JSON.parse(raw) as { entries?: SkillEntry[] }).entries ?? []
+} catch {
+  entries = []
+}
+
+function formatSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+  return `${(bytes / 1024 / 1024).toFixed(2)} MB`
+}
+---
+
+<Base title="工具与 Skill · 男哥" description="下载我整理的课程笔记处理工具与 Skill">
+  <section class="wrap">
+    <h1>工具与 Skill</h1>
+    <p class="muted">
+      这些是我自己在用的工具，公开出来方便你复用。下载后请校验 sha256，避免文件被篡改。
+    </p>
+
+    {entries.length === 0 ? (
+      <p class="empty">还没有发布任何 skill 包。</p>
+    ) : (
+      entries.map((entry) => (
+        <div class="card">
+          <h3>{entry.name}</h3>
+          <p class="muted">
+            版本 v{entry.version} · {formatSize(entry.size)}
+          </p>
+          <p>
+            <a class="btn primary" href={`/skills/${entry.fileName}`} download>
+              下载 zip
+            </a>
+          </p>
+          <p class="muted" style="font-size:12px;word-break:break-all;">
+            sha256: {entry.sha256}
+          </p>
+        </div>
+      ))
+    )}
+
+    <h2>怎么用</h2>
+    <ol>
+      <li>下载上面的 zip 并解压。</li>
+      <li>把解压出的目录放进你的 skills 目录。</li>
+      <li>按其中的 SKILL.md 说明调用即可。</li>
+    </ol>
+  </section>
+</Base>

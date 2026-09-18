@@ -1,0 +1,64 @@
+---
+import '../styles/global.css'
+
+interface Props {
+  title: string
+  description?: string
+}
+
+const { title, description = '男哥 · 关于社交、成长与自我提升的长期记录' } = Astro.props
+const nav = [
+  { href: '/', label: '首页' },
+  { href: '/posts/', label: '文章' },
+  { href: '/skills/', label: '工具与 Skill' },
+]
+const current = Astro.url.pathname
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta name="generator" content={Astro.generator} />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap header-inner">
+        <a class="logo" href="/">
+          <span class="logo-mark">男</span>
+          <span class="logo-text">男哥</span>
+        </a>
+        <nav>
+          {
+            nav.map((item) => (
+              <a
+                href={item.href}
+                class:list={['nav-link', { active: current === item.href }]}
+              >
+                {item.label}
+              </a>
+            ))
+          }
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <p>© {new Date().getFullYear()} 男哥 · 持续更新中</p>
+        <p class="muted">本站内容为个人整理与分享，请勿用于商业转载。</p>
+      </div>
+    </footer>
+  </body>
+</html>

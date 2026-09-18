@@ -1,0 +1,52 @@
+---
+import { getCollection } from 'astro:content'
+import Base from '../layouts/Base.astro'
+
+const posts = (await getCollection('posts', ({ data }) => data.public)).sort((a, b) =>
+  b.data.date.localeCompare(a.data.date),
+)
+const latest = posts.slice(0, 5)
+---
+
+<Base title="男哥 · 社交与成长笔记">
+  <section class="wrap hero">
+    <h1>把社交讲清楚，而不是讲玄学</h1>
+    <p>
+      这里记录我在男女交往、展示面、聊天与心态上的长期思考与整理。所有内容都来自真实案例复盘，
+      不灌鸡汤，也不教你表演。
+    </p>
+    <div class="actions">
+      <a class="btn primary" href="/posts/">开始阅读</a>
+      <a class="btn" href="/skills/">获取整理工具</a>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <h2>最新文章</h2>
+    {latest.length === 0 ? (
+      <p class="empty">还没有公开文章，去本地 Studio 发布第一篇吧。</p>
+    ) : (
+      <ul class="post-list">
+        {latest.map((post) => (
+          <li class="post-item">
+            <h2>
+              <a href={`/posts/${post.id}/`}>{post.data.title}</a>
+            </h2>
+            <div class="post-meta">
+              <span>{post.data.date}</span>
+              {post.data.tags.map((tag) => (
+                <span class="tag">{tag}</span>
+              ))}
+            </div>
+            {post.data.description ? <p class="muted">{post.data.description}</p> : null}
+          </li>
+        ))}
+      </ul>
+    )}
+    {posts.length > latest.length ? (
+      <p>
+        <a href="/posts/">查看全部 {posts.length} 篇 →</a>
+      </p>
+    ) : null}
+  </section>
+</Base>

@@ -1,0 +1,36 @@
+---
+import { getCollection } from 'astro:content'
+import Base from '../../layouts/Base.astro'
+
+const posts = (await getCollection('posts', ({ data }) => data.public)).sort((a, b) =>
+  b.data.date.localeCompare(a.data.date),
+)
+---
+
+<Base title="全部文章 · 男哥">
+  <section class="wrap">
+    <h1>全部文章</h1>
+    <p class="muted">共 {posts.length} 篇</p>
+
+    {posts.length === 0 ? (
+      <p class="empty">暂无公开文章。</p>
+    ) : (
+      <ul class="post-list">
+        {posts.map((post) => (
+          <li class="post-item">
+            <h2>
+              <a href={`/posts/${post.id}/`}>{post.data.title}</a>
+            </h2>
+            <div class="post-meta">
+              <span>{post.data.date}</span>
+              {post.data.tags.map((tag) => (
+                <span class="tag">{tag}</span>
+              ))}
+            </div>
+            {post.data.description ? <p class="muted">{post.data.description}</p> : null}
+          </li>
+        ))}
+      </ul>
+    )}
+  </section>
+</Base>
