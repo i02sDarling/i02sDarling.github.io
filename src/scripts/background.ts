@@ -313,8 +313,14 @@ export function mountBackground(): () => void {
   const plum = mountPlum()
   document.documentElement.classList.add('has-canvas-bg')
 
+  // 只对「明/暗主题」真正变化做出反应。
+  // 注意：<html> 的 class 可能被别的东西改动（浏览器暗色插件、扩展、工具条等），
+  // 如果无脑重画，会出现「刚长出来又重新长一遍」。
+  let wasDark = document.documentElement.classList.contains('dark')
   const observer = new MutationObserver(() => {
-    // 主题切换后刷新颜色并重画树枝
+    const isDark = document.documentElement.classList.contains('dark')
+    if (isDark === wasDark) return
+    wasDark = isDark
     dots.refresh()
     plum.restart()
   })
