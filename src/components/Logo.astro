@@ -2,55 +2,37 @@
 interface Props {
   class?: string
 }
+
 const { class: className } = Astro.props
+
+const strokes = [
+  { d: 'M328.5 249.2L328.8 252.0L327.4 260.8L319.8 292.8L300.5 355.7L298.1 365.3L298.0 368.2L298.5 368.9L297.0 365.4', name: 'dl-k0' },
+  { d: 'M323.4 247.8L325.9 244.9L333.6 240.3L341.2 237.9L350.0 236.3L358.0 235.8L366.9 236.3L374.8 237.9L382.3 240.6L389.3 244.4L394.7 248.7L399.4 253.9L402.6 258.9L404.9 264.5L406.4 271.2L406.6 278.2L405.7 285.1L403.6 292.8L400.7 300.2L396.1 309.1L390.8 317.6L376.6 335.6L359.0 353.4L341.2 367.8L324.1 378.1L312.0 382.6L304.2 383.5L297.6 382.4L296.0 384.0', name: 'dl-k1' },
+  { d: 'M456.4 319.8L449.1 316.9L443.1 317.0L435.7 319.9L428.1 324.8L419.2 332.7L411.4 341.9L405.7 351.3L402.8 359.7L402.8 361.6L404.0 363.6L406.4 365.2L408.9 365.8L413.5 365.6L419.8 362.9L428.2 357.5L437.6 350.1L447.9 340.6L460.4 327.7L463.5 325.6L465.5 326.5L463.6 327.9L461.4 331.2L455.2 343.7L451.4 356.0L451.4 358.8L452.4 361.7L451.4 363.2L449.2 364.6', name: 'dl-k2' },
+  { d: 'M500.7 330.4L500.5 333.2L498.1 339.8L486.2 364.3L486.0 362.3L487.4 358.6L493.8 348.5L502.5 337.7L511.7 328.6L519.7 322.6L526.7 318.8L534.3 316.7L542.1 316.3L543.1 315.2', name: 'dl-k3' },
+  { d: 'M606.1 261.9L605.5 264.7L602.9 270.2L571.9 327.4L563.0 345.4L557.3 360.3L556.6 365.3L556.9 369.2L558.3 370.7L561.1 371.3L565.9 370.4L570.5 368.5L588.5 357.5L626.7 330.0L630.3 328.3L632.9 328.1L633.8 328.9L633.0 331.3', name: 'dl-k4' },
+  { d: 'M651.7 318.0L650.2 322.6L634.3 356.3L631.0 364.7L630.5 367.9', name: 'dl-k5' },
+  { d: 'M675.6 280.7L673.7 280.6L675.4 281.0', name: 'dl-k6' },
+  { d: 'M686.7 332.0L686.6 334.8L684.3 341.4L679.2 352.3L671.0 367.2L669.9 369.9L670.0 371.4L673.6 366.2L682.5 356.7L699.5 341.3L706.8 335.9L714.5 331.3L720.9 328.4L725.7 327.3L728.5 327.8L730.4 330.2L731.1 333.6L730.9 337.5L728.5 345.0L719.2 363.9L717.9 367.6L718.1 369.0', name: 'dl-k7' },
+  { d: 'M794.1 337.3L788.2 336.7L784.2 337.3L778.6 339.4L774.3 341.8L767.7 346.4L761.0 352.4L755.7 358.4L752.5 363.5L752.3 364.4L752.9 365.5L755.8 367.1L759.5 367.3L764.2 366.0L777.3 358.6L796.5 344.3L798.2 343.8L800.5 344.9L797.5 348.6L792.7 359.6L770.7 422.9L764.9 435.7L758.8 446.0L753.0 452.9L747.7 457.4L741.7 460.8L735.0 462.5L728.1 462.2L721.6 459.9L716.1 455.5L712.9 450.5L711.6 446.8L711.2 440.8L711.9 436.9L714.0 431.2L720.3 422.3L731.1 413.4L745.0 405.5L764.4 397.3L784.3 390.7L813.4 383.2L815.9 382.0', name: 'dl-k8' },
+]
 ---
 
 <svg
   class={className}
-  viewBox="0 0 820 300"
+  viewBox="288.886 231.423 531.086 236.049"
   xmlns="http://www.w3.org/2000/svg"
   fill="none"
   role="img"
-  aria-label="Darlingz"
+  aria-label="Darling"
 >
-  <title>Darlingz</title>
+  <title>Darling</title>
   <g>
-    <path
-      d="M 16 190 C 26 168 50 116 70 110C 47.9 110 30 127.9 30 150 C 30 172.1 47.9 190 70 190 C 92.1 190 110 172.1 110 150 C 110 127.9 92.1 110 70 110 C 92 108 110 92 118 62 C 122 50 133 59 131 74 C 127 112 125 152 127 190 C 128 197 133 199 138 195"
-      pathLength="1"
-      style="animation-delay:0.00s"></path>
-    <path
-      d="M 136 190 C 146 168 170 116 190 110C 167.9 110 150 127.9 150 150 C 150 172.1 167.9 190 190 190 C 212.1 190 230 172.1 230 150 C 230 127.9 212.1 110 190 110 C 212 110 232 130 236 150 C 238 166 238 178 236 190"
-      pathLength="1"
-      style="animation-delay:0.18s"></path>
-    <path
-      d="M 284 190 C 288 158 292 128 298 110 C 306 118 318 108 334 110 C 338 111 340 113 340 116"
-      pathLength="1"
-      style="animation-delay:0.36s"></path>
-    <path
-      d="M 366 190 C 370 140 376 82 380 58 C 383 45 396 51 394 67 C 390 112 388 152 390 176 C 391 187 396 190 404 190"
-      pathLength="1"
-      style="animation-delay:0.54s"></path>
-    <path
-      d="M437 85 A5 5 0 1 0 437 95 A5 5 0 1 0 437 85"
-      pathLength="1"
-      style="animation-delay:0.80s"></path>
-    <path
-      d="M 430 190 C 432 160 435 130 438 110"
-      pathLength="1"
-      style="animation-delay:0.72s"></path>
-    <path
-      d="M 492 190 C 496 158 500 128 506 110 C 516 100 534 104 540 122 C 544 138 546 166 546 190"
-      pathLength="1"
-      style="animation-delay:0.90s"></path>
-    <path
-      d="M 582 190 C 592 168 616 116 636 110C 613.9 110 596 127.9 596 150 C 596 172.1 613.9 190 636 190 C 658.1 190 676 172.1 676 150 C 676 127.9 658.1 110 636 110 C 660 110 676 126 680 150 C 684 176 684 204 682 220 C 678 242 656 250 642 240 C 634 234 632 226 634 218"
-      pathLength="1"
-      style="animation-delay:1.08s"></path>
-    <path
-      d="M 722 112 C 750 104 776 108 788 116 C 766 138 734 164 720 188 C 744 191 772 192 792 200"
-      pathLength="1"
-      style="animation-delay:1.26s"></path>
+    {
+      strokes.map((s) => (
+        <path d={s.d} pathLength="1" style={`animation-name: ${s.name}`} />
+      ))
+    }
   </g>
 </svg>
 
@@ -71,40 +53,114 @@ const { class: className } = Astro.props
   path {
     fill: none;
     stroke: currentColor;
-    stroke-width: 9;
+    stroke-width: 8;
     stroke-linecap: round;
     stroke-linejoin: round;
     stroke-dasharray: 1;
     stroke-dashoffset: 1;
-    opacity: 0;
+    animation-duration: 4.95s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-fill-mode: both;
   }
 
-  @media (prefers-reduced-motion: no-preference) {
-    path {
-      animation: darlingz-draw 0.5s ease-out forwards;
-    }
-
-    @keyframes darlingz-draw {
-      0% {
-        opacity: 0;
-        stroke-dashoffset: 1;
-      }
-
-      1% {
-        opacity: 1;
-      }
-
-      to {
-        opacity: 1;
-        stroke-dashoffset: 0;
-      }
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    path {
-      opacity: 1;
-      stroke-dashoffset: 0;
-    }
-  }
+@keyframes dl-k0 {
+  0% { stroke-dashoffset: 1; opacity: 0; }
+  0.000% { stroke-dashoffset: 1; opacity: 0; }
+  0.040% { stroke-dashoffset: 1; opacity: 1; animation-timing-function: cubic-bezier(0.33, 0.05, 0.55, 1); }
+  3.182% { stroke-dashoffset: 0; opacity: 1; }
+  52.525% { stroke-dashoffset: 0; opacity: 1; }
+  87.767% { stroke-dashoffset: 0; opacity: 1; animation-timing-function: cubic-bezier(0.33, 0.05, 0.55, 1); }
+  90.909% { stroke-dashoffset: 1; opacity: 1; }
+  90.949% { stroke-dashoffset: 1; opacity: 0; }
+  100% { stroke-dashoffset: 1; opacity: 0; }
+}
+@keyframes dl-k1 {
+  0% { stroke-dashoffset: 1; opacity: 0; }
+  3.182% { stroke-dashoffset: 1; opacity: 0; }
+  3.223% { stroke-dashoffset: 1; opacity: 1; animation-timing-function: cubic-bezier(0.33, 0.05, 0.55, 1); }
+  8.760% { stroke-dashoffset: 0; opacity: 1; }
+  52.525% { stroke-dashoffset: 0; opacity: 1; }
+  82.190% { stroke-dashoffset: 0; opacity: 1; animation-timing-function: cubic-bezier(0.33, 0.05, 0.55, 1); }
+  87.727% { stroke-dashoffset: 1; opacity: 1; }
+  87.767% { stroke-dashoffset: 1; opacity: 0; }
+  100% { stroke-dashoffset: 1; opacity: 0; }
+}
+@keyframes dl-k2 {
+  0% { stroke-dashoffset: 1; opacity: 0; }
+  8.760% { stroke-dashoffset: 1; opacity: 0; }
+  8.800% { stroke-dashoffset: 1; opacity: 1; animation-timing-function: cubic-bezier(0.33, 0.05, 0.55, 1); }
+  12.815% { stroke-dashoffset: 0; opacity: 1; }
+  52.525% { stroke-dashoffset: 0; opacity: 1; }
+  78.135% { stroke-dashoffset: 0; opacity: 1; animation-timing-function: cubic-bezier(0.33, 0.05, 0.55, 1); }
+  82.150% { stroke-dashoffset: 1; opacity: 1; }
+  82.190% { stroke-dashoffset: 1; opacity: 0; }
+  100% { stroke-dashoffset: 1; opacity: 0; }
+}
+@keyframes dl-k3 {
+  0% { stroke-dashoffset: 1; opacity: 0; }
+  12.815% { stroke-dashoffset: 1; opacity: 0; }
+  12.855% { stroke-dashoffset: 1; opacity: 1; animation-timing-function: cubic-bezier(0.33, 0.05, 0.55, 1); }
+  15.997% { stroke-dashoffset: 0; opacity: 1; }
+  52.525% { stroke-dashoffset: 0; opacity: 1; }
+  74.952% { stroke-dashoffset: 0; opacity: 1; animation-timing-function: cubic-bezier(0.33, 0.05, 0.55, 1); }
+  78.094% { stroke-dashoffset: 1; opacity: 1; }
+  78.135% { stroke-dashoffset: 1; opacity: 0; }
+  100% { stroke-dashoffset: 1; opacity: 0; }
+}
+@keyframes dl-k4 {
+  0% { stroke-dashoffset: 1; opacity: 0; }
+  15.997% { stroke-dashoffset: 1; opacity: 0; }
+  16.037% { stroke-dashoffset: 1; opacity: 1; animation-timing-function: cubic-bezier(0.33, 0.05, 0.55, 1); }
+  20.320% { stroke-dashoffset: 0; opacity: 1; }
+  52.525% { stroke-dashoffset: 0; opacity: 1; }
+  70.630% { stroke-dashoffset: 0; opacity: 1; animation-timing-function: cubic-bezier(0.33, 0.05, 0.55, 1); }
+  74.912% { stroke-dashoffset: 1; opacity: 1; }
+  74.952% { stroke-dashoffset: 1; opacity: 0; }
+  100% { stroke-dashoffset: 1; opacity: 0; }
+}
+@keyframes dl-k5 {
+  0% { stroke-dashoffset: 1; opacity: 0; }
+  20.320% { stroke-dashoffset: 1; opacity: 0; }
+  20.360% { stroke-dashoffset: 1; opacity: 1; animation-timing-function: cubic-bezier(0.33, 0.05, 0.55, 1); }
+  23.502% { stroke-dashoffset: 0; opacity: 1; }
+  52.525% { stroke-dashoffset: 0; opacity: 1; }
+  67.447% { stroke-dashoffset: 0; opacity: 1; animation-timing-function: cubic-bezier(0.33, 0.05, 0.55, 1); }
+  70.589% { stroke-dashoffset: 1; opacity: 1; }
+  70.630% { stroke-dashoffset: 1; opacity: 0; }
+  100% { stroke-dashoffset: 1; opacity: 0; }
+}
+@keyframes dl-k6 {
+  0% { stroke-dashoffset: 1; opacity: 0; }
+  23.502% { stroke-dashoffset: 1; opacity: 0; }
+  23.543% { stroke-dashoffset: 1; opacity: 1; animation-timing-function: cubic-bezier(0.33, 0.05, 0.55, 1); }
+  26.684% { stroke-dashoffset: 0; opacity: 1; }
+  52.525% { stroke-dashoffset: 0; opacity: 1; }
+  64.265% { stroke-dashoffset: 0; opacity: 1; animation-timing-function: cubic-bezier(0.33, 0.05, 0.55, 1); }
+  67.407% { stroke-dashoffset: 1; opacity: 1; }
+  67.447% { stroke-dashoffset: 1; opacity: 0; }
+  100% { stroke-dashoffset: 1; opacity: 0; }
+}
+@keyframes dl-k7 {
+  0% { stroke-dashoffset: 1; opacity: 0; }
+  26.684% { stroke-dashoffset: 1; opacity: 0; }
+  26.725% { stroke-dashoffset: 1; opacity: 1; animation-timing-function: cubic-bezier(0.33, 0.05, 0.55, 1); }
+  30.006% { stroke-dashoffset: 0; opacity: 1; }
+  52.525% { stroke-dashoffset: 0; opacity: 1; }
+  60.944% { stroke-dashoffset: 0; opacity: 1; animation-timing-function: cubic-bezier(0.33, 0.05, 0.55, 1); }
+  64.225% { stroke-dashoffset: 1; opacity: 1; }
+  64.265% { stroke-dashoffset: 1; opacity: 0; }
+  100% { stroke-dashoffset: 1; opacity: 0; }
+}
+@keyframes dl-k8 {
+  0% { stroke-dashoffset: 1; opacity: 0; }
+  30.006% { stroke-dashoffset: 1; opacity: 0; }
+  30.046% { stroke-dashoffset: 1; opacity: 1; animation-timing-function: cubic-bezier(0.33, 0.05, 0.55, 1); }
+  38.384% { stroke-dashoffset: 0; opacity: 1; }
+  52.525% { stroke-dashoffset: 0; opacity: 1; }
+  52.566% { stroke-dashoffset: 0; opacity: 1; animation-timing-function: cubic-bezier(0.33, 0.05, 0.55, 1); }
+  60.903% { stroke-dashoffset: 1; opacity: 1; }
+  60.944% { stroke-dashoffset: 1; opacity: 0; }
+  100% { stroke-dashoffset: 1; opacity: 0; }
+}
 </style>
