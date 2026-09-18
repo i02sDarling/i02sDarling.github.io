@@ -222,6 +222,13 @@ hr {
   position: sticky;
   top: 0;
   z-index: 10;
+  /* 顶部时完全透明，让点阵 / 树枝从最上方就能看见 */
+  background: transparent;
+  transition: background 0.25s ease, backdrop-filter 0.25s ease;
+}
+
+/* 滚动后才浮出模糊背景条，保证内容压过时仍可读 */
+.site-header.scrolled {
   background: color-mix(in srgb, var(--c-bg) 88%, transparent);
   backdrop-filter: blur(8px);
 }

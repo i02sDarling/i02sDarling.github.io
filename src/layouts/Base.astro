@@ -117,6 +117,16 @@ const siteTitle = title === '妲零' ? '妲零' : `${title} · 妲零`
       })()
     </script>
 
+    <script is:inline>
+      ;(() => {
+        const header = document.querySelector('.site-header')
+        if (!header) return
+        const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 8)
+        onScroll()
+        window.addEventListener('scroll', onScroll, { passive: true })
+      })()
+    </script>
+
     <script>
       import { mountBackground } from '../scripts/background.ts'
 
