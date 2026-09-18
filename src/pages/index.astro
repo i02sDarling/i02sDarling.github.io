@@ -8,23 +8,23 @@ const posts = (await getCollection('posts', ({ data }) => data.public)).sort((a,
 const latest = posts.slice(0, 5)
 ---
 
-<Base title="男哥 · 社交与成长笔记">
+<Base title="妲零">
   <section class="wrap hero">
-    <h1>把社交讲清楚，而不是讲玄学</h1>
+    <h1>妲零</h1>
     <p>
-      这里记录我在男女交往、展示面、聊天与心态上的长期思考与整理。所有内容都来自真实案例复盘，
-      不灌鸡汤，也不教你表演。
+      我的个人博客。在这里记录我正在做的事、学到的东西，还有一些还没想清楚、
+      但值得写下来的念头。更新不快，但都自己写。
     </p>
     <div class="actions">
-      <a class="btn primary" href="/posts/">开始阅读</a>
-      <a class="btn" href="/skills/">获取整理工具</a>
+      <a class="btn primary" href="/posts/">读文章</a>
+      <a class="btn" href="/skills/">看工具</a>
     </div>
   </section>
 
   <section class="wrap">
     <h2>最新文章</h2>
     {latest.length === 0 ? (
-      <p class="empty">还没有公开文章，去本地 Studio 发布第一篇吧。</p>
+      <p class="empty">还没有公开文章。</p>
     ) : (
       <ul class="post-list">
         {latest.map((post) => (
@@ -48,5 +48,13 @@ const latest = posts.slice(0, 5)
         <a href="/posts/">查看全部 {posts.length} 篇 →</a>
       </p>
     ) : null}
+  </section>
+
+  <section class="wrap">
+    <h2>关于这里</h2>
+    <p class="muted">
+      这里是妲零的自留地。除了文章，我也会把自己在用的工具和脚本整理出来放在
+      <a href="/skills/">工具</a> 页，方便你直接用。
+    </p>
   </section>
 </Base>

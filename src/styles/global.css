@@ -4,8 +4,8 @@
   --text: #1f2328;
   --text-dim: #656d76;
   --border: #d8dee4;
-  --accent: #1a7f37;
-  --accent-soft: #eaf5ec;
+  --accent: #6d28d9;
+  --accent-soft: #f3eefe;
   --radius: 10px;
   --sans: system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', sans-serif;
   --mono: ui-monospace, Consolas, monospace;
@@ -110,7 +110,7 @@ img {
   display: grid;
   place-items: center;
   border-radius: 8px;
-  background: linear-gradient(135deg, #1a7f37, #0ea5e9);
+  background: linear-gradient(135deg, #6d28d9, #ec4899);
   color: #fff;
   font-size: 15px;
 }

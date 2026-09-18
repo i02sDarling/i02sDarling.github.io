@@ -6,13 +6,18 @@ interface Props {
   description?: string
 }
 
-const { title, description = '男哥 · 关于社交、成长与自我提升的长期记录' } = Astro.props
+const {
+  title,
+  description = '妲零的个人博客：记录在做的事、学到的东西，以及还没想清楚的念头。',
+} = Astro.props
+
 const nav = [
   { href: '/', label: '首页' },
   { href: '/posts/', label: '文章' },
-  { href: '/skills/', label: '工具与 Skill' },
+  { href: '/skills/', label: '工具' },
 ]
 const current = Astro.url.pathname
+const siteTitle = title === '妲零' ? '妲零' : `${title} · 妲零`
 ---
 
 <!doctype html>
@@ -21,9 +26,11 @@ const current = Astro.url.pathname
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>{title}</title>
+    <title>{siteTitle}</title>
     <meta name="description" content={description} />
-    <meta property="og:title" content={title} />
+    <meta name="theme-color" content="#6d28d9" />
+    <meta property="og:site_name" content="妲零" />
+    <meta property="og:title" content={siteTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta name="generator" content={Astro.generator} />
@@ -32,8 +39,8 @@ const current = Astro.url.pathname
     <header class="site-header">
       <div class="wrap header-inner">
         <a class="logo" href="/">
-          <span class="logo-mark">男</span>
-          <span class="logo-text">男哥</span>
+          <span class="logo-mark">妲</span>
+          <span class="logo-text">妲零</span>
         </a>
         <nav>
           {
@@ -56,8 +63,8 @@ const current = Astro.url.pathname
 
     <footer class="site-footer">
       <div class="wrap">
-        <p>© {new Date().getFullYear()} 男哥 · 持续更新中</p>
-        <p class="muted">本站内容为个人整理与分享，请勿用于商业转载。</p>
+        <p>© {new Date().getFullYear()} 妲零 · Darling</p>
+        <p class="muted">个人博客，内容仅为个人记录与分享。</p>
       </div>
     </footer>
   </body>
