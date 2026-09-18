@@ -13,6 +13,7 @@
   --c-scrollbar: #eee;
   --c-scrollbar-hover: #bbb;
   --c-dot: #d4d4d4;
+  --c-plum: rgba(136, 136, 136, 0.16);
 
   --border-4: #8884;
   --border-3: #8883;
@@ -38,6 +39,7 @@ html.dark {
   --c-scrollbar: #111;
   --c-scrollbar-hover: #222;
   --c-dot: #1e1e1e;
+  --c-plum: rgba(255, 255, 255, 0.1);
 
   --fg-light: #888;
   --fg: #bbb;
@@ -79,6 +81,11 @@ body::before {
   pointer-events: none;
   background-image: radial-gradient(var(--c-dot) 1px, transparent 1px);
   background-size: 15px 15px;
+}
+
+/* 有了 canvas 动画层后，静态点阵让位（也作为 reduced-motion 的降级方案） */
+html.has-canvas-bg body::before {
+  display: none;
 }
 
 ::selection {

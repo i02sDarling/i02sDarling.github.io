@@ -12,7 +12,8 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^7.3.3"
+    "astro": "^7.3.3",
+    "simplex-noise": "^4.0.3"
   },
   "allowScripts": {
     "esbuild": true
