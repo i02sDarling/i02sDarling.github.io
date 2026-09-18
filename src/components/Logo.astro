@@ -1,0 +1,104 @@
+---
+interface Props {
+  class?: string
+}
+const { class: className } = Astro.props
+---
+
+<svg
+  class={className}
+  viewBox="0 0 820 300"
+  xmlns="http://www.w3.org/2000/svg"
+  fill="none"
+  role="img"
+  aria-label="Darlingz"
+>
+  <title>Darlingz</title>
+  <g>
+    <path
+      d="M 16 190 C 26 168 50 116 70 110C 47.9 110 30 127.9 30 150 C 30 172.1 47.9 190 70 190 C 92.1 190 110 172.1 110 150 C 110 127.9 92.1 110 70 110 C 92 108 110 92 118 62 C 122 50 133 59 131 74 C 127 112 125 152 127 190 C 128 197 133 199 138 195"
+      pathLength="1"
+      style="animation-delay:0.00s"></path>
+    <path
+      d="M 136 190 C 146 168 170 116 190 110C 167.9 110 150 127.9 150 150 C 150 172.1 167.9 190 190 190 C 212.1 190 230 172.1 230 150 C 230 127.9 212.1 110 190 110 C 212 110 232 130 236 150 C 238 166 238 178 236 190"
+      pathLength="1"
+      style="animation-delay:0.18s"></path>
+    <path
+      d="M 284 190 C 288 158 292 128 298 110 C 306 118 318 108 334 110 C 338 111 340 113 340 116"
+      pathLength="1"
+      style="animation-delay:0.36s"></path>
+    <path
+      d="M 366 190 C 370 140 376 82 380 58 C 383 45 396 51 394 67 C 390 112 388 152 390 176 C 391 187 396 190 404 190"
+      pathLength="1"
+      style="animation-delay:0.54s"></path>
+    <path
+      d="M437 85 A5 5 0 1 0 437 95 A5 5 0 1 0 437 85"
+      pathLength="1"
+      style="animation-delay:0.80s"></path>
+    <path
+      d="M 430 190 C 432 160 435 130 438 110"
+      pathLength="1"
+      style="animation-delay:0.72s"></path>
+    <path
+      d="M 492 190 C 496 158 500 128 506 110 C 516 100 534 104 540 122 C 544 138 546 166 546 190"
+      pathLength="1"
+      style="animation-delay:0.90s"></path>
+    <path
+      d="M 582 190 C 592 168 616 116 636 110C 613.9 110 596 127.9 596 150 C 596 172.1 613.9 190 636 190 C 658.1 190 676 172.1 676 150 C 676 127.9 658.1 110 636 110 C 660 110 676 126 680 150 C 684 176 684 204 682 220 C 678 242 656 250 642 240 C 634 234 632 226 634 218"
+      pathLength="1"
+      style="animation-delay:1.08s"></path>
+    <path
+      d="M 722 112 C 750 104 776 108 788 116 C 766 138 734 164 720 188 C 744 191 772 192 792 200"
+      pathLength="1"
+      style="animation-delay:1.26s"></path>
+  </g>
+</svg>
+
+<style>
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    color: var(--fg-deep);
+  }
+
+  path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    path {
+      animation: darlingz-draw 0.5s ease-out forwards;
+    }
+
+    @keyframes darlingz-draw {
+      0% {
+        opacity: 0;
+        stroke-dashoffset: 1;
+      }
+
+      1% {
+        opacity: 1;
+      }
+
+      to {
+        opacity: 1;
+        stroke-dashoffset: 0;
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    path {
+      opacity: 1;
+      stroke-dashoffset: 0;
+    }
+  }
+</style>

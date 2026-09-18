@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css'
+import Logo from '../components/Logo.astro'
 
 interface Props {
   title: string
@@ -49,9 +50,8 @@ const siteTitle = title === '妲零' ? '妲零' : `${title} · 妲零`
   <body>
     <header class="site-header">
       <div class="wrap header-inner">
-        <a class="logo" href="/">
-          <span class="logo-mark">妲</span>
-          <span class="logo-text">妲零</span>
+        <a class="logo" href="/" aria-label="妲零 Darlingz">
+          <Logo class="logo-mark" />
         </a>
         <nav>
           {
