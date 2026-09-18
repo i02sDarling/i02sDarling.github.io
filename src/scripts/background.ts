@@ -203,6 +203,14 @@ function mountPlum(): PlumLayer {
   const mask = 'radial-gradient(circle, transparent, black)'
   const canvas = createLayer(mask)
 
+  // 固定为初始视口的像素尺寸并锚定左上角（对齐 antfu.me）：
+  // 窗口拉大时右下露出空白，而不是拉伸画布导致树枝变形、位置偏移。
+  canvas.style.inset = 'auto'
+  canvas.style.top = '0'
+  canvas.style.left = '0'
+  canvas.style.width = `${window.innerWidth}px`
+  canvas.style.height = `${window.innerHeight}px`
+
   let ctx: CanvasRenderingContext2D | null = null
   let width = 0
   let height = 0
@@ -300,7 +308,6 @@ function mountPlum(): PlumLayer {
 
 export function mountBackground(): () => void {
   if (typeof window === 'undefined') return () => {}
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return () => {}
 
   const dots = mountDots()
   const plum = mountPlum()

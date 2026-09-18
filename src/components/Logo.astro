@@ -57,9 +57,15 @@ const { class: className } = Astro.props
 <style>
   svg {
     display: block;
-    width: 100%;
+    width: 104px;
     height: auto;
     color: var(--fg-deep);
+  }
+
+  @media (max-width: 640px) {
+    svg {
+      width: 84px;
+    }
   }
 
   path {
