@@ -13,11 +13,13 @@ const {
 } = Astro.props
 
 const nav = [
-  { href: '/', label: '首页' },
+  { href: '/home/', label: '首页' },
   { href: '/posts/', label: '文章' },
   { href: '/skills/', label: '工具' },
 ]
 const current = Astro.url.pathname
+/** 去掉结尾斜杠再比，/home 与 /home/ 都算「首页」 */
+const path = current.replace(/\/+$/, '') || '/'
 const siteTitle = title === '妲零' ? '妲零' : `${title} · 妲零`
 ---
 
@@ -35,6 +37,7 @@ const siteTitle = title === '妲零' ? '妲零' : `${title} · 妲零`
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta name="generator" content={Astro.generator} />
+    <slot name="head" />
     <script is:inline>
       ;(() => {
         try {
@@ -50,7 +53,7 @@ const siteTitle = title === '妲零' ? '妲零' : `${title} · 妲零`
   <body>
     <header class="site-header">
       <div class="wrap header-inner">
-        <a class="logo" href="/" aria-label="妲零 Darling">
+        <a class="logo" href="/home" aria-label="妲零 Darling">
           <Logo class="logo-mark" />
         </a>
         <nav>
@@ -58,7 +61,7 @@ const siteTitle = title === '妲零' ? '妲零' : `${title} · 妲零`
             nav.map((item) => (
               <a
                 href={item.href}
-                class:list={['nav-link', { active: current === item.href }]}
+                class:list={['nav-link', { active: path === item.href.replace(/\/+$/, '') }]}
               >
                 {item.label}
               </a>
@@ -100,6 +103,15 @@ const siteTitle = title === '妲零' ? '妲零' : `${title} · 妲零`
       <div class="wrap">
         <p>© {new Date().getFullYear()} 妲零 · Darling</p>
         <p>个人博客，内容仅为个人记录与分享。</p>
+        {
+          path === '/' ? null : (
+            <p>
+              <a class="footer-link" href="/?pick=1">
+                ← 切换站点
+              </a>
+            </p>
+          )
+        }
       </div>
     </footer>
 

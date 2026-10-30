@@ -592,3 +592,79 @@ html.dark::view-transition-old(root) {
 html.dark::view-transition-new(root) {
   z-index: 1;
 }
+
+/* ── 选择站点（/） ───────────────────────────────────────────── */
+
+.choose {
+  margin-top: 8px;
+  border-top: 1px solid var(--border-3);
+}
+
+.choose-item {
+  display: block;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--border-3);
+}
+
+.choose-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.choose-title {
+  font-size: 1.125rem;
+  color: var(--fg-deep);
+  transition: color 0.2s ease-out;
+}
+
+.choose-arrow {
+  color: var(--fg-light);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: all 0.2s ease-out;
+}
+
+.choose-desc {
+  display: block;
+  margin-top: 6px;
+  color: var(--fg);
+  font-size: 0.9375rem;
+}
+
+.choose-meta {
+  display: block;
+  margin-top: 8px;
+  color: var(--fg-light);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.choose-item:hover .choose-title,
+.choose-item:hover .choose-arrow {
+  color: var(--accent);
+}
+
+.choose-item:hover .choose-arrow {
+  opacity: 1;
+  transform: none;
+}
+
+.choose-note {
+  display: grid;
+  gap: 6px;
+  margin-top: 26px;
+}
+
+.choose-note p {
+  margin: 0;
+  font-size: 0.8125rem;
+}
+
+.footer-link {
+  color: var(--fg-light);
+}
+
+.footer-link:hover {
+  color: var(--accent);
+}
