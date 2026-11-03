@@ -1,10 +1,12 @@
 ---
 title: "第一课：前价值（展示面）"
 date: "2026-11-04"
+updated: "2026-11-04"
 slug: "di-yi-ke-qian-jia-zhi-zhan-shi-mian"
 description: ""
 tags: []
 public: false
+source: "第一课：前价值（展示面）"
 ---
 
 # 
