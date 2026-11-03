@@ -21,6 +21,9 @@ const { Content } = await render(post)
       <h1>{post.data.title}</h1>
       <div class="post-meta">
         <span>{post.data.date}</span>
+        {post.data.updated && post.data.updated !== post.data.date ? (
+          <span class="muted">更新于 {post.data.updated}</span>
+        ) : null}
         {post.data.tags.map((tag) => (
           <span class="tag">{tag}</span>
         ))}
