@@ -4,7 +4,8 @@ import type { GetStaticPaths } from 'astro'
 import Base from '../../layouts/Base.astro'
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const posts = await getCollection('posts', ({ data }) => data.public)
+  // 本地 dev 连草稿一起生成页面，线上只构建公开文章
+  const posts = await getCollection('posts', ({ data }) => data.public || import.meta.env.DEV)
   return posts.map((post) => ({
     params: { id: post.id },
     props: { post },
@@ -21,6 +22,7 @@ const { Content } = await render(post)
       <h1>{post.data.title}</h1>
       <div class="post-meta">
         <span>{post.data.date}</span>
+        {!post.data.public ? <span class="tag draft">草稿 · 仅本地可见</span> : null}
         {post.data.updated && post.data.updated !== post.data.date ? (
           <span class="muted">更新于 {post.data.updated}</span>
         ) : null}

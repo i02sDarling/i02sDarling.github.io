@@ -413,6 +413,12 @@ main {
   font-size: 0.75rem;
 }
 
+/* 本地 dev 里才会出现的草稿标记（线上构建不会渲染） */
+.tag.draft {
+  background: transparent;
+  border: 1px dashed var(--border-2);
+}
+
 .empty {
   padding: 28px 0;
   color: var(--fg-light);

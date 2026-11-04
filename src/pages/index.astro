@@ -23,19 +23,6 @@ const sites = [
 ---
 
 <Base title="选择站点">
-  <Fragment slot="head">
-    <script is:inline>
-      // 记住上次的选择（30 分钟），下次打开直接进对应站点；?pick=1 强制显示本页
-      ;(() => {
-        try {
-          if (new URLSearchParams(location.search).get('pick') === '1') return
-          const saved = JSON.parse(localStorage.getItem('entry-choice') || 'null')
-          if (!saved || !(saved.expireAt > Date.now())) return
-          location.replace(saved.target === 'gsp' ? 'http://110.42.224.84:8080/' : '/home/')
-        } catch {}
-      })()
-    </script>
-  </Fragment>
 
   <section class="wrap hero">
     <h1>要去哪个站点？</h1>
@@ -60,24 +47,9 @@ const sites = [
   </section>
 
   <section class="wrap choose-note">
-    <p class="muted">选过一次会记住 30 分钟，下次打开直接进；想重新选，点页脚的「切换站点」。</p>
+    <p class="muted">首页只负责选择站点，不会自动跳转；想回来随时点页脚的「切换站点」。</p>
     <p class="muted">
       GSP 演示站目前只有 http，从 https 跳过去时地址栏会提示「不安全」，这是正常的。
     </p>
   </section>
 </Base>
-
-<script>
-  // 点哪个就记住哪个（跳转仍走 href，这里只负责记）
-  const links = document.querySelectorAll<HTMLAnchorElement>('.choose-item[data-target]')
-  for (const link of links) {
-    link.addEventListener('click', () => {
-      try {
-        localStorage.setItem(
-          'entry-choice',
-          JSON.stringify({ target: link.dataset.target, expireAt: Date.now() + 30 * 60 * 1000 }),
-        )
-      } catch {}
-    })
-  }
-</script>

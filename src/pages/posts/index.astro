@@ -2,9 +2,11 @@
 import { getCollection } from 'astro:content'
 import Base from '../../layouts/Base.astro'
 
-const posts = (await getCollection('posts', ({ data }) => data.public)).sort((a, b) =>
-  b.data.date.localeCompare(a.data.date),
-)
+// 本地 dev 连草稿一起列，线上只渲染公开文章
+const all = await getCollection('posts')
+const posts = all
+  .filter((post) => post.data.public || import.meta.env.DEV)
+  .sort((a, b) => b.data.date.localeCompare(a.data.date))
 ---
 
 <Base title="全部文章">
@@ -13,7 +15,7 @@ const posts = (await getCollection('posts', ({ data }) => data.public)).sort((a,
     <p class="muted">共 {posts.length} 篇</p>
 
     {posts.length === 0 ? (
-      <p class="empty">暂无公开文章。</p>
+      <p class="empty">暂无文章。</p>
     ) : (
       <ul class="post-list">
         {posts.map((post) => (
@@ -23,6 +25,7 @@ const posts = (await getCollection('posts', ({ data }) => data.public)).sort((a,
             </h2>
             <div class="post-meta">
               <span>{post.data.date}</span>
+              {!post.data.public ? <span class="tag draft">草稿</span> : null}
               {post.data.tags.map((tag) => (
                 <span class="tag">{tag}</span>
               ))}

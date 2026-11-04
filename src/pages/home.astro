@@ -2,9 +2,11 @@
 import { getCollection } from 'astro:content'
 import Base from '../layouts/Base.astro'
 
-const posts = (await getCollection('posts', ({ data }) => data.public)).sort((a, b) =>
-  b.data.date.localeCompare(a.data.date),
-)
+// 本地 dev 把草稿也列出来，方便发布后立刻看效果；线上构建只渲染公开文章
+const all = await getCollection('posts')
+const posts = all
+  .filter((post) => post.data.public || import.meta.env.DEV)
+  .sort((a, b) => b.data.date.localeCompare(a.data.date))
 const latest = posts.slice(0, 5)
 ---
 
@@ -24,7 +26,7 @@ const latest = posts.slice(0, 5)
   <section class="wrap">
     <h2>最新文章</h2>
     {latest.length === 0 ? (
-      <p class="empty">还没有公开文章。</p>
+      <p class="empty">还没有文章。</p>
     ) : (
       <ul class="post-list">
         {latest.map((post) => (
@@ -34,6 +36,7 @@ const latest = posts.slice(0, 5)
             </h2>
             <div class="post-meta">
               <span>{post.data.date}</span>
+              {!post.data.public ? <span class="tag draft">草稿</span> : null}
               {post.data.tags.map((tag) => (
                 <span class="tag">{tag}</span>
               ))}
