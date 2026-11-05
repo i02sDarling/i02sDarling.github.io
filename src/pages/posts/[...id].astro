@@ -5,27 +5,60 @@ import Base from '../../layouts/Base.astro'
 
 export const getStaticPaths: GetStaticPaths = async () => {
   // 本地 dev 连草稿一起生成页面，线上只构建公开文章
-  const posts = await getCollection('posts', ({ data }) => data.public || import.meta.env.DEV)
-  return posts.map((post) => ({
+  const posts = (await getCollection('posts', ({ data }) => data.public || import.meta.env.DEV)).sort(
+    (a, b) => b.data.date.localeCompare(a.data.date),
+  )
+  return posts.map((post, index) => ({
     params: { id: post.id },
-    props: { post },
+    // 上一篇 = 更新的那篇，下一篇 = 更旧的那篇
+    props: { post, prev: posts[index - 1] ?? null, next: posts[index + 1] ?? null },
   }))
 }
 
-const { post } = Astro.props
-const { Content } = await render(post)
+const { post, prev, next } = Astro.props
+const { Content, headings } = await render(post)
+
+// 大纲只用二、三级标题；小节特别多时只留二级，否则整份大纲会长到没法扫
+const detailed = headings.filter((heading) => heading.depth === 2 || heading.depth === 3)
+const level2 = detailed.filter((heading) => heading.depth === 2)
+const tocItems = level2.length >= 4 ? level2 : detailed
+const lastEdited = post.data.updated || post.data.date
 ---
 
 <Base title={post.data.title} description={post.data.description}>
-  <article class="wrap">
+  {
+    tocItems.length > 1 ? (
+      <nav class="toc" data-toc aria-label="文章大纲">
+        <div class="toc-head">
+          <span class="toc-title">大纲</span>
+          <button class="toc-pin" type="button" data-toc-toggle aria-expanded="false">
+            <span class="toc-pin-text">固定</span>
+          </button>
+        </div>
+        <div class="toc-ticks" aria-hidden="true">
+          {tocItems.map((heading) => (
+            <span class={`toc-tick d${heading.depth}`} />
+          ))}
+        </div>
+        <ol class="toc-list">
+          {tocItems.map((heading) => (
+            <li class={`toc-item d${heading.depth}`}>
+              <a href={`#${heading.slug}`} data-toc-link>
+                {heading.text}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    ) : null
+  }
+
+  <article class="wrap post-page">
     <header class="post-header">
       <h1>{post.data.title}</h1>
       <div class="post-meta">
         <span>{post.data.date}</span>
         {!post.data.public ? <span class="tag draft">草稿 · 仅本地可见</span> : null}
-        {post.data.updated && post.data.updated !== post.data.date ? (
-          <span class="muted">更新于 {post.data.updated}</span>
-        ) : null}
         {post.data.tags.map((tag) => (
           <span class="tag">{tag}</span>
         ))}
@@ -38,8 +71,82 @@ const { Content } = await render(post)
     </div>
 
     <hr />
-    <p>
+
+    <div class="post-nav">
       <a href="/posts/">← 返回文章列表</a>
-    </p>
+      <span class="post-edited">最后编辑于 {lastEdited}</span>
+    </div>
+
+    {
+      prev || next ? (
+        <nav class="post-adjacent" aria-label="相邻文章">
+          {prev ? (
+            <a class="adjacent-item" href={`/posts/${prev.id}/`}>
+              <span class="adjacent-label">← 上一篇</span>
+              <span class="adjacent-title">{prev.data.title}</span>
+            </a>
+          ) : (
+            <span />
+          )}
+          {next ? (
+            <a class="adjacent-item adjacent-next" href={`/posts/${next.id}/`}>
+              <span class="adjacent-label">下一篇 →</span>
+              <span class="adjacent-title">{next.data.title}</span>
+            </a>
+          ) : (
+            <span />
+          )}
+        </nav>
+      ) : null
+    }
   </article>
 </Base>
+
+<script>
+  // 大纲：默认收成刻度条，hover 展开；点「固定」常驻展开（记在 localStorage）
+  const toc = document.querySelector<HTMLElement>('[data-toc]')
+  if (toc) {
+    const PIN_KEY = 'toc-pinned'
+    const toggle = toc.querySelector<HTMLButtonElement>('[data-toc-toggle]')
+
+    const setPinned = (pinned: boolean) => {
+      toc.classList.toggle('is-pinned', pinned)
+      toggle?.setAttribute('aria-expanded', String(pinned))
+      const label = toggle?.querySelector('.toc-pin-text')
+      if (label) label.textContent = pinned ? '已固定' : '固定'
+      try {
+        localStorage.setItem(PIN_KEY, pinned ? '1' : '0')
+      } catch {}
+    }
+
+    try {
+      if (localStorage.getItem(PIN_KEY) === '1') setPinned(true)
+    } catch {}
+
+    toggle?.addEventListener('click', () => setPinned(!toc.classList.contains('is-pinned')))
+
+    const links = new Map<string, HTMLAnchorElement>()
+    for (const link of toc.querySelectorAll<HTMLAnchorElement>('[data-toc-link]')) {
+      // link.hash 是百分号编码的，元素 id 是原文，必须解码才能对上
+      links.set(decodeURIComponent(link.hash.slice(1)), link)
+    }
+
+    const targets = [...links.keys()]
+      .map((id) => document.getElementById(id))
+      .filter((element): element is HTMLElement => element !== null)
+
+    if (targets.length > 0 && 'IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue
+            for (const link of links.values()) link.classList.remove('is-active')
+            links.get(entry.target.id)?.classList.add('is-active')
+          }
+        },
+        { rootMargin: '-88px 0px -70% 0px' },
+      )
+      for (const target of targets) observer.observe(target)
+    }
+  }
+</script>
