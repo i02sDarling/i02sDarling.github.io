@@ -12,6 +12,7 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/markdown-remark": "^7.3.5",
     "astro": "^7.3.3",
     "simplex-noise": "^4.0.3"
   },

@@ -7,6 +7,8 @@
   --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', 'PingFang SC',
     'Microsoft YaHei', sans-serif;
   --font-mono: 'DM Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  /* 引用、金句、需要「换一种声音」的地方 */
+  --font-serif: 'Noto Serif SC', 'Songti SC', ui-serif, Georgia, 'Times New Roman', serif;
 
   --c-bg: #fff;
   --c-text: #000;
@@ -171,7 +173,8 @@ a {
 }
 
 a:hover {
-  border-bottom-color: var(--fg);
+  color: var(--fg-deeper);
+  border-bottom-color: var(--fg-deep);
 }
 
 code {
@@ -449,22 +452,134 @@ main {
 }
 
 .article blockquote {
-  margin: 0 0 1.25em -1.1em;
-  padding: 0.5em 1em;
+  margin: 1.6em 0;
+  padding: 0.25em 0 0.25em 1em;
   border-left: 3px solid var(--border-3);
+  /* 引用/金句用衬线体：和正文的 sans 拉开层次，一眼能看出「这是别人说的话」 */
+  font-family: var(--font-serif);
+  font-size: 1.0625em;
+  color: var(--fg-deep);
 }
 
 .article blockquote > * {
-  opacity: 0.7;
+  opacity: 1;
 }
 
 .article blockquote > :last-child {
   margin-bottom: 0;
 }
 
-.article em {
+.article strong {
   color: var(--fg-deep);
+  font-weight: 600;
+}
+
+.article em {
+  font-family: var(--font-serif);
   font-size: 1.05em;
+  color: var(--fg-deep);
+}
+
+/* `==重点==` 的默认样式；想换颜色写 <span class="hl-blue">…</span> */
+.article mark.hl {
+  padding: 0.08em 0.24em;
+  border-radius: 3px;
+  background: rgb(109 40 217 / 0.12);
+  color: var(--fg-deeper);
+}
+
+.article :is(.hl-blue, .hl-red, .hl-green, .hl-amber) {
+  padding: 0 0.08em;
+  border-bottom: 1px solid currentColor;
+}
+
+.article .hl-blue {
+  color: #2563eb;
+  border-bottom-color: rgb(37 99 235 / 0.3);
+}
+
+.article .hl-red {
+  color: #dc2626;
+  border-bottom-color: rgb(220 38 38 / 0.3);
+}
+
+.article .hl-green {
+  color: #059669;
+  border-bottom-color: rgb(5 150 105 / 0.3);
+}
+
+.article .hl-amber {
+  color: #b45309;
+  border-bottom-color: rgb(180 83 9 / 0.3);
+}
+
+html.dark .article mark.hl {
+  background: rgb(167 139 250 / 0.18);
+}
+
+html.dark .article .hl-blue {
+  color: #7aa2ff;
+  border-bottom-color: rgb(122 162 255 / 0.35);
+}
+
+html.dark .article .hl-red {
+  color: #ff7b72;
+  border-bottom-color: rgb(255 123 114 / 0.35);
+}
+
+html.dark .article .hl-green {
+  color: #4ade80;
+  border-bottom-color: rgb(74 222 128 / 0.35);
+}
+
+html.dark .article .hl-amber {
+  color: #fbbf24;
+  border-bottom-color: rgb(251 191 36 / 0.35);
+}
+
+/* 标题左边的 `#`：默认透明，hover 标题才浮出来 */
+.article :is(h2, h3, h4) {
+  position: relative;
+}
+
+.header-anchor {
+  position: absolute;
+  left: -1.15em;
+  top: 0;
+  padding-right: 0.2em;
+  border-bottom: none !important;
+  color: var(--fg-light);
+  font-weight: 400;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.article :is(h2, h3, h4):hover .header-anchor {
+  opacity: 0.45;
+}
+
+.header-anchor:hover {
+  opacity: 1;
+  border-bottom: none;
+}
+
+/* 外链前的网站图标（构建时抓到本地，抓不到就不渲染） */
+.link-icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  margin-right: 0.25em;
+  border-radius: 2px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  vertical-align: -0.12em;
+}
+
+@media (max-width: 640px) {
+  .header-anchor {
+    display: none;
+  }
 }
 
 .article s {
@@ -511,7 +626,7 @@ main {
 .post-nav {
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 16px;
   flex-wrap: wrap;
   font-size: 0.875rem;
@@ -520,6 +635,62 @@ main {
 .post-edited {
   font-size: 0.75rem;
   color: var(--fg-light);
+}
+
+/* 文末终端式导航：程序员的浪漫，但只占两行、不喧哗 */
+.post-terminal {
+  margin-top: 28px;
+  padding: 14px 16px;
+  border: 1px solid var(--border-3);
+  border-radius: var(--radius);
+  background: var(--fill-1);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.9;
+}
+
+.post-terminal p {
+  margin: 0;
+}
+
+.term-prompt {
+  margin-right: 0.5em;
+  color: var(--accent);
+  user-select: none;
+}
+
+.post-terminal a {
+  border-bottom: none;
+  color: var(--fg-deep);
+  transition: color 0.15s ease;
+}
+
+.post-terminal a:hover {
+  color: var(--accent);
+}
+
+.term-note {
+  margin-left: 0.75em;
+  color: var(--fg-light);
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+}
+
+.post-terminal a:hover + .term-note {
+  color: var(--fg);
+}
+
+@media (max-width: 640px) {
+  .post-terminal {
+    padding: 12px 14px;
+    font-size: 0.78125rem;
+  }
+
+  .term-note {
+    display: block;
+    margin-left: 1.5em;
+    line-height: 1.4;
+  }
 }
 
 .post-adjacent {
@@ -535,7 +706,13 @@ main {
   gap: 4px;
   padding-top: 12px;
   border-top: 1px solid var(--border-3);
+  border-bottom: none;
   text-decoration: none;
+}
+
+.adjacent-item:hover {
+  border-bottom: none;
+  color: inherit;
 }
 
 .adjacent-label {

@@ -73,7 +73,6 @@ const lastEdited = post.data.updated || post.data.date
     <hr />
 
     <div class="post-nav">
-      <a href="/posts/">← 返回文章列表</a>
       <span class="post-edited">最后编辑于 {lastEdited}</span>
     </div>
 
@@ -99,6 +98,19 @@ const lastEdited = post.data.updated || post.data.date
         </nav>
       ) : null
     }
+
+    <div class="post-terminal" aria-label="快捷导航">
+      <p>
+        <span class="term-prompt">&gt;</span>
+        <a href="/">cd ~</a>
+        <span class="term-note">回首页</span>
+      </p>
+      <p>
+        <span class="term-prompt">&gt;</span>
+        <a href="/posts/">cd ..</a>
+        <span class="term-note">返回文章列表</span>
+      </p>
+    </div>
   </article>
 </Base>
 
