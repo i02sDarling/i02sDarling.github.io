@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config'
 import { fileURLToPath } from 'node:url'
 import { unified } from '@astrojs/markdown-remark'
 import remarkMark from './src/plugins/remark-mark.mjs'
+import remarkPostMetadata from './src/plugins/remark-post-metadata.mjs'
 import rehypePostMagic, { copyIconsToDist } from './src/plugins/rehype-post-magic.mjs'
 
 const root = fileURLToPath(new URL('.', import.meta.url))
@@ -30,8 +31,8 @@ export default defineConfig({
   markdown: {
     // Astro 7 默认换成 Sätteri，remark/rehype 插件要用 unified() 显式声明
     processor: unified({
-      // `==重点==` → <mark class="hl">
-      remarkPlugins: [remarkMark],
+      // 正文开头的 `> metadata:` 块只给页面读，不渲染给读者
+      remarkPlugins: [remarkPostMetadata, remarkMark],
       // 标题 `#` 锚点 + 外链网站图标（构建时抓，抓不到就跳过）
       rehypePlugins: [[rehypePostMagic, { root }]],
     }),

@@ -1,39 +1,58 @@
 ---
 import { getCollection } from 'astro:content'
 import Base from '../../layouts/Base.astro'
+import { formatPostDate, groupByYear, readingMinutes } from '../../lib/posts.ts'
+import { postSlug, resolvePostData, stripMetadataBlock } from '../../lib/metadata.ts'
 
 // 本地 dev 连草稿一起列，线上只渲染公开文章
 const all = await getCollection('posts')
 const posts = all
-  .filter((post) => post.data.public || import.meta.env.DEV)
-  .sort((a, b) => b.data.date.localeCompare(a.data.date))
+  .map((post) => ({ post, meta: resolvePostData(post), slug: postSlug(post) }))
+  .filter((entry) => entry.meta.public || import.meta.env.DEV)
+  .sort((a, b) => String(b.meta.date).localeCompare(String(a.meta.date)))
+
+// groupByYear 只关心 data.date，把合并后的 meta 当成 data 传进去
+const groups = groupByYear(posts.map((entry) => ({ ...entry, data: entry.meta })))
 ---
 
-<Base title="全部文章">
+<Base title="Blog">
   <section class="wrap">
-    <h1>全部文章</h1>
-    <p class="muted">共 {posts.length} 篇</p>
+    <header class="list-head">
+      <h1>Blog</h1>
+      <p class="muted">共 {posts.length} 篇 · 记录在做的项目、踩过的坑，和还没想清楚的事</p>
+    </header>
 
     {posts.length === 0 ? (
       <p class="empty">暂无文章。</p>
     ) : (
-      <ul class="post-list">
-        {posts.map((post) => (
-          <li class="post-item">
-            <h2>
-              <a href={`/posts/${post.id}/`}>{post.data.title}</a>
-            </h2>
-            <div class="post-meta">
-              <span>{post.data.date}</span>
-              {!post.data.public ? <span class="tag draft">草稿</span> : null}
-              {post.data.tags.map((tag) => (
-                <span class="tag">{tag}</span>
-              ))}
-            </div>
-            {post.data.description ? <p class="muted">{post.data.description}</p> : null}
-          </li>
-        ))}
-      </ul>
+      <div class="post-years">
+        {
+          groups.map((group) => (
+            <section class="post-year-group">
+              <div class="post-group-head" aria-hidden="true">
+                <span class="post-year">{group.year}</span>
+              </div>
+              <ul class="post-rows">
+                {group.posts.map((post) => (
+                  <li class="post-row">
+                    <a class="post-row-link" href={`/posts/${post.slug}/`}>
+                      <span class="post-row-title">{post.meta.title}</span>
+                      <span class="post-row-meta">
+                        <span>{formatPostDate(post.meta.date)}</span>
+                        <span class="post-row-dot" aria-hidden="true">
+                          ·
+                        </span>
+                        <span>{readingMinutes(stripMetadataBlock(post.post.body))} min</span>
+                        {!post.meta.public ? <span class="tag draft">草稿</span> : null}
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))
+        }
+      </div>
     )}
   </section>
 </Base>

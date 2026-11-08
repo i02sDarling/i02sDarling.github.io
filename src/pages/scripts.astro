@@ -1,0 +1,106 @@
+---
+import Base from '../layouts/Base.astro'
+
+/**
+ * 油猴脚本清单。
+ *
+ * 脚本文件放 public/userscripts/ 下，这里只登记展示信息；
+ * 新增脚本时把 .user.js 与预览图拷进 public/userscripts/，再往数组里加一条。
+ */
+interface ScriptItem {
+  id: string
+  title: string
+  desc: string
+  site: string
+  install: string
+  preview?: string
+  points: string[]
+  notes: string[]
+}
+
+const scripts: ScriptItem[] = [
+  {
+    id: 'forum-txt-inline',
+    title: '论坛 TXT 附件自动展开',
+    desc: '在帖子页里，把指向 txt 的链接内容直接展开在链接下方，不用点下载、不用等文件落盘。',
+    site: '论坛站点（安装后改 @match）',
+    install: '/userscripts/forum-txt-inline.user.js',
+    preview: '/userscripts/preview-forum-txt.jpg',
+    points: [
+      '链接文字或地址里出现 .txt 就处理，Discuz 那种不带后缀的附件链接也能认',
+      'UTF-8 / UTF-16 / GBK 自动识别，中文论坛不会乱码',
+      '同一地址只请求一次；动态加载的楼层也会继续扫描',
+      '长内容固定高度、内部滚动，不会把帖子撑爆',
+    ],
+    notes: [
+      '浏览器安装 Tampermonkey，点上面的「安装脚本」。',
+      '装完改脚本头里的 @match，换成你要生效的站点，例如 *://*.98t.la/*。',
+      '刷新帖子页即可；脚本只读取你本来就有权限访问的附件。',
+    ],
+  },
+]
+---
+
+<Base
+  title="Scripts"
+  description="妲零自用的油猴脚本合集：装上 Tampermonkey，点一下就能用。"
+>
+  <section class="wrap">
+    <header class="list-head">
+      <h1>Scripts</h1>
+      <p class="muted">
+        自用的油猴脚本 · 浏览器装 <a
+          href="https://www.tampermonkey.net/"
+          target="_blank"
+          rel="noopener noreferrer">Tampermonkey</a
+        >，点「安装脚本」即可
+      </p>
+    </header>
+
+    <div class="script-list">
+      {
+        scripts.map((script) => (
+          <article class="script-item">
+            <header class="script-head">
+              <h2>{script.title}</h2>
+              <a class="btn primary script-install" href={script.install}>
+                安装脚本
+              </a>
+            </header>
+
+            <p class="script-desc">{script.desc}</p>
+            <p class="script-site">
+              <span class="script-label">适用站点</span>
+              {script.site}
+            </p>
+
+            <ul class="script-points">
+              {script.points.map((point) => (
+                <li>{point}</li>
+              ))}
+            </ul>
+
+            {script.preview ? (
+              <a class="script-preview" href={script.preview} target="_blank" rel="noopener noreferrer">
+                <img src={script.preview} alt={`${script.title} 效果预览`} />
+              </a>
+            ) : null}
+
+            <details class="script-notes">
+              <summary>使用说明</summary>
+              <ol>
+                {script.notes.map((note) => (
+                  <li>{note}</li>
+                ))}
+              </ol>
+            </details>
+          </article>
+        ))
+      }
+    </div>
+
+    <p class="script-foot muted">
+      脚本只发起页面本身就能发起的请求，不绕过登录、付费、权限或试用额度。
+    </p>
+  </section>
+</Base>

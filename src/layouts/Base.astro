@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css'
 import Logo from '../components/Logo.astro'
+import { ClientRouter } from 'astro:transitions'
 
 interface Props {
   title: string
@@ -13,13 +14,19 @@ const {
 } = Astro.props
 
 const nav = [
-  { href: '/home/', label: '首页' },
-  { href: '/posts/', label: '文章' },
-  { href: '/skills/', label: '工具' },
+  { href: '/home/', label: 'Home' },
+  { href: '/posts/', label: 'Blog' },
+  { href: '/resume', label: 'Resume' },
+  { href: '/skills/', label: 'Tools' },
+  { href: '/scripts/', label: 'Scripts' },
 ]
 const current = Astro.url.pathname
 /** 去掉结尾斜杠再比，/home 与 /home/ 都算「首页」 */
 const path = current.replace(/\/+$/, '') || '/'
+const isActive = (href: string) => {
+  const base = href.replace(/\/+$/, '')
+  return base === '/home' ? path === '/home' : path === base || path.startsWith(`${base}/`)
+}
 const siteTitle = title === '妲零' ? '妲零' : `${title} · 妲零`
 ---
 
@@ -37,7 +44,29 @@ const siteTitle = title === '妲零' ? '妲零' : `${title} · 妲零`
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta name="generator" content={Astro.generator} />
+    <ClientRouter />
     <slot name="head" />
+    <!--
+      关键布局兜底：内容列宽度写死在这里一份。
+      外链样式表万一晚到、被换页换掉、或变量没挂上，正文也不会从「居中 42rem」
+      突然塌成「贴左边一整行」——这是之前最容易看到的那种「页面不是全屏」。
+    -->
+    <style is:inline>
+      .wrap {
+        width: min(100%, 42rem);
+        margin-inline: auto;
+      }
+
+      /* 用 :where 降权：外链样式表里的移动端 padding 仍然能覆盖它 */
+      :where(.wrap) {
+        padding: 0 24px;
+      }
+
+      .header-inner {
+        width: 100%;
+        max-width: none;
+      }
+    </style>
     <script is:inline>
       ;(() => {
         try {
@@ -51,6 +80,12 @@ const siteTitle = title === '妲零' ? '妲零' : `${title} · 妲零`
     </script>
   </head>
   <body>
+    <!--
+      进度条必须 transition:persist：ClientRouter 换页会整块替换 <body>，
+      不持久化的话这条线刚爬到一半就被新页面那份覆写回 0，等于从来没出现过。
+    -->
+    <div class="route-progress" data-progress transition:persist aria-hidden="true"><span></span></div>
+
     <header class="site-header">
       <div class="wrap header-inner">
         <a class="logo" href="/home" aria-label="妲零 Darling">
@@ -59,14 +94,25 @@ const siteTitle = title === '妲零' ? '妲零' : `${title} · 妲零`
         <nav>
           {
             nav.map((item) => (
-              <a
-                href={item.href}
-                class:list={['nav-link', { active: path === item.href.replace(/\/+$/, '') }]}
-              >
+              <a href={item.href} class:list={['nav-link', { active: isActive(item.href) }]}>
                 {item.label}
               </a>
             ))
           }
+          <a
+            class="nav-icon"
+            href="https://github.com/i02sdarling"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub"
+            title="GitHub"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path
+                d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55v-2.1c-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.12 3.05.74.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.41-5.25 5.69.41.36.78 1.06.78 2.14v3.17c0 .3.21.67.8.55A11.51 11.51 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5z"
+              ></path>
+            </svg>
+          </a>
           <button class="theme-toggle" id="theme-toggle" type="button" aria-label="切换主题">
             <svg
               class="icon-sun"
@@ -95,7 +141,7 @@ const siteTitle = title === '妲零' ? '妲零' : `${title} · 妲零`
       </div>
     </header>
 
-    <main class="slide-enter-content">
+    <main>
       <slot />
     </main>
 
@@ -114,34 +160,276 @@ const siteTitle = title === '妲零' ? '妲零' : `${title} · 妲零`
       </div>
     </footer>
 
-    <script is:inline>
-      ;(() => {
-        const button = document.getElementById('theme-toggle')
-        button?.addEventListener('click', () => {
-          const isDark = document.documentElement.classList.toggle('dark')
-          try {
-            localStorage.setItem('theme', isDark ? 'dark' : 'light')
-          } catch {}
-          const meta = document.querySelector('meta[name="theme-color"]')
-          meta?.setAttribute('content', isDark ? '#050505' : '#ffffff')
-        })
-      })()
-    </script>
+    <button class="to-top" data-to-top type="button" aria-label="回到顶部" title="回到顶部">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 19V5M5 12l7-7 7 7"></path>
+      </svg>
+    </button>
 
-    <script is:inline>
-      ;(() => {
-        const header = document.querySelector('.site-header')
-        if (!header) return
-        const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 8)
-        onScroll()
-        window.addEventListener('scroll', onScroll, { passive: true })
-      })()
-    </script>
+    <!-- 图片预览：点正文 / 脚本页的图放大，×、Esc、点空白处都能退出 -->
+    <div class="lightbox" data-lightbox aria-hidden="true">
+      <button class="lightbox-close" type="button" data-lightbox-close aria-label="关闭预览" title="关闭（Esc）">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18"></path>
+        </svg>
+      </button>
+      <img data-lightbox-img alt="" />
+    </div>
 
     <script>
       import { mountBackground } from '../scripts/background.ts'
 
-      mountBackground()
+      /**
+       * 全站客户端逻辑。ClientRouter 是 SPA 换页：整块 <body> 会被替换、
+       * <html> 上的 class 也会被新文档的属性覆盖，所以这里：
+       *  - 监听器只挂在 document / window 上一次
+       *  - 背景画布挂在 <html> 下（不随 body 换页消失），只挂载一次
+       *  - 每次 astro:page-load 只重建页面内那部分状态
+       */
+      const state = window as typeof window & {
+        __dsDisposeBg?: () => void
+        __dsProgressAt?: number
+      }
+
+      let hideTimer = 0
+      let growTimer = 0
+      let watchdogTimer = 0
+
+      function resetBar() {
+        const { bar, fill } = fillOf()
+        if (!bar || !fill) return
+        bar.classList.remove('is-loading')
+        fill.style.transition = 'none'
+        fill.style.width = '0'
+        state.__dsProgressAt = 0
+      }
+      const fillOf = () => {
+        const bar = document.querySelector<HTMLElement>('[data-progress]')
+        return { bar, fill: bar?.firstElementChild as HTMLElement | null }
+      }
+
+      /* 换页进度条：开始加载立刻露头，快速爬到 78%，换页完成后补满再淡出 */
+      function startProgress() {
+        const { bar, fill } = fillOf()
+        if (!bar || !fill) return
+        window.clearTimeout(hideTimer)
+        window.clearTimeout(growTimer)
+        window.clearTimeout(watchdogTimer)
+        state.__dsProgressAt = performance.now()
+        bar.classList.add('is-loading')
+        fill.style.transition = 'none'
+        fill.style.width = '10%'
+        // 读一次布局，保证 10% → 78% 的宽度过渡真的会跑
+        void fill.offsetWidth
+        growTimer = window.setTimeout(() => {
+          // 本地换页只要 ~100ms，爬升也得快：0.45s 内到 78%，换页那一刻已经有明显一截
+          fill.style.transition = 'width 0.45s cubic-bezier(0.2, 0.8, 0.3, 1)'
+          fill.style.width = '78%'
+        }, 30)
+        // 导航被中断 / 浏览器挂起时兜底，别让这条线永远卡在 78%
+        watchdogTimer = window.setTimeout(resetBar, 6000)
+      }
+
+      function doneProgress() {
+        const startedAt = state.__dsProgressAt
+        if (!startedAt) return
+        const { bar, fill } = fillOf()
+        if (!bar || !fill) return
+        window.clearTimeout(growTimer)
+        window.clearTimeout(watchdogTimer)
+        /*
+         * 本地换页经常 30ms 就完了，太快会看不见。
+         * 换页过渡本身要跑 0.28s（进度条在过渡层最上面，一直可见），
+         * 所以至少撑到 520ms，让它在过渡结束后再走完最后一段。
+         */
+        const wait = Math.max(0, 520 - (performance.now() - startedAt))
+        hideTimer = window.setTimeout(() => {
+          fill.style.transition = 'width 0.16s ease-out'
+          fill.style.width = '100%'
+          hideTimer = window.setTimeout(resetBar, 160)
+        }, wait)
+      }
+
+      function syncChrome() {
+        document.querySelector('.site-header')?.classList.toggle('scrolled', window.scrollY > 8)
+        document
+          .querySelector('[data-to-top]')
+          ?.classList.toggle('is-visible', window.scrollY > 300)
+      }
+
+      function applyTheme() {
+        try {
+          const stored = localStorage.getItem('theme')
+          const dark = stored
+            ? stored === 'dark'
+            : window.matchMedia('(prefers-color-scheme: dark)').matches
+          document.documentElement.classList.toggle('dark', dark)
+          document
+            .querySelector('meta[name="theme-color"]')
+            ?.setAttribute('content', dark ? '#050505' : '#ffffff')
+        } catch {}
+      }
+
+      function toggleTheme() {
+        const isDark = document.documentElement.classList.toggle('dark')
+        try {
+          localStorage.setItem('theme', isDark ? 'dark' : 'light')
+        } catch {}
+        const meta = document.querySelector('meta[name="theme-color"]')
+        meta?.setAttribute('content', isDark ? '#050505' : '#ffffff')
+      }
+
+      /* ── 图片预览 ───────────────────────────────────────────── */
+      function openLightbox(source: HTMLImageElement) {
+        const box = document.querySelector<HTMLElement>('[data-lightbox]')
+        const view = box?.querySelector<HTMLImageElement>('[data-lightbox-img]')
+        if (!box || !view) return
+        view.src = source.currentSrc || source.src
+        view.alt = source.alt || ''
+        box.classList.add('is-open')
+        box.setAttribute('aria-hidden', 'false')
+        document.documentElement.classList.add('lightbox-open')
+        document.body.classList.add('lightbox-open')
+      }
+
+      function closeLightbox() {
+        const box = document.querySelector<HTMLElement>('[data-lightbox]')
+        if (!box) return
+        box.classList.remove('is-open')
+        box.setAttribute('aria-hidden', 'true')
+        document.documentElement.classList.remove('lightbox-open')
+        document.body.classList.remove('lightbox-open')
+      }
+
+      /* 大纲：左侧悬浮目录，hover 展开；点图标固定 / 收起（记在 localStorage） */
+      function setupToc() {
+        const toc = document.querySelector<HTMLElement>('[data-toc]')
+        if (!toc || toc.dataset.ready === '1') return
+        toc.dataset.ready = '1'
+
+        const PIN_KEY = 'toc-pinned'
+        const toggle = toc.querySelector<HTMLButtonElement>('[data-toc-toggle]')
+
+        const setPinned = (pinned: boolean) => {
+          toc.classList.toggle('is-pinned', pinned)
+          toggle?.setAttribute('aria-expanded', String(pinned))
+          try {
+            localStorage.setItem(PIN_KEY, pinned ? '1' : '0')
+          } catch {}
+        }
+
+        try {
+          if (localStorage.getItem(PIN_KEY) === '1') setPinned(true)
+        } catch {}
+
+        toggle?.addEventListener('click', () => setPinned(!toc.classList.contains('is-pinned')))
+
+        const links = new Map<string, HTMLAnchorElement>()
+        for (const link of toc.querySelectorAll<HTMLAnchorElement>('[data-toc-link]')) {
+          // link.hash 是百分号编码的，元素 id 是原文，必须解码才能对上
+          links.set(decodeURIComponent(link.hash.slice(1)), link)
+        }
+
+        const targets = [...links.keys()]
+          .map((id) => document.getElementById(id))
+          .filter((element): element is HTMLElement => element !== null)
+
+        if (targets.length > 0 && 'IntersectionObserver' in window) {
+          const observer = new IntersectionObserver(
+            (entries) => {
+              for (const entry of entries) {
+                if (!entry.isIntersecting) continue
+                for (const link of links.values()) link.classList.remove('is-active')
+                links.get(entry.target.id)?.classList.add('is-active')
+              }
+            },
+            { rootMargin: '-88px 0px -70% 0px' },
+          )
+          for (const target of targets) observer.observe(target)
+        }
+      }
+
+      function setupPage() {
+        // <html> 的 class 在换页时会被新文档覆盖掉（dark / has-canvas-bg），补回来
+        applyTheme()
+
+        if (!state.__dsDisposeBg) {
+          state.__dsDisposeBg = mountBackground()
+        } else {
+          document.documentElement.classList.add('has-canvas-bg')
+        }
+
+        const main = document.querySelector('main')
+        // 首次加载时脚本先跑一遍，astro:page-load 又跑一遍；用标记跳过第二次
+        if (!main || main.dataset.ready === '1') return
+        main.dataset.ready = '1'
+
+        setupToc()
+        syncChrome()
+      }
+
+      document.addEventListener('astro:before-preparation', startProgress)
+      document.addEventListener('astro:before-swap', (event) => {
+        closeLightbox()
+        /*
+         * 换页时 <html> 的属性会被新文档整组覆盖（dark / has-canvas-bg 都会掉）。
+         * 在 swap 之前把这两个 class 补到新文档上，暗色模式换页就不会先闪一下白。
+         */
+        try {
+          const root = event.newDocument?.documentElement
+          if (root) {
+            const stored = localStorage.getItem('theme')
+            const dark = stored
+              ? stored === 'dark'
+              : window.matchMedia('(prefers-color-scheme: dark)').matches
+            root.classList.toggle('dark', dark)
+            if (state.__dsDisposeBg) root.classList.add('has-canvas-bg')
+          }
+        } catch {}
+      })
+      document.addEventListener('astro:page-load', () => {
+        doneProgress()
+        setupPage()
+      })
+
+      window.addEventListener('scroll', syncChrome, { passive: true })
+
+      document.addEventListener('click', (event) => {
+        const target = event.target as HTMLElement | null
+        if (!target) return
+
+        if (target.closest('#theme-toggle')) {
+          toggleTheme()
+          return
+        }
+        if (target.closest('[data-to-top]')) {
+          window.scrollTo({ top: 0, behavior: 'smooth' })
+          return
+        }
+        if (target.closest('[data-lightbox-close]')) {
+          closeLightbox()
+          return
+        }
+
+        const image = target.closest<HTMLImageElement>('.article img, .script-preview img')
+        if (image) {
+          // 脚本页的效果图外面包着 <a>，这里拦下跳转，改成站内放大
+          event.preventDefault()
+          openLightbox(image)
+          return
+        }
+
+        // 点遮罩空白处关闭；点图片本身不关
+        const box = target.closest('[data-lightbox]')
+        if (box && !target.closest('[data-lightbox-img]')) closeLightbox()
+      })
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') closeLightbox()
+      })
+
+      setupPage()
     </script>
+
   </body>
 </html>

@@ -1,0 +1,110 @@
+{
+  "version": 1,
+  "basics": {
+    "name": "你的名字",
+    "gender": "",
+    "age": "",
+    "phone": "138-0000-0000",
+    "email": "hello@example.com",
+    "education": "本科",
+    "experience": "3 年经验",
+    "targetCity": "杭州",
+    "targetRole": "前端开发工程师",
+    "homepage": "example.com",
+    "github": "yourname",
+    "photo": "",
+    "summary": "3 年前端开发经验，熟悉 React 生态与工程化；能独立负责从需求拆解到上线的完整流程，习惯用数据验证改动效果。"
+  },
+  "sections": [
+    {
+      "id": "s_edu",
+      "kind": "education",
+      "title": "教育经历",
+      "entries": [
+        {
+          "id": "e_edu",
+          "title": "某某大学",
+          "subtitle": "本科 · 计算机科学与技术",
+          "start": "2019.09",
+          "end": "2023.06",
+          "meta": "GPA 3.8/4.0（专业前 10%）",
+          "tags": "",
+          "bullets": []
+        }
+      ],
+      "lines": []
+    },
+    {
+      "id": "s_work",
+      "kind": "work",
+      "title": "工作经历",
+      "entries": [
+        {
+          "id": "e_work",
+          "title": "某某科技有限公司",
+          "subtitle": "前端开发工程师",
+          "start": "2023.07",
+          "end": "至今",
+          "meta": "",
+          "tags": "React / TypeScript / Vite / Zustand",
+          "bullets": [
+            "## 主要工作",
+            "1. **中后台体系搭建**：从 0 到 1 搭建 6 个业务模块，抽公共表单与权限组件，新页面交付时间从 3 天降到 1 天。",
+            "- 统一请求层与错误处理，接口异常定位时间从 20 分钟降到 5 分钟。",
+            "2. **性能优化**：首屏体积从 1.8MB 降到 720KB，LCP 从 3.2s 降到 1.4s。",
+            "## 项目成果",
+            "1. 支撑日均 3 万次访问，上线后无 P0 故障。"
+          ]
+        }
+      ],
+      "lines": []
+    },
+    {
+      "id": "s_project",
+      "kind": "project",
+      "title": "项目经历",
+      "entries": [
+        {
+          "id": "e_project",
+          "title": "数据看板",
+          "subtitle": "前端负责人",
+          "start": "2024.03",
+          "end": "2024.10",
+          "meta": "",
+          "tags": "React / ECharts / WebSocket",
+          "bullets": [
+            "## 项目背景",
+            "为运营团队做实时数据看板，替代每天手工汇总的 Excel。",
+            "## 我做了什么",
+            "1. **实时刷新**：用 WebSocket 增量推送替代轮询，服务端请求量下降 80%。",
+            "2. **图表复用**：封装 12 个图表组件，新指标接入只需配置，不用改代码。",
+            "## 项目成果",
+            "1. 看板覆盖 30+ 核心指标，运营日报从 1 小时缩短到 5 分钟。"
+          ]
+        }
+      ],
+      "lines": []
+    },
+    {
+      "id": "s_skills",
+      "kind": "skills",
+      "title": "专业技能",
+      "entries": [],
+      "lines": [
+        "**前端**：React 18 / TypeScript / Vite / Tailwind CSS，熟悉组件设计与状态管理。",
+        "**工程化**：ESLint / Vitest / CI，能维护多包仓库与构建脚本。",
+        "**后端**：Node.js / Fastify，能写接口与简单的数据处理。"
+      ]
+    },
+    {
+      "id": "s_about",
+      "kind": "custom",
+      "title": "自我评价",
+      "entries": [],
+      "lines": [
+        "遇到问题先定位再动手，改动上线前习惯补监控和回滚方案。",
+        "喜欢把重复的事做成工具，团队里负责过 3 个内部效率脚本。"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+---
+import Base from '../layouts/Base.astro'
+import resumeData from '../data/resume.json'
+import '../styles/resume.css'
+
+/**
+ * 简历页（/resume）。
+ *
+ * 默认简历来自 src/data/resume.json（就是 ip-studio 里那一份的最新版），
+ * 页面打开后可以直接改：数据只落在访客自己的 localStorage，不上传、不进 git。
+ * 改完点「导出 PDF」带走，提示「导出成功，如有用请点个 Star ~」。
+ */
+const json = JSON.stringify(resumeData).replace(/</g, '\\u003c')
+---
+
+<Base
+  title="Resume"
+  description="妲零的简历：可直接在页面上修改、导出 A4 PDF；改的内容只保存在你自己的浏览器。"
+>
+  <section class="wrap resume-wrap is-editing" data-resume-page>
+    <header class="list-head">
+      <h1>Resume</h1>
+      <p class="muted">下面是一份示例简历，直接把内容改成你自己的就行；只保存在你的浏览器，不会上传。</p>
+    </header>
+
+    <div class="resume-toolbar">
+      <button class="btn primary" type="button" data-action="export">导出 PDF</button>
+      <button class="btn" type="button" data-action="edit">完成编辑</button>
+      <button class="btn" type="button" data-action="reset">恢复示例</button>
+      <button class="btn" type="button" data-action="blank">清空重填</button>
+      <span class="resume-status muted" data-resume-status>修改只保存在本机浏览器</span>
+    </div>
+
+    <div class="resume-layout" data-resume-layout>
+      <div class="resume-editor" data-resume-editor></div>
+      <div class="resume-paper">
+        <article class="resume-sheet" data-resume-sheet></article>
+      </div>
+    </div>
+
+    <p class="resume-tip muted">
+      正文支持轻量标记：<code>## 小标题</code>、<code>1. 条目</code>、<code>- 子条目</code>、<code>**加粗**</code>；
+      一行一条，空行会被忽略。导出会按 A4 自动分页，不会带浏览器页眉 / 页脚 / 网址。
+    </p>
+
+    <div class="resume-toast" data-resume-toast hidden role="status" aria-live="polite"></div>
+    <div class="resume-export-stage" data-resume-stage aria-hidden="true"></div>
+  </section>
+
+  <script type="application/json" data-resume-default set:html={json}></script>
+
+  <script>
+    import { bootResume } from '../scripts/resume.ts'
+
+    bootResume()
+  </script>
+</Base>

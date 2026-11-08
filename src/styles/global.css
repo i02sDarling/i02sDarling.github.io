@@ -29,6 +29,10 @@
 
   --accent: #6d28d9;
 
+  /* 顶栏 / 粘性工具条的半透明底色：用固定 rgba，别用 color-mix */
+  --c-bg-translucent: rgba(255, 255, 255, 0.88);
+  --glow: rgba(85, 85, 85, 0.45);
+
   --content-width: 42rem;
   --radius: 6px;
 
@@ -47,6 +51,9 @@ html.dark {
   --fg: #bbb;
   --fg-deep: #ddd;
   --fg-deeper: #fff;
+
+  --c-bg-translucent: rgba(5, 5, 5, 0.88);
+  --glow: rgba(187, 187, 187, 0.45);
 
   color-scheme: dark;
 }
@@ -105,7 +112,8 @@ html.has-canvas-bg body::before {
 
 ::-webkit-scrollbar-track,
 ::-webkit-scrollbar-corner {
-  background: transparent;
+  background: var(--c-bg);
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -118,13 +126,15 @@ html.has-canvas-bg body::before {
 }
 
 * {
-  scrollbar-color: var(--c-scrollbar) transparent;
+  scrollbar-width: thin;
+  scrollbar-color: var(--c-scrollbar) var(--c-bg);
 }
 
 .wrap {
-  width: 100%;
-  max-width: var(--content-width);
-  margin: 0 auto;
+  /* 用 width 兜底而不是只写 max-width：即使样式表某一刻没接上，
+     内容列也只占 42rem 并居中，不会出现「整页挤到左边」的样子 */
+  width: min(100%, var(--content-width, 42rem));
+  margin-inline: auto;
   padding: 0 24px;
 }
 
@@ -232,7 +242,7 @@ hr {
 
 /* 滚动后才浮出模糊背景条，保证内容压过时仍可读 */
 .site-header.scrolled {
-  background: color-mix(in srgb, var(--c-bg) 88%, transparent);
+  background: var(--c-bg-translucent);
   backdrop-filter: blur(8px);
 }
 
@@ -241,12 +251,17 @@ hr {
   align-items: center;
   justify-content: space-between;
   height: 64px;
+  /* 顶栏跟窗口右对齐（内容列仍居中），和 antfu.me 一样 */
+  width: 100%;
+  max-width: none;
+  padding: 0 24px;
 }
 
 .logo {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex: none;
   border-bottom: none;
   color: var(--fg-deep);
 }
@@ -277,6 +292,135 @@ hr {
 .nav-link.active {
   color: var(--fg);
   opacity: 1;
+}
+
+/* GitHub 这类纯图标链接：和文字 tab 同一行，只做透明度层级 */
+.nav-icon {
+  display: grid;
+  place-items: center;
+  border-bottom: none;
+  color: var(--fg-light);
+  opacity: 0.6;
+  transition: opacity 0.2s ease-out;
+}
+
+.nav-icon:hover {
+  border-bottom: none;
+  color: var(--fg);
+  opacity: 1;
+}
+
+.nav-icon svg {
+  width: 1.1em;
+  height: 1.1em;
+}
+
+/* 手机顶栏：五个 tab 放不下，收紧间距并先藏 GitHub 图标 */
+@media (max-width: 640px) {
+  .header-inner {
+    padding: 0 12px;
+  }
+
+  .site-header nav {
+    gap: 6px;
+  }
+
+  .nav-link {
+    font-size: 0.75rem;
+  }
+
+  .nav-icon {
+    display: none;
+  }
+}
+
+/* 320 段的老设备：再收一档，避免顶栏横向溢出 */
+@media (max-width: 360px) {
+  .site-header .logo svg {
+    width: 60px;
+  }
+
+  .nav-link {
+    font-size: 0.72rem;
+  }
+
+  .site-header nav {
+    gap: 5px;
+  }
+}
+
+/* 换页进度条：ClientRouter 导航时在顶部走一条 2px 细线 */
+.route-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: 2px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.1s linear;
+  /*
+   * 关键：给进度条一个独立的 view-transition-name。
+   *
+   * 换页时 View Transition 会把整页拍成快照、盖在最上层交叉淡入淡出。
+   * 没有独立 name 的元素会被 root 快照一起拍进去 —— 也就是说进度条在这
+   * 0.28s 里画的是「换页那一帧的静止图像」，之后再接手时它基本已经跑完了，
+   * 所以肉眼上等于从来没出现过。
+   *
+   * 有了 name，它会被从 root 快照里摘出来，单独提到过渡层最上面，
+   * 整段换页过程都能看见（和 antfu.me 的 nprogress 一样一直在最上层）。
+   */
+  view-transition-name: route-progress;
+}
+
+.route-progress.is-loading {
+  opacity: 0.9;
+}
+
+.route-progress span {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: var(--fg);
+  /* 领头那一小段加一点辉光，2px 的线也更容易被眼睛捕捉到 */
+  box-shadow: 0 0 6px var(--glow);
+}
+
+/* 回到顶部：滚过一屏才浮出来，和 antfu.me 一样低对比 */
+.to-top {
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--fg);
+  opacity: 0;
+  pointer-events: none;
+  cursor: pointer;
+  transition: opacity 0.3s ease, background 0.3s ease;
+}
+
+.to-top.is-visible {
+  opacity: 0.3;
+  pointer-events: auto;
+}
+
+.to-top:hover {
+  opacity: 1;
+  background: var(--border-2);
+}
+
+.to-top svg {
+  width: 20px;
+  height: 20px;
 }
 
 .theme-toggle {
@@ -327,6 +471,39 @@ main {
   color: var(--fg);
 }
 
+/* 首页：只做一段自我介绍，不铺最新文章列表 */
+.intro {
+  max-width: 38rem;
+}
+
+.intro .intro-lead {
+  margin-top: 4px;
+  font-size: 1.0625rem;
+  color: var(--fg-deep);
+}
+
+.intro p {
+  margin-bottom: 1.1em;
+}
+
+.intro-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 30px;
+  font-size: 0.875rem;
+  color: var(--fg-light);
+}
+
+.intro-links a {
+  color: var(--fg);
+}
+
+.intro-dot {
+  opacity: 0.6;
+}
+
 .actions {
   display: flex;
   flex-wrap: wrap;
@@ -362,41 +539,113 @@ main {
 
 /* ── 列表 ───────────────────────────────────────────────────── */
 
-.post-list {
+/* ── Blog 列表：年份大字 + 标题 / 日期 / 阅读时长 ───────────── */
+
+.list-head {
+  margin-bottom: 24px;
+}
+
+.list-head h1 {
+  margin-bottom: 6px;
+}
+
+.list-head p {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.post-years {
+  display: grid;
+  gap: 2px;
+}
+
+.post-year-group {
+  position: relative;
+}
+
+/* 每年开头留一块空白，年份数字用描边大字压在下面几条标题后面。
+   高度跟着字号走：窄屏 58px 够用，宽屏字号到 92px 时要留出更多位置，
+   否则年份会压到第一条标题上。 */
+.post-group-head {
+  position: relative;
+  height: clamp(58px, 5.4vw, 88px);
+  user-select: none;
+  pointer-events: none;
+}
+
+.post-year {
+  position: absolute;
+  top: -16px;
+  left: -7px;
+  z-index: 0;
+  font-size: clamp(4rem, 12vw, 5.75rem);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  /*
+   * 用固定 rgba，不用 color-mix()：
+   * color-mix 在旧内核里整条声明会被丢掉，颜色回退成 currentColor，
+   * 年份就变成一坨实心黑字（看起来像「样式被改坏了」）。
+   * 实心浅灰 + 略深描边，靠 alpha 而不是 opacity 控制深浅。
+   */
+  color: rgba(34, 34, 34, 0.16);
+  -webkit-text-stroke: 1px rgba(34, 34, 34, 0.36);
+  paint-order: stroke fill;
+}
+
+html.dark .post-year {
+  color: rgba(255, 255, 255, 0.12);
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+}
+
+.post-rows {
+  position: relative;
+  z-index: 1;
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.post-item {
-  padding: 18px 0;
-  border-top: 1px solid var(--border-3);
+.post-row {
+  margin: 0;
 }
 
-.post-item:first-child {
-  border-top: none;
+.post-row-link {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 14px;
+  padding: 7px 0;
+  border-bottom: none;
 }
 
-.post-item h2 {
-  margin: 0 0 4px;
+.post-row-link:hover {
+  border-bottom: none;
+}
+
+.post-row-title {
   font-size: 1.0625rem;
-  font-weight: 500;
-}
-
-.post-item h2 a {
-  border-bottom: none;
+  line-height: 1.5;
   color: var(--fg-deep);
+  transition: color 0.2s ease;
 }
 
-.post-item h2 a:hover {
-  border-bottom: none;
+.post-row-link:hover .post-row-title {
   color: var(--fg-deeper);
 }
 
-.post-item p {
-  margin: 6px 0 0;
-  font-size: 0.875rem;
+.post-row-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8125rem;
   color: var(--fg-light);
+  white-space: nowrap;
+}
+
+.post-row-dot {
+  opacity: 0.7;
 }
 
 .post-meta {
@@ -444,6 +693,24 @@ main {
 
 .article {
   font-size: 1rem;
+}
+
+/* 正文图片：默认不许撑破列宽，也不能一张长截图占满整屏；
+   点一下走下面的 lightbox 放大 */
+.article img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  max-height: 70vh;
+  height: auto;
+  margin: 1.6em auto;
+  border: 1px solid var(--border-3);
+  border-radius: var(--radius);
+  cursor: zoom-in;
+}
+
+.article a:has(> img) {
+  border-bottom: none;
 }
 
 .article h2 {
@@ -616,7 +883,7 @@ html.dark .article .hl-amber {
 
 /* 比列表页宽 1.4 倍：42rem → 58.8rem */
 .wrap.post-page {
-  max-width: calc(var(--content-width) * 1.4);
+  width: min(100%, calc(var(--content-width, 42rem) * 1.4));
 }
 
 .post-page :is(h2, h3) {
@@ -743,130 +1010,114 @@ html.dark .article .hl-amber {
   }
 }
 
-/* 大纲：默认是右侧一列刻度，hover 展开成目录，点「固定」常驻 */
+/* 大纲：左侧悬浮目录。平时只露一个小按钮，hover / 固定后浮出完整列表（参考 antfu.me） */
 .toc {
   position: fixed;
-  top: 96px;
-  right: 16px;
+  top: 92px;
+  bottom: 0;
+  left: 12px;
   z-index: 30;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  width: 30px;
-  max-height: calc(100vh - 160px);
-  padding: 10px 8px;
-  overflow: hidden;
+  width: 208px;
+  font-size: 0.8rem;
+  color: var(--fg);
+  /* 收起时整块不挡正文点击，只有小按钮可点 */
+  pointer-events: none;
+}
+
+.toc-anchor {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-left: 4px;
+  padding: 0;
   border: 1px solid transparent;
   border-radius: var(--radius);
-  transition: width 0.16s ease, border-color 0.16s ease;
-}
-
-.toc:hover,
-.toc:focus-within,
-.toc.is-pinned {
-  width: 208px;
-  border-color: var(--border-2);
-  background: var(--c-bg);
-}
-
-.toc-ticks {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 7px;
-  padding-top: 2px;
-}
-
-.toc-tick {
-  height: 1px;
-  background: var(--fg-light);
-  opacity: 0.55;
-}
-
-.toc-tick.d2 {
-  width: 14px;
-}
-
-.toc-tick.d3 {
-  width: 8px;
-}
-
-.toc-head {
-  display: none;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  font-size: 0.75rem;
+  background: transparent;
   color: var(--fg-light);
-}
-
-.toc:hover .toc-head,
-.toc:focus-within .toc-head,
-.toc.is-pinned .toc-head {
-  display: flex;
-}
-
-.toc:hover .toc-ticks,
-.toc:focus-within .toc-ticks,
-.toc.is-pinned .toc-ticks {
-  display: none;
-}
-
-.toc-pin {
-  padding: 0;
-  border: none;
-  background: none;
-  font: inherit;
-  color: var(--fg-light);
+  opacity: 0.5;
+  pointer-events: auto;
   cursor: pointer;
+  transition: opacity 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
-.toc-pin:hover {
-  color: var(--fg);
+.toc-anchor svg {
+  width: 16px;
+  height: 16px;
+}
+
+.toc:hover .toc-anchor,
+.toc:focus-within .toc-anchor,
+.toc.is-pinned .toc-anchor {
+  border-color: var(--border-3);
+  color: var(--fg-deep);
+  opacity: 1;
 }
 
 .toc-list {
-  display: none;
   flex: 1;
   min-height: 0;
   margin: 0;
-  padding: 0;
+  padding: 6px 8px 40px 0;
   overflow-y: auto;
   list-style: none;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
 }
 
 .toc:hover .toc-list,
 .toc:focus-within .toc-list,
 .toc.is-pinned .toc-list {
-  display: block;
+  opacity: 0.78;
+  pointer-events: auto;
+}
+
+.toc-item {
+  margin-top: 0.55em;
+  padding-left: 0.9rem;
+  line-height: 1.5;
+}
+
+.toc-item.d3 {
+  padding-left: 1.7rem;
+  font-size: 0.92em;
 }
 
 .toc-list a {
-  display: block;
-  padding: 3px 0 3px 10px;
-  border-left: 1px solid var(--border-3);
-  color: var(--fg-light);
-  font-size: 0.8125rem;
-  line-height: 1.5;
-  text-decoration: none;
+  color: inherit;
+  border-bottom: none;
+  opacity: 0.75;
+  transition: opacity 0.2s ease, color 0.2s ease;
 }
 
 .toc-list a:hover {
-  color: var(--fg);
+  border-bottom: none;
+  color: var(--fg-deep);
+  opacity: 1;
 }
 
 .toc-list a.is-active {
-  color: var(--fg-deep);
-  border-left-color: var(--fg);
+  color: var(--fg-deeper);
+  opacity: 1;
 }
 
-.toc-item.d3 a {
-  padding-left: 22px;
-  font-size: 0.75rem;
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
 
-/* 窄屏放不下右侧大纲，直接不显示 */
-@media (max-width: 1199px) {
+/* 窄屏没有侧边留白，直接收起大纲 */
+@media (max-width: 1279px) {
   .toc {
     display: none;
   }
@@ -920,57 +1171,57 @@ html.dark .article .hl-amber {
   margin: 0;
 }
 
-/* ── 入场动画 ───────────────────────────────────────────────── */
+/* ── 入场动画 / 换页过渡 ────────────────────────────────────── */
 
-@keyframes slide-enter {
+/*
+ * 换页过渡交给 View Transition（ClientRouter 会自动包 document.startViewTransition）。
+ *
+ * 之前这里写的是 `::view-transition-old/new(root) { animation: none }` ——
+ * 那等于把过渡整个关掉：点击链接后画面直接硬切，看起来就是「闪一下」，
+ * 2px 进度条也还没来得及走完就换了页。现在给旧页淡出、新页淡入 + 轻微上移。
+ *
+ * 注意：不要再给 main 里的子元素加入场动画。换页时新页快照是在 DOM 换完的
+ * 那一帧截的，子元素还停在 opacity:0，快照就是一张空白，淡入淡出就变成闪白。
+ */
+@keyframes vt-page-out {
   from {
-    translate: 0 10px;
-    opacity: 0;
+    opacity: 1;
   }
 
   to {
-    translate: 0 0;
+    opacity: 0;
+  }
+}
+
+@keyframes vt-page-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
     opacity: 1;
+    transform: none;
   }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .slide-enter-content > * {
-    animation: slide-enter 0.6s both 1;
-  }
-
-  .slide-enter-content > *:nth-child(1) { animation-delay: 0ms; }
-  .slide-enter-content > *:nth-child(2) { animation-delay: 60ms; }
-  .slide-enter-content > *:nth-child(3) { animation-delay: 120ms; }
-  .slide-enter-content > *:nth-child(4) { animation-delay: 180ms; }
-  .slide-enter-content > *:nth-child(5) { animation-delay: 240ms; }
-  .slide-enter-content > *:nth-child(6) { animation-delay: 300ms; }
-  .slide-enter-content > *:nth-child(7) { animation-delay: 360ms; }
-  .slide-enter-content > *:nth-child(8) { animation-delay: 420ms; }
-}
-
-/* ── 主题切换过渡 ───────────────────────────────────────────── */
-
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
 }
 
 ::view-transition-old(root) {
   z-index: 1;
+  mix-blend-mode: normal;
+  animation: vt-page-out 0.16s ease both;
 }
 
 ::view-transition-new(root) {
-  z-index: 9999;
+  z-index: 2;
+  mix-blend-mode: normal;
+  animation: vt-page-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-html.dark::view-transition-old(root) {
-  z-index: 9999;
-}
-
-html.dark::view-transition-new(root) {
-  z-index: 1;
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
 }
 
 /* ── 选择站点（/） ───────────────────────────────────────────── */
@@ -1047,4 +1298,194 @@ html.dark::view-transition-new(root) {
 
 .footer-link:hover {
   color: var(--accent);
+}
+
+/* ── Scripts 页：油猴脚本列表 ───────────────────────────────── */
+
+.script-list {
+  display: grid;
+  gap: 42px;
+  margin-top: 30px;
+}
+
+.script-item {
+  padding-top: 28px;
+  border-top: 1px solid var(--border-3);
+}
+
+.script-item:first-child {
+  padding-top: 0;
+  border-top: none;
+}
+
+.script-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px 16px;
+}
+
+.script-head h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.script-install {
+  flex: none;
+}
+
+.script-desc {
+  margin: 10px 0 8px;
+  color: var(--fg);
+}
+
+.script-site {
+  margin: 0 0 14px;
+  font-size: 0.8125rem;
+  color: var(--fg-light);
+}
+
+.script-label {
+  margin-right: 8px;
+  opacity: 0.7;
+}
+
+.script-points {
+  margin: 0 0 18px;
+  padding-left: 1.15em;
+  font-size: 0.9375rem;
+  color: var(--fg);
+}
+
+.script-points li {
+  margin-bottom: 0.35em;
+  line-height: 1.7;
+}
+
+.script-preview {
+  display: block;
+  margin: 18px 0 0;
+  border-bottom: none;
+}
+
+.script-preview:hover {
+  border-bottom: none;
+}
+
+.script-preview img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 70vh;
+  object-fit: cover;
+  object-position: top center;
+  border: 1px solid var(--border-3);
+  border-radius: var(--radius);
+  cursor: zoom-in;
+}
+
+.script-notes {
+  margin-top: 16px;
+  font-size: 0.9375rem;
+  color: var(--fg);
+}
+
+.script-notes summary {
+  color: var(--fg-light);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.script-notes summary:hover {
+  color: var(--fg);
+}
+
+.script-notes ol {
+  margin: 10px 0 0;
+  padding-left: 1.3em;
+}
+
+.script-notes li {
+  margin-bottom: 0.3em;
+  line-height: 1.7;
+}
+
+.script-foot {
+  margin-top: 38px;
+  font-size: 0.8125rem;
+}
+
+/* ── 图片预览（lightbox） ───────────────────────────────────── */
+
+body.lightbox-open {
+  overflow: hidden;
+}
+
+/* overflow-y:scroll 挂在 <html> 上，所以要锁的是 html */
+html.lightbox-open {
+  overflow: hidden;
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: grid;
+  place-items: center;
+  padding: 56px 24px 32px;
+  background: rgb(0 0 0 / 0.82);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+}
+
+.lightbox.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.lightbox img {
+  display: block;
+  width: auto;
+  max-width: min(100%, 1200px);
+  max-height: calc(100vh - 96px);
+  height: auto;
+  border-radius: 4px;
+  cursor: default;
+}
+
+.lightbox-close {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid rgb(255 255 255 / 0.2);
+  border-radius: 50%;
+  background: rgb(0 0 0 / 0.35);
+  color: #fff;
+  opacity: 0.85;
+  cursor: pointer;
+  transition: opacity 0.18s ease, background 0.18s ease;
+}
+
+.lightbox-close:hover {
+  opacity: 1;
+  background: rgb(255 255 255 / 0.16);
+}
+
+.lightbox-close svg {
+  width: 20px;
+  height: 20px;
+}
+
+@media (max-width: 640px) {
+  .lightbox {
+    padding: 52px 12px 24px;
+  }
 }

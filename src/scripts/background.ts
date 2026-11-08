@@ -30,7 +30,9 @@ function createLayer(mask?: string): HTMLCanvasElement {
     canvas.style.maskImage = mask
     canvas.style.setProperty('-webkit-mask-image', mask)
   }
-  document.body.appendChild(canvas)
+  // 挂到 <html> 而不是 <body>：ClientRouter 换页会整块替换 body，
+  // 挂在 body 里画布会被一起扔掉，每切一次页面树枝就重长一遍（看起来就是闪屏）。
+  document.documentElement.appendChild(canvas)
   return canvas
 }
 
