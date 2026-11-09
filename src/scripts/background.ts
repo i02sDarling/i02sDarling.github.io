@@ -77,10 +77,14 @@ const BUCKETS = 8
 
 interface DotsLayer extends Layer {
   refresh: () => void
+  setEnabled: (enabled: boolean) => void
 }
 
 function mountDots(): DotsLayer {
   const canvas = createLayer()
+  // 文章页要能单独关掉点阵：用类名让 CSS 也能兜底，JS 里则连 rAF 一起停
+  canvas.classList.add('bg-dots')
+  let enabled = true
   let ctx: CanvasRenderingContext2D | null = null
   let width = 0
   let height = 0
@@ -125,6 +129,7 @@ function mountDots(): DotsLayer {
   }
 
   function frame(now: number) {
+    if (!enabled) return
     raf = window.requestAnimationFrame(frame)
     if (!ctx || document.hidden) return
     if (now - last < 1000 / FPS) return
@@ -182,6 +187,18 @@ function mountDots(): DotsLayer {
   return {
     canvas,
     refresh: buildStyles,
+    setEnabled(next: boolean) {
+      if (enabled === next) return
+      enabled = next
+      canvas.style.display = next ? 'block' : 'none'
+      if (!next) {
+        window.cancelAnimationFrame(raf)
+        ctx?.clearRect(0, 0, width, height)
+      } else {
+        last = 0
+        raf = window.requestAnimationFrame(frame)
+      }
+    },
     destroy() {
       window.cancelAnimationFrame(raf)
       window.clearTimeout(resizeTimer)
@@ -196,6 +213,20 @@ const R90 = Math.PI / 2
 const R180 = Math.PI
 const R15 = Math.PI / 12
 const MIN_BRANCH = 30
+
+/**
+ * 树枝的「棵树」与「长势」上限。
+ *
+ * 之前是固定 4 棵、分叉概率一直不降：枝条按指数繁殖，几分钟后整块画布
+ * 覆盖到 30% 以上，看起来就是一团乱麻。现在：
+ *  - 最多 4 棵、最少 3 棵（窄屏 3 棵）；
+ *  - 画满 SEGMENT_BUDGET 段就收手，不会再无限生长；
+ *  - 同时生长的枝条也有上限，避免某一瞬间爆开。
+ */
+const MIN_TREES = 3
+const MAX_TREES = 4
+const SEGMENT_BUDGET = 12000
+const TIP_BUDGET = 700
 
 interface PlumLayer extends Layer {
   restart: () => void
@@ -220,6 +251,8 @@ function mountPlum(): PlumLayer {
   let raf = 0
   let last = 0
   let len = 6
+  /** 已经画过的枝条段数：到 SEGMENT_BUDGET 就不再生长 */
+  let segments = 0
 
   const FPS = 40
 
@@ -230,6 +263,9 @@ function mountPlum(): PlumLayer {
     counter: { value: number },
   ): void {
     if (!ctx) return
+    // 整张画布的生长预算用完就停：树枝只长到「够看」为止
+    if (segments >= SEGMENT_BUDGET) return
+    segments += 1
 
     const length = Math.random() * len
     counter.value += 1
@@ -246,6 +282,9 @@ function mountPlum(): PlumLayer {
     const rad2 = rad - Math.random() * R15
 
     if (nx < -100 || nx > width + 100 || ny < -100 || ny > height + 100) return
+
+    // 同时生长的枝条别太多；长势保持原来的蓬松感，只靠总预算收口
+    if (steps.length >= TIP_BUDGET) return
 
     const rate = counter.value <= MIN_BRANCH ? 0.8 : 0.5
     if (Math.random() < rate) steps.push(() => step(nx, ny, rad1, counter))
@@ -276,15 +315,17 @@ function mountPlum(): PlumLayer {
     ctx.lineCap = 'round'
     ctx.strokeStyle = readToken('--c-plum', 'rgba(136,136,136,0.16)')
 
+    segments = 0
     const middle = () => Math.random() * 0.6 + 0.2
-
-    steps = [
+    const trees = [
       () => step(middle() * width, -5, R90, { value: 0 }),
+      () => step(width + 5, middle() * height, R180, { value: 0 }),
       () => step(middle() * width, height + 5, -R90, { value: 0 }),
       () => step(-5, middle() * height, 0, { value: 0 }),
-      () => step(width + 5, middle() * height, R180, { value: 0 }),
     ]
-    if (width < 500) steps = steps.slice(0, 2)
+    // 4 棵树已经够满；窄屏放 3 棵，别挤成一团
+    const count = width >= 720 ? MAX_TREES : MIN_TREES
+    steps = trees.slice(0, Math.max(MIN_TREES, Math.min(MAX_TREES, count)))
   }
 
   const ready = setupCanvas(canvas)
@@ -308,12 +349,28 @@ function mountPlum(): PlumLayer {
 
 /* ── 挂载 ─────────────────────────────────────────────────────── */
 
+let dotsLayer: DotsLayer | null = null
+
+/**
+ * 按当前页面决定点阵要不要出现：
+ * 文章页（`.post-page`）是阅读场景，背景只留树枝，点阵会让密集的正文更吵。
+ * ClientRouter 换页后 body 会换掉，所以每次 astro:page-load 都要重新算一遍。
+ */
+export function syncBackground(): void {
+  if (typeof document === 'undefined') return
+  const reading = Boolean(document.querySelector('.post-page'))
+  document.documentElement.classList.toggle('bg-dots-off', reading)
+  dotsLayer?.setEnabled(!reading)
+}
+
 export function mountBackground(): () => void {
   if (typeof window === 'undefined') return () => {}
 
   const dots = mountDots()
   const plum = mountPlum()
+  dotsLayer = dots
   document.documentElement.classList.add('has-canvas-bg')
+  syncBackground()
 
   // 只对「明/暗主题」真正变化做出反应。
   // 注意：<html> 的 class 可能被别的东西改动（浏览器暗色插件、扩展、工具条等），
@@ -337,6 +394,7 @@ export function mountBackground(): () => void {
     plum.destroy()
     dots.canvas.remove()
     plum.canvas.remove()
+    dotsLayer = null
     document.documentElement.classList.remove('has-canvas-bg')
   }
 }
