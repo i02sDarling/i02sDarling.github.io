@@ -4,6 +4,8 @@ import { fileURLToPath } from 'node:url'
 import { unified } from '@astrojs/markdown-remark'
 import remarkMark from './src/plugins/remark-mark.mjs'
 import remarkPostMetadata from './src/plugins/remark-post-metadata.mjs'
+import remarkQuotes from './src/plugins/remark-quotes.mjs'
+import rehypeImageGallery from './src/plugins/rehype-image-gallery.mjs'
 import rehypePostMagic, { copyIconsToDist } from './src/plugins/rehype-post-magic.mjs'
 
 const root = fileURLToPath(new URL('.', import.meta.url))
@@ -29,12 +31,19 @@ export default defineConfig({
     format: 'directory',
   },
   markdown: {
+    /*
+     * 关掉 Astro 默认的 smartypants：它按「前一个字符是空白」判断前引号，
+     * 不认识中文。`他说"你好"` 会被判成 `他说”你好”`（开头引号丢了）。
+     * 引号交给下面的 remarkQuotes 按成对规则处理，更符合中文排版。
+     */
+    smartypants: false,
     // Astro 7 默认换成 Sätteri，remark/rehype 插件要用 unified() 显式声明
     processor: unified({
       // 正文开头的 `> metadata:` 块只给页面读，不渲染给读者
-      remarkPlugins: [remarkPostMetadata, remarkMark],
+      remarkPlugins: [remarkPostMetadata, remarkQuotes, remarkMark],
       // 标题 `#` 锚点 + 外链网站图标（构建时抓，抓不到就跳过）
-      rehypePlugins: [[rehypePostMagic, { root }]],
+      // 连续图片先收成图片组，再交给锚点 / 图标处理
+      rehypePlugins: [rehypeImageGallery, [rehypePostMagic, { root }]],
     }),
     shikiConfig: {
       theme: 'github-dark',

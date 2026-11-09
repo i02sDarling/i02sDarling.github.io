@@ -196,6 +196,10 @@ export default function rehypePostMagic(options = {}) {
       const id = node.properties?.id
       if (!id) return
       if (node.children.some((child) => child.properties?.className?.includes?.('header-anchor'))) return
+      // 锚点里**不能**放文字节点：本插件跑在 Astro 的 `rehypeHeadingIds` 之前，
+      // 那个插件会遍历标题的所有文本子节点来收集 `headings[].text`，
+      // 一旦这里塞了 `#`，大纲里每一项都会变成「#标题」。
+      // `#` 用 CSS（.header-anchor::before）画出来，和文档树无关。
       node.children.unshift({
         type: 'element',
         tagName: 'a',
@@ -205,7 +209,7 @@ export default function rehypePostMagic(options = {}) {
           ariaHidden: 'true',
           tabIndex: -1,
         },
-        children: [{ type: 'text', value: '#' }],
+        children: [],
       })
     })
 

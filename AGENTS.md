@@ -1,12 +1,25 @@
 ## Development
 
-When starting the dev server, use background mode:
+**人**在编辑器里开发，用前台模式（跟着终端一起关）：
 
 ```
-astro dev --background
+npm run dev          # 先 astro dev stop 清掉残留，再前台起服务
 ```
 
-Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
+前台进程挂在当前终端上，关掉 VS Code / 终端就一起结束。
+
+**agent** 需要跨多次工具调用保持服务时才用后台模式：
+
+```
+npm run dev:bg       # astro dev --background
+npm run dev:stop     # 用完必须停，否则会留一个脱离终端的孤儿进程
+npm run dev:status
+```
+
+`astro dev --background` 内部是 `spawn(..., { detached: true })` + `child.unref()`，
+进程被**故意**从启动它的终端上摘下来了，所以关 VS Code 它不会退出；下次再起一台
+就会因为 4321 被占而落到 4322，变成两个实例。`npm run dev` 的 `predev` 会先把
+残留的那台停掉，因此人永远最多只会有一台。
 
 ## Documentation
 

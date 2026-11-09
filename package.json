@@ -7,6 +7,10 @@
   },
   "scripts": {
     "dev": "astro dev",
+    "predev": "astro dev stop",
+    "dev:bg": "astro dev --background",
+    "dev:stop": "astro dev stop",
+    "dev:status": "astro dev status",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"

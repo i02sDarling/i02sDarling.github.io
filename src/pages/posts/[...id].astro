@@ -29,10 +29,12 @@ export const getStaticPaths: GetStaticPaths = async () => {
 const { post, meta, prev, next } = Astro.props
 const { Content, headings } = await render(post)
 
-// 大纲只用二、三级标题；小节特别多时只留二级，否则整份大纲会长到没法扫
-const detailed = headings.filter((heading) => heading.depth === 2 || heading.depth === 3)
-const level2 = detailed.filter((heading) => heading.depth === 2)
-const tocItems = level2.length >= 4 ? level2 : detailed
+// 大纲收 2–4 级标题，靠 .toc-item.d2/d3/d4 的缩进表现层级；
+// 只在 h4 特别碎（超过 30 条）时丢掉 h4，免得整份大纲长到没法扫
+const detailed = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 4)
+const tocItems = detailed.filter((heading) => heading.depth <= 3).length >= 30
+  ? detailed.filter((heading) => heading.depth <= 3)
+  : detailed
 const lastEdited = meta.updated || meta.date
 ---
 
