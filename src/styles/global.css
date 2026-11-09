@@ -820,17 +820,19 @@ html.dark .post-year {
   gap: 10px;
   overflow-x: auto;
   overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory;
+  /* 不吸附：拖动松手停在哪就是哪（scroll-snap 会在松手的瞬间把图片吸回整张，
+     看起来像闪一下 / 卡顿一下）。想要整张对齐就切宫格视图。 */
+  scroll-snap-type: none;
+  -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
   padding-bottom: 6px;
   /* 能按住图片直接拖（见 Base.astro 的 pointerdown）；滚动条只是兜底 */
   cursor: grab;
 }
 
-/* 拖拽中：换成抓手、关掉 scroll-snap（否则每帧都被吸回整张图）、不选中文字 */
+/* 拖拽中：换成抓手、不选中文字 */
 .article .gallery-track.is-dragging {
   cursor: grabbing;
-  scroll-snap-type: none;
   user-select: none;
 }
 
@@ -843,7 +845,7 @@ html.dark .post-year {
   max-height: none;
   margin: 0;
   object-fit: contain;
-  scroll-snap-align: start;
+  scroll-snap-align: none;
   /* 拖拽时别触发浏览器「拖图片到新标签页」的默认行为 */
   -webkit-user-drag: none;
   user-select: none;
@@ -1081,6 +1083,32 @@ html.dark .article td {
 
 html.dark .article th {
   border-bottom-color: rgba(255, 255, 255, 0.24);
+}
+
+/* ── 数学公式（KaTeX）───────────────────────────────────────── */
+
+/* 正文里的公式跟正文同色同字号，不要比文字更抢眼 */
+.article .katex {
+  font-size: 1.05em;
+  color: inherit;
+}
+
+/* 独立成行的公式可能比正文列宽，允许横向滚动而不是撑破布局 */
+.article .katex-display {
+  margin: 1.2em 0;
+  padding: 2px 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* 表格里的公式缩小一点，否则行高会被撑得很高 */
+.article table .katex {
+  font-size: 0.95em;
+}
+
+/* 构建失败时（比如公式写错）KaTeX 会把原始 TeX 标红：保持同样的灰，不铺色块 */
+.article .katex-error {
+  color: inherit;
 }
 
 .article h2 code,

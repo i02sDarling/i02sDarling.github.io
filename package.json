@@ -20,6 +20,9 @@
     "@zumer/snapdom": "^3.7.1",
     "astro": "^7.3.3",
     "jspdf": "^4.2.1",
+    "katex": "^0.19.1",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0",
     "simplex-noise": "^4.0.3"
   },
   "allowScripts": {

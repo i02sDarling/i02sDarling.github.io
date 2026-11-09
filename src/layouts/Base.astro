@@ -1,4 +1,5 @@
 ---
+import 'katex/dist/katex.min.css'
 import '../styles/global.css'
 import Logo from '../components/Logo.astro'
 import { ClientRouter } from 'astro:transitions'
@@ -495,6 +496,11 @@ const siteTitle = title === '妲零' ? '妲零' : `${title} · 妲零`
 
       document.addEventListener('pointerup', endDrag)
       document.addEventListener('pointercancel', endDrag)
+      window.addEventListener('blur', endDrag)
+      // Firefox 不认 -webkit-user-drag：不拦的话按下拖会变成「拖一张半透明图片」
+      document.addEventListener('dragstart', (event) => {
+        if ((event.target as HTMLElement | null)?.closest('.gallery-track')) event.preventDefault()
+      })
 
       setupPage()
     </script>
