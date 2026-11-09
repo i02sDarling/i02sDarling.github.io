@@ -6,7 +6,12 @@
 :root {
   --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', 'PingFang SC',
     'Microsoft YaHei', sans-serif;
-  --font-mono: 'DM Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  /* 等宽栈照 antfu.me 的顺序：DM Mono → Input Mono → Fira Code → 系统等宽。
+     Input Mono / Fira Code 都是本机可装的桌面字体；缺哪一级就往下掉，
+     最后一定要落到 ui-monospace / Cascadia / Consolas，别用裸 monospace
+     （Windows 上裸 monospace 可能落到宋体的拉丁字形，看起来「字都歪了」）。 */
+  --font-mono: 'DM Mono', 'Input Mono', 'Fira Code', ui-monospace, 'Cascadia Mono',
+    Consolas, 'Liberation Mono', monospace;
   /* 引用、金句、需要「换一种声音」的地方 */
   --font-serif: 'Noto Serif SC', 'Songti SC', ui-serif, Georgia, 'Times New Roman', serif;
 
@@ -101,6 +106,19 @@ html.has-canvas-bg body::before {
   display: none;
 }
 
+/* 文章页禁用点阵：阅读时背景越安静越好（树枝保留）。
+   两套选择器都要：`html.bg-dots-off` 是 JS 挂的，`:has(.post-page)` 让 JS 没跑时也生效。 */
+html.bg-dots-off body::before,
+html:has(.post-page) body::before {
+  display: none;
+}
+
+html.bg-dots-off canvas.bg-dots {
+  /* canvas 的 display 是 JS 写的行内样式，这里必须 !important 才盖得住；
+     JS 正常时两边一致，JS 挂了也有 :has() 兜底 */
+  display: none !important;
+}
+
 ::selection {
   background: #8884;
 }
@@ -190,12 +208,22 @@ a:hover {
 code {
   font-family: var(--font-mono);
   font-size: 0.9em;
-  background: var(--fill-1);
+  /* 等宽字体本来就等宽，再吃正文的 0.01em 字距会变成「每个字符都不一样宽」 */
+  letter-spacing: normal;
+  background: rgba(170, 170, 170, 0.14);
   padding: 0.15em 0.4em;
   border-radius: 4px;
 }
 
+html.dark code {
+  background: rgba(255, 255, 255, 0.1);
+}
+
 pre {
+  /* 必须显式写字体：浏览器 UA 样式给 pre 的是裸 monospace，
+     代码块里的英文就会落到系统默认等宽（有时是宋体拉丁字形） */
+  font-family: var(--font-mono);
+  letter-spacing: normal;
   background: #fafafa;
   border-radius: 8px;
   padding: 16px 18px;
@@ -209,6 +237,10 @@ html.dark pre {
 }
 
 pre code {
+  /* pre 已经 0.9em 了，这里再乘 0.9em 会变成 12.96px——
+     比正文小两档，Cascadia 的细笔画在这个尺寸就看不清了 */
+  font-size: inherit;
+  letter-spacing: inherit;
   background: none;
   padding: 0;
 }
@@ -456,6 +488,9 @@ html.dark .theme-toggle .icon-moon {
 main {
   flex: 1;
   padding: 56px 0 72px;
+  /* 年份数字向左出血，允许越过内容列；clip 比 hidden 好：
+     不产生滚动容器，也不会影响 sticky / fixed 的定位基准。 */
+  overflow-x: clip;
 }
 
 .hero {
@@ -563,40 +598,54 @@ main {
   position: relative;
 }
 
-/* 每年开头留一块空白，年份数字用描边大字压在下面几条标题后面。
-   高度跟着字号走：窄屏 58px 够用，宽屏字号到 92px 时要留出更多位置，
-   否则年份会压到第一条标题上。 */
+/* 每年开头留一块空白，年份数字用「空心描边大字」压在下面几条标题后面。
+   数值直接照 antfu.me 抄（他的写法是 text-8em / left--3rem / top--2rem / h20）：
+   - 字号固定 8rem，不跟视口宽度联动（用 vw 会让年份随窗口缩放，一拖动就「跑」）；
+   - 向左上出血，压到标题行后面，而不是排在正文里当一个大标题；
+   - 出血会被 main 的 overflow-x: clip 裁掉，不会撑出横向滚动条。 */
 .post-group-head {
   position: relative;
-  height: clamp(58px, 5.4vw, 88px);
+  height: 5rem;
   user-select: none;
   pointer-events: none;
 }
 
 .post-year {
   position: absolute;
-  top: -16px;
-  left: -7px;
+  top: -2rem;
+  left: -3rem;
   z-index: 0;
-  font-size: clamp(4rem, 12vw, 5.75rem);
+  font-size: 8rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-  line-height: 1;
-  letter-spacing: -0.02em;
+  /* 这里**不要**写 line-height: 1。antfu 那个 span 吃的是正文的 1.75 行高，
+     128px 的字在 224px 的行盒里垂直居中，所以数字本体比盒子顶低 48px，
+     正好落到下面第一条标题上；写死 1 会让数字整体上移 48px，看起来就"飘"在标题上方了。 */
   /*
-   * 用固定 rgba，不用 color-mix()：
-   * color-mix 在旧内核里整条声明会被丢掉，颜色回退成 currentColor，
-   * 年份就变成一坨实心黑字（看起来像「样式被改坏了」）。
-   * 实心浅灰 + 略深描边，靠 alpha 而不是 opacity 控制深浅。
+   * 只描边、不填充：填充一旦有颜色，年份就从「淡淡的轮廓」变成
+   * 一坨近实的灰块，跟 antfu.me 那种几乎看不见的底纹完全不是一回事。
+   * 用固定 rgba 而不是 opacity，暗色模式下才好单独调。
    */
-  color: rgba(34, 34, 34, 0.16);
-  -webkit-text-stroke: 1px rgba(34, 34, 34, 0.36);
-  paint-order: stroke fill;
+  color: transparent;
+  -webkit-text-stroke: 2px rgba(34, 34, 34, 0.09);
 }
 
 html.dark .post-year {
-  color: rgba(255, 255, 255, 0.12);
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+  color: transparent;
+  -webkit-text-stroke: 2px rgba(255, 255, 255, 0.14);
+}
+
+/* 手机上一行只有 300 多 px，128px 的字会被裁掉大半，单独缩一档 */
+@media (max-width: 640px) {
+  .post-group-head {
+    height: 3.5rem;
+  }
+
+  .post-year {
+    top: -1.25rem;
+    left: -1rem;
+    font-size: 5.5rem;
+  }
 }
 
 .post-rows {
@@ -616,7 +665,8 @@ html.dark .post-year {
   flex-wrap: wrap;
   align-items: baseline;
   gap: 2px 14px;
-  padding: 7px 0;
+  /* 上下内边距相加 = 相邻两行间隔 24px（antfu 是 mb-6 / mt-2） */
+  padding: 8px 0 16px;
   border-bottom: none;
 }
 
@@ -625,8 +675,8 @@ html.dark .post-year {
 }
 
 .post-row-title {
-  font-size: 1.0625rem;
-  line-height: 1.5;
+  font-size: 1.125rem;
+  line-height: 1.2;
   color: var(--fg-deep);
   transition: color 0.2s ease;
 }
@@ -695,18 +745,135 @@ html.dark .post-year {
   font-size: 1rem;
 }
 
-/* 正文图片：默认不许撑破列宽，也不能一张长截图占满整屏；
-   点一下走下面的 lightbox 放大 */
+/* 正文图片：统一成同一个「画框」——宽度跟满正文列、固定 4:3 的画框，
+   长截图 / 宽截图都按 object-fit: contain 装进去，不再一张大一张小；
+   点一下走下面的 lightbox 放大看原图。 */
 .article img {
   display: block;
-  width: auto;
+  width: 100%;
+  aspect-ratio: 4 / 3;
   max-width: 100%;
-  max-height: 70vh;
   height: auto;
+  object-fit: contain;
+  background: var(--fill-1);
   margin: 1.6em auto;
   border: 1px solid var(--border-3);
   border-radius: var(--radius);
   cursor: zoom-in;
+}
+
+/* 连续图片 → 一个图片组：默认横向滚动（一屏一张，向左滑），
+   右上角的小按钮切换成宫格；切换靠 checkbox + label，线上不跑 JS。 */
+.article .gallery {
+  position: relative;
+  margin: 1.6em 0;
+}
+
+.article .gallery-toggle {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.article .gallery-switch {
+  display: block;
+  width: max-content;
+  margin: 0 0 0.55em auto;
+  padding: 0.08em 0.55em;
+  font-size: 0.75rem;
+  line-height: 1.7;
+  color: var(--fg-light);
+  border: 1px solid var(--border-4);
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s ease-out, border-color 0.2s ease-out;
+}
+
+.article .gallery-switch:hover {
+  opacity: 1;
+  border-color: var(--fg-light);
+}
+
+.article .gallery-toggle:focus-visible ~ .gallery-switch {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* 未切换时按钮提示「宫格」；切换后提示「横滑」 */
+.article .gallery-switch-to-strip {
+  display: none;
+}
+
+.article .gallery-toggle:checked ~ .gallery-switch .gallery-switch-to-grid {
+  display: none;
+}
+
+.article .gallery-toggle:checked ~ .gallery-switch .gallery-switch-to-strip {
+  display: inline;
+}
+
+.article .gallery-track {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  padding-bottom: 6px;
+  /* 能按住图片直接拖（见 Base.astro 的 pointerdown）；滚动条只是兜底 */
+  cursor: grab;
+}
+
+/* 拖拽中：换成抓手、关掉 scroll-snap（否则每帧都被吸回整张图）、不选中文字 */
+.article .gallery-track.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+  user-select: none;
+}
+
+.article .gallery-track img {
+  flex: 0 0 auto;
+  width: auto;
+  height: clamp(220px, 42vh, 380px);
+  aspect-ratio: auto;
+  max-width: 100%;
+  max-height: none;
+  margin: 0;
+  object-fit: contain;
+  scroll-snap-align: start;
+  /* 拖拽时别触发浏览器「拖图片到新标签页」的默认行为 */
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+/* 宫格视图：一排小图，一次看全；点任意一张仍然进 lightbox */
+.article .gallery-toggle:checked ~ .gallery-track {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px;
+  overflow: visible;
+  padding-bottom: 0;
+}
+
+.article .gallery-toggle:checked ~ .gallery-track img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  scroll-snap-align: none;
+}
+
+@media (max-width: 640px) {
+  .article .gallery-track img {
+    height: clamp(180px, 34vh, 300px);
+  }
+
+  .article .gallery-toggle:checked ~ .gallery-track {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  }
 }
 
 .article a:has(> img) {
@@ -780,6 +947,16 @@ html.dark .post-year {
   border-bottom-color: rgb(180 83 9 / 0.3);
 }
 
+/* 红字 + 黄底：只给「跳读也必须撞上」的那一句，一节最多一处。
+   和 hl-red 的分工是：hl-red 只染字（强调），hl-red-bg 会抢视线（结论）。 */
+.article .hl-red-bg {
+  padding: 0.08em 0.24em;
+  border-radius: 3px;
+  color: #dc2626;
+  background: rgb(250 204 21 / 0.3);
+  border-bottom: none;
+}
+
 html.dark .article mark.hl {
   background: rgb(167 139 250 / 0.18);
 }
@@ -804,6 +981,11 @@ html.dark .article .hl-amber {
   border-bottom-color: rgb(251 191 36 / 0.35);
 }
 
+html.dark .article .hl-red-bg {
+  color: #ff7b72;
+  background: rgb(250 204 21 / 0.16);
+}
+
 /* 标题左边的 `#`：默认透明，hover 标题才浮出来 */
 .article :is(h2, h3, h4) {
   position: relative;
@@ -813,12 +995,19 @@ html.dark .article .hl-amber {
   position: absolute;
   left: -1.15em;
   top: 0;
+  width: 1.15em;
+  text-align: center;
   padding-right: 0.2em;
   border-bottom: none !important;
   color: var(--fg-light);
   font-weight: 400;
   opacity: 0;
   transition: opacity 0.15s ease;
+}
+
+/* `#` 是画出来的，不是标题文本的一部分（否则会跑进文章大纲） */
+.header-anchor::before {
+  content: '#';
 }
 
 .article :is(h2, h3, h4):hover .header-anchor {
@@ -856,22 +1045,42 @@ html.dark .article .hl-amber {
 .article table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 1.5em;
+  margin: 1.6em 0;
   font-size: 0.9375rem;
+  /* 上下各一条外框线，表格才「立」得起来；只靠行间线容易看成一段普通文字 */
+  border-top: 1px solid rgba(136, 136, 136, 0.4);
+  border-bottom: 1px solid rgba(136, 136, 136, 0.4);
 }
 
 .article th,
 .article td {
   padding: 0.5rem 0.625rem;
   text-align: left;
+  vertical-align: top;
   border: none;
-  border-bottom: 1px solid var(--border-3);
+  border-bottom: 1px solid rgba(136, 136, 136, 0.28);
 }
 
 .article th {
   color: var(--fg-deep);
   font-weight: 600;
-  background: transparent;
+  /* 表头给一层极淡的底 + 一条更实的下线，扫一眼就知道这是表头 */
+  background: var(--fill-1);
+  border-bottom: 1px solid rgba(136, 136, 136, 0.4);
+}
+
+html.dark .article table {
+  border-top-color: rgba(255, 255, 255, 0.24);
+  border-bottom-color: rgba(255, 255, 255, 0.24);
+}
+
+html.dark .article th,
+html.dark .article td {
+  border-bottom-color: rgba(255, 255, 255, 0.16);
+}
+
+html.dark .article th {
+  border-bottom-color: rgba(255, 255, 255, 0.24);
 }
 
 .article h2 code,
@@ -1076,14 +1285,41 @@ html.dark .article .hl-amber {
 }
 
 .toc-item {
+  position: relative;
   margin-top: 0.55em;
-  padding-left: 0.9rem;
+  padding-left: 0.35rem;
   line-height: 1.5;
 }
 
+/* 层级靠「缩进 + 字号」两级递减表现，跟正文 h2 / h3 / h4 对齐 */
 .toc-item.d3 {
-  padding-left: 1.7rem;
+  padding-left: 1.15rem;
+  font-size: 0.94em;
+}
+
+.toc-item.d4 {
+  padding-left: 1.95rem;
   font-size: 0.92em;
+}
+
+/* 子级左侧的细引导线：让「这一条属于上面哪一节」一眼看得出来 */
+.toc-item.d3::before,
+.toc-item.d4::before {
+  content: '';
+  position: absolute;
+  top: -0.5em;
+  bottom: -0.15em;
+  width: 1px;
+  background: var(--border-2);
+  pointer-events: none;
+}
+
+.toc-item.d3::before {
+  left: 0.55rem;
+}
+
+.toc-item.d4::before {
+  left: 1.35rem;
 }
 
 .toc-list a {

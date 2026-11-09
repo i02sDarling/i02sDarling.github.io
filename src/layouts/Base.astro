@@ -177,7 +177,7 @@ const siteTitle = title === '妲零' ? '妲零' : `${title} · 妲零`
     </div>
 
     <script>
-      import { mountBackground } from '../scripts/background.ts'
+      import { mountBackground, syncBackground } from '../scripts/background.ts'
 
       /**
        * 全站客户端逻辑。ClientRouter 是 SPA 换页：整块 <body> 会被替换、
@@ -189,6 +189,8 @@ const siteTitle = title === '妲零' ? '妲零' : `${title} · 妲零`
       const state = window as typeof window & {
         __dsDisposeBg?: () => void
         __dsProgressAt?: number
+        /** 刚拖过图片组：这段时间内的 click 不再当成「点开大图」 */
+        __dsSuppressClickUntil?: number
       }
 
       let hideTimer = 0
@@ -357,6 +359,8 @@ const siteTitle = title === '妲零' ? '妲零' : `${title} · 妲零`
           state.__dsDisposeBg = mountBackground()
         } else {
           document.documentElement.classList.add('has-canvas-bg')
+          // 换页后 body 已经换新：文章页关点阵、列表页再打开
+          syncBackground()
         }
 
         const main = document.querySelector('main')
@@ -384,6 +388,8 @@ const siteTitle = title === '妲零' ? '妲零' : `${title} · 妲零`
               : window.matchMedia('(prefers-color-scheme: dark)').matches
             root.classList.toggle('dark', dark)
             if (state.__dsDisposeBg) root.classList.add('has-canvas-bg')
+            // 新文档本身就是文章页的话，提前把点阵关掉，避免换页瞬间闪一下
+            root.classList.toggle('bg-dots-off', Boolean(event.newDocument?.querySelector('.post-page')))
           }
         } catch {}
       })
@@ -397,6 +403,8 @@ const siteTitle = title === '妲零' ? '妲零' : `${title} · 妲零`
       document.addEventListener('click', (event) => {
         const target = event.target as HTMLElement | null
         if (!target) return
+        // 刚在图片组里拖过：松手的这一下不算点击，别顺手把大图打开
+        if (state.__dsSuppressClickUntil && performance.now() < state.__dsSuppressClickUntil) return
 
         if (target.closest('#theme-toggle')) {
           toggleTheme()
@@ -427,6 +435,66 @@ const siteTitle = title === '妲零' ? '妲零' : `${title} · 妲零`
       document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') closeLightbox()
       })
+
+      /* ── 图片组：按住拖动横向滚动 ─────────────────────────────── */
+      /*
+       * 图片组本身是 overflow-x 容器，但底下的滚动条太细、不好按。
+       * 这里让「按住图片往左/往右拖」直接改 scrollLeft；手机 / 触控笔
+       * 仍然交给浏览器原生惯性滚动，不抢它的手势。
+       */
+      interface DragState {
+        track: HTMLElement
+        startX: number
+        startLeft: number
+        moved: boolean
+        pointerId: number
+      }
+
+      let drag: DragState | null = null
+      /** 手抖几像素不算拖，避免「想点开大图」被当成拖动 */
+      const DRAG_THRESHOLD = 4
+
+      document.addEventListener('pointerdown', (event) => {
+        if (event.button !== 0 || event.pointerType !== 'mouse') return
+        const track = (event.target as HTMLElement | null)?.closest<HTMLElement>('.gallery-track')
+        // 宫格视图 / 图片不够多时没有可滚动的空间，不接管
+        if (!track || track.scrollWidth <= track.clientWidth) return
+        drag = {
+          track,
+          startX: event.clientX,
+          startLeft: track.scrollLeft,
+          moved: false,
+          pointerId: event.pointerId,
+        }
+        track.classList.add('is-dragging')
+        try {
+          track.setPointerCapture(event.pointerId)
+        } catch {}
+      })
+
+      document.addEventListener(
+        'pointermove',
+        (event) => {
+          if (!drag || event.pointerId !== drag.pointerId) return
+          const dx = event.clientX - drag.startX
+          if (!drag.moved && Math.abs(dx) < DRAG_THRESHOLD) return
+          drag.moved = true
+          drag.track.scrollLeft = drag.startLeft - dx
+          event.preventDefault()
+        },
+        { passive: false },
+      )
+
+      function endDrag() {
+        if (!drag) return
+        const { track, moved } = drag
+        drag = null
+        track.classList.remove('is-dragging')
+        if (moved) state.__dsSuppressClickUntil = performance.now() + 300
+      }
+
+      document.addEventListener('pointerup', endDrag)
+      document.addEventListener('pointercancel', endDrag)
 
       setupPage()
     </script>
