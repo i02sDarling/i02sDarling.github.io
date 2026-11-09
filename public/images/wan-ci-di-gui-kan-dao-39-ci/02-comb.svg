@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600" fill="none">
+  <style>
+    text { font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #808080; }
+    .t { font-size: 18px; fill: #6f6f6f; }
+    .s { font-size: 13px; }
+    .box { stroke: #8a8a8a; stroke-width: 1.2; fill: none; }
+    .keep { stroke: #5c8fbb; stroke-width: 1.6; }
+    .kill { stroke: #8a8a8a; stroke-width: 1.2; stroke-dasharray: 4 3; opacity: .8; }
+    .strike { stroke: #bb6055; stroke-width: 1.4; }
+  </style>
+
+  <text class="t" x="40" y="54">同一组小段 {1, 3, 5}：排列 6 种，组合只有 1 种</text>
+  <text class="s" x="40" y="82">只保留下标递增的那一种，其余 5 种没人再搜</text>
+  <line x1="40" y1="104" x2="760" y2="104" stroke="#8a8a8a" opacity=".25"/>
+
+  <rect class="keep" x="60" y="132" width="150" height="46" rx="4"/>
+  <text class="s" x="88" y="161">1 → 3 → 5</text>
+  <text class="s" x="226" y="161" fill="#5c8fbb">保留</text>
+
+  <rect class="kill" x="60" y="196" width="150" height="46" rx="4"/>
+  <text class="s" x="88" y="225">1 → 5 → 3</text>
+  <line class="strike" x1="70" y1="219" x2="200" y2="219"/>
+
+  <rect class="kill" x="60" y="260" width="150" height="46" rx="4"/>
+  <text class="s" x="88" y="289">3 → 1 → 5</text>
+  <line class="strike" x1="70" y1="283" x2="200" y2="283"/>
+
+  <rect class="kill" x="60" y="324" width="150" height="46" rx="4"/>
+  <text class="s" x="88" y="353">3 → 5 → 1</text>
+  <line class="strike" x1="70" y1="347" x2="200" y2="347"/>
+
+  <rect class="kill" x="60" y="388" width="150" height="46" rx="4"/>
+  <text class="s" x="88" y="417">5 → 1 → 3</text>
+  <line class="strike" x1="70" y1="411" x2="200" y2="411"/>
+
+  <rect class="kill" x="60" y="452" width="150" height="46" rx="4"/>
+  <text class="s" x="88" y="481">5 → 3 → 1</text>
+  <line class="strike" x1="70" y1="475" x2="200" y2="475"/>
+
+  <line x1="360" y1="240" x2="452" y2="240" stroke="#8a8a8a" stroke-width="1.2"/>
+  <path d="M444 234 L456 240 L444 246" stroke="#8a8a8a" stroke-width="1.2" fill="none"/>
+
+  <text x="486" y="248" style="font-size:26px" fill="#6f6f6f">3! = 6 → 1</text>
+  <text class="s" x="486" y="286">6 种排列对应同一根长木棍的</text>
+  <text class="s" x="486" y="308">同一种填法，搜索时却要各走一遍</text>
+
+  <line x1="486" y1="344" x2="744" y2="344" stroke="#8a8a8a" opacity=".25"/>
+  <text class="s" x="486" y="378">实现只是一行：for (int i = start; i &lt; n; i++)</text>
+  <text class="s" x="486" y="402">下一层传 i + 1，编号就只会往后长</text>
+  <text class="s" x="486" y="426">4 根是 4! = 24 种，5 根是 120 种</text>
+
+  <text class="s" x="40" y="548">这一条不制造新剪枝，它直接把搜索树剪掉一整层宽度。</text>
+</svg>

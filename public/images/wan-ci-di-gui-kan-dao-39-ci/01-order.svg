@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600" fill="none">
+  <style>
+    text { font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #808080; }
+    .t { font-size: 18px; fill: #6f6f6f; }
+    .s { font-size: 13px; }
+    .lab { font-size: 16px; fill: #6f6f6f; }
+    .bar { stroke: #8a8a8a; stroke-width: 1.2; }
+    .cell { stroke: #8a8a8a; stroke-width: 1; opacity: .45; }
+    .fill { fill: #5c8fbb; fill-opacity: .28; stroke: #5c8fbb; stroke-width: 1.4; }
+    .rest { stroke: #8a8a8a; stroke-width: 1.2; stroke-dasharray: 5 4; }
+  </style>
+
+  <text class="t" x="40" y="54">同一根长木棍（L = 6）：先放 5，还是先放 2？</text>
+  <text class="s" x="40" y="82">先放谁，决定了下一层还有多少个分支要试</text>
+  <line x1="40" y1="104" x2="760" y2="104" stroke="#8a8a8a" opacity=".25"/>
+
+  <text class="lab" x="40" y="156">先放 5</text>
+  <text class="s" x="40" y="178">最大的那块</text>
+
+  <rect class="bar" x="200" y="130" width="480" height="40" rx="3"/>
+  <rect class="fill" x="200" y="130" width="400" height="40" rx="3"/>
+  <line class="cell" x1="280" y1="130" x2="280" y2="170"/>
+  <line class="cell" x1="360" y1="130" x2="360" y2="170"/>
+  <line class="cell" x1="440" y1="130" x2="440" y2="170"/>
+  <line class="cell" x1="520" y1="130" x2="520" y2="170"/>
+  <rect class="rest" x="600" y="130" width="80" height="40"/>
+
+  <text class="s" x="200" y="198">只剩 1 格 → 下一层能填的只有长度 1，分支 ×1</text>
+
+  <text class="lab" x="40" y="304">先放 2</text>
+  <text class="s" x="40" y="326">随手挑的一块</text>
+
+  <rect class="bar" x="200" y="278" width="480" height="40" rx="3"/>
+  <rect class="fill" x="200" y="278" width="160" height="40" rx="3"/>
+  <line class="cell" x1="280" y1="278" x2="280" y2="318"/>
+  <line class="cell" x1="360" y1="278" x2="360" y2="318"/>
+  <line class="cell" x1="440" y1="278" x2="440" y2="318"/>
+  <line class="cell" x1="520" y1="278" x2="520" y2="318"/>
+  <rect class="rest" x="360" y="278" width="320" height="40"/>
+
+  <text class="s" x="200" y="346">还剩 4 格 → 2、4、2+2、1+1+2… 分支立刻张开</text>
+
+  <line x1="40" y1="400" x2="760" y2="400" stroke="#8a8a8a" opacity=".25"/>
+  <text class="s" x="40" y="436">所以排序必须是降序：把大块先塞进去，坑位立刻变窄，</text>
+  <text class="s" x="40" y="462">错的组合在第一层就死；反过来小段先放，坑一直很宽，</text>
+  <text class="s" x="40" y="488">要搜到底才暴露矛盾。</text>
+
+  <rect x="40" y="524" width="16" height="10" fill="#5c8fbb" fill-opacity=".28" stroke="#5c8fbb"/>
+  <text class="s" x="66" y="534">已放进去的小段</text>
+  <rect x="216" y="524" width="16" height="10" stroke="#8a8a8a" stroke-dasharray="5 4"/>
+  <text class="s" x="242" y="534">还空着的位置</text>
+</svg>
