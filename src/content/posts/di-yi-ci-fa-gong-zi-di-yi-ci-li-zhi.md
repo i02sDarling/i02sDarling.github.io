@@ -5,6 +5,7 @@ updated: "2026-11-09"
 slug: "di-yi-ci-fa-gong-zi-di-yi-ci-li-zhi"
 description: "从第一次发工资到第一次离职，记下杭州那家公司的人，和一段没说完整的告别。"
 tags: ["杭州", "离职", "记录"]
+group: "实习"
 public: false
 source: "未命名"
 ---
@@ -15,6 +16,7 @@ source: "未命名"
 > date: 2024-12-17
 > updated: 2026-11-09
 > tags: 杭州, 离职, 记录
+> group: 实习
 > description: 从第一次发工资到第一次离职，记下杭州那家公司的人，和一段没说完整的告别。
 > public: false
 
