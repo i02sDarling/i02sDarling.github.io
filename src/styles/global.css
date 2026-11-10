@@ -891,21 +891,26 @@ html.dark .post-year {
   user-select: none;
 }
 
-/* 宫格视图：一排小图，一次看全；点任意一张仍然进 lightbox */
+/* 宫格视图：一排缩略图，一次看全。
+   长截图如果整张塞进 4:3 格子会缩得只剩一条，所以这里用 cover 从顶部裁切填满：
+   格子里能看到长图的上半段（可辨认），点任意一张仍然进 lightbox 看完整大图。 */
 .article .gallery-toggle:checked ~ .gallery-track {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 8px;
   overflow: visible;
   padding-bottom: 0;
+  align-items: start;
 }
 
 .article .gallery-toggle:checked ~ .gallery-track img {
   width: 100%;
   height: auto;
   aspect-ratio: 4 / 3;
-  object-fit: contain;
+  object-fit: cover;
+  object-position: top center;
   scroll-snap-align: none;
+  cursor: zoom-in;
 }
 
 @media (max-width: 640px) {
@@ -914,7 +919,7 @@ html.dark .post-year {
   }
 
   .article .gallery-toggle:checked ~ .gallery-track {
-    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   }
 }
 
@@ -1213,27 +1218,10 @@ html.dark .article th {
   color: var(--accent);
 }
 
-.term-note {
-  margin-left: 0.75em;
-  color: var(--fg-light);
-  font-family: var(--font-sans);
-  font-size: 0.75rem;
-}
-
-.post-terminal a:hover + .term-note {
-  color: var(--fg);
-}
-
 @media (max-width: 640px) {
   .post-terminal {
     padding: 12px 14px;
     font-size: 0.78125rem;
-  }
-
-  .term-note {
-    display: block;
-    margin-left: 1.5em;
-    line-height: 1.4;
   }
 }
 
