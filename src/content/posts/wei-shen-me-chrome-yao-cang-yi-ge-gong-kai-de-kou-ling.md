@@ -5,7 +5,6 @@ updated: "2025-01-22"
 slug: "wei-shen-me-chrome-yao-cang-yi-ge-gong-kai-de-kou-ling"
 description: "Chromium 2018 年因为博客传播换过一次 SSL 后门口令，又用 base64 包了一层，可下一行就是 atob。它挡住的从来不是读源码的人。"
 tags: ["Chrome", "安全", "浏览器"]
-group: "实习"
 public: false
 source: "未命名"
 ---
@@ -16,7 +15,6 @@ source: "未命名"
 > date: 2025-01-22
 > updated: 2025-01-22
 > tags: Chrome, 安全, 浏览器
-> group: 实习
 > description: Chromium 2018 年因为博客传播换过一次 SSL 后门口令，又用 base64 包了一层，可下一行就是 atob。它挡住的从来不是读源码的人。
 > public: false
 
