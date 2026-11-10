@@ -1,7 +1,7 @@
 ---
 title: "技术面试在你坐下之前就结束了"
-date: "2026-11-09"
-updated: "2026-11-09"
+date: "2026-08-09"
+updated: "2026-08-09"
 slug: "ji-shu-mian-shi-zai-ni-zuo-xia-zhi-qian-jiu-jie-shu-le"
 description: "技术行业里简历和作品已经决定八成，面试更像是核实真假，顺便看看这个人的长相和嘴。"
 tags: ["面试", "招聘", "技术行业"]
@@ -12,8 +12,8 @@ source: "未命名"
 > metadata:
 > title: 技术面试在你坐下之前就结束了
 > slug: ji-shu-mian-shi-zai-ni-zuo-xia-zhi-qian-jiu-jie-shu-le
-> date: 2026-11-09
-> updated: 2026-11-09
+> date: 2026-08-09
+> updated: 2026-08-09
 > tags: 面试, 招聘, 技术行业
 > description: 技术行业里简历和作品已经决定八成，面试更像是核实真假，顺便看看这个人的长相和嘴。
 > public: false
