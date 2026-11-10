@@ -1,6 +1,7 @@
 ---
 title: "隐藏的compact命令"
-date: "2026-11-08"
+date: "2026-07-05"
+updated: "2026-07-06"
 slug: "yin-cang-de-ya-suo-ming-ling"
 description: ""
 tags: []
@@ -11,7 +12,8 @@ source: "隐藏的压缩命令"
 > metadata:
 > title: 隐藏的compact命令
 > slug: yin-cang-de-ya-suo-ming-ling
-> date: 2026-11-08
+> date: 2026-07-05
+> updated: 2026-07-06
 > public: false
 
 # 不是 compact 用多了，是菜单把灰项删了
