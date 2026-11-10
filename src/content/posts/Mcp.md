@@ -1,12 +1,20 @@
 ---
 title: "MCP还是我们的优先选择吗"
-date: "2026-11-08"
+date: "2026-02-08"
+updated: "2026-02-08"
 slug: "Mcp"
 description: ""
 tags: []
 public: false
 source: "001"
 ---
+
+> metadata:
+> title: MCP还是我们的优先选择吗
+> slug: Mcp
+> date: 2026-02-08
+> updated: 2026-02-08
+> public: false
 
 # MCP还是我们的优先选择吗
 
