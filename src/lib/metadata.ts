@@ -19,9 +19,21 @@ export interface PostMetadata {
   group?: string
   description?: string
   public?: boolean
+  /** 软删除：ip-studio 删除文章时写 true，站点据此隐藏（文件还在，可恢复） */
+  deleted?: boolean
 }
 
-const KEYS = new Set(['title', 'slug', 'date', 'updated', 'tags', 'group', 'description', 'public'])
+const KEYS = new Set([
+  'title',
+  'slug',
+  'date',
+  'updated',
+  'tags',
+  'group',
+  'description',
+  'public',
+  'deleted',
+])
 const HEADER_RE = /^\s*>\s*metadata\s*:?\s*$/i
 const QUOTE_RE = /^\s*>/
 const FIELD_RE = /^\s*(?:[-*]\s+)?([A-Za-z][\w-]*)\s*:\s?(.*)$/
@@ -131,6 +143,11 @@ export function parseMetadataBlock(source = ''): ParsedMetadataBlock {
         if (value !== null) metadata.public = value
         break
       }
+      case 'deleted': {
+        const value = toBoolean(raw)
+        if (value !== null) metadata.deleted = value
+        break
+      }
     }
   }
 
@@ -163,6 +180,8 @@ export interface PostDataView {
   tags: string[]
   group: string
   public: boolean
+  /** 软删除：true = 不进列表、不生成页面 */
+  deleted: boolean
 }
 
 /**
@@ -183,6 +202,7 @@ export function resolvePostData(post: PostLike): PostDataView {
     tags: 'tags' in block ? (block.tags ?? []) : (data.tags ?? []),
     group: 'group' in block ? (block.group ?? '') : (data.group ?? ''),
     public: 'public' in block ? Boolean(block.public) : Boolean(data.public),
+    deleted: 'deleted' in block ? Boolean(block.deleted) : Boolean(data.deleted),
   }
 }
 

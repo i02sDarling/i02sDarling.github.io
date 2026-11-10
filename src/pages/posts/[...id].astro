@@ -11,7 +11,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const all = await getCollection('posts')
   const entries = all
     .map((post) => ({ post, meta: resolvePostData(post), slug: postSlug(post) }))
-    .filter((entry) => entry.meta.public || import.meta.env.DEV)
+    .filter((entry) => !entry.meta.deleted && (entry.meta.public || import.meta.env.DEV))
     .sort((a, b) => String(b.meta.date).localeCompare(String(a.meta.date)))
 
   return entries.map((entry, index) => ({
