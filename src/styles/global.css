@@ -681,12 +681,24 @@ html.dark .post-year {
   transition: color 0.2s ease;
 }
 
-/* 分组小标签 + 标题：标签紧贴标题左侧，像 antfu.me 的「日本語」小方块 */
+/* 分组小标签 + 标题：标签悬在标题左侧页边（背景年份那一侧），不进标题的流。
+   这样每一行的标题都从同一条左边界开始，有分组的那行不会被标签推右。 */
 .post-row-main {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 8px;
   min-width: 0;
+}
+
+.post-row-group {
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 10px);
+  transform: translateY(-50%);
+  max-width: 4.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .post-row-group,
@@ -700,6 +712,13 @@ html.dark .post-year {
   font-weight: 400;
   line-height: 1.6;
   white-space: nowrap;
+}
+
+/* 窄屏没有页边可借（左边只剩内边距），标签会压到视口外，干脆不显示。 */
+@media (max-width: 760px) {
+  .post-row-group {
+    display: none;
+  }
 }
 
 .post-row-link:hover .post-row-title {

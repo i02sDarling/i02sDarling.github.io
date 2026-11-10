@@ -37,7 +37,11 @@ const groups = groupByYear(posts.map((entry) => ({ ...entry, data: entry.meta })
                   <li class="post-row">
                     <a class="post-row-link" href={`/posts/${post.slug}/`}>
                       <span class="post-row-main">
-                        {post.meta.group ? <span class="post-row-group">{post.meta.group}</span> : null}
+                        {post.meta.group ? (
+                          <span class="post-row-group" title={post.meta.group}>
+                            {post.meta.group}
+                          </span>
+                        ) : null}
                         <span class="post-row-title">{post.meta.title}</span>
                       </span>
                       <span class="post-row-meta">
