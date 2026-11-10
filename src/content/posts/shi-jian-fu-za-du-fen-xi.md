@@ -1,7 +1,7 @@
 ---
 title: "时间复杂度分析"
-date: "2026-11-06"
-updated: "2026-11-09"
+date: "2024-08-06"
+updated: "2024-08-07"
 slug: "shi-jian-fu-za-du-fen-xi"
 description: "一秒 10^7~10^8 次操作，数据范围一给定，能用哪个复杂度、该上哪个算法基本就定了。"
 tags: ["算法", "复杂度", "C++", "笔记"]
@@ -12,8 +12,8 @@ source: "未命名"
 > metadata:
 > title: 时间复杂度分析
 > slug: shi-jian-fu-za-du-fen-xi
-> date: 2026-11-06
-> updated: 2026-11-09
+> date: 2024-08-06
+> updated: 2024-08-07
 > tags: 算法, 复杂度, C++, 笔记
 > description: 一秒 10^7~10^8 次操作，数据范围一给定，能用哪个复杂度、该上哪个算法基本就定了。
 > public: false
