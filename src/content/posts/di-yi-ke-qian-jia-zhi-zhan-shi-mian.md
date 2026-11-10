@@ -6,8 +6,17 @@ slug: "di-yi-ke-qian-jia-zhi-zhan-shi-mian"
 description: ""
 tags: []
 public: false
+deleted: true
 source: "第一课：前价值（展示面）"
 ---
+
+> metadata:
+> title: 第一课：前价值（展示面）
+> slug: di-yi-ke-qian-jia-zhi-zhan-shi-mian
+> date: 2026-11-04
+> updated: 2026-11-04
+> public: false
+> deleted: true
 
 # 
 > 说明：本笔记由课程直播转写稿整理而成，尽最大可能保留老师原始文字，仅做分节、清洗口水词、加粗、列表化、表格增补与图片占位。转写稿中"钱价值""大琴圣""大秦镇"等均为"前价值""大情圣"的语音转写误差，原文保留未改。
