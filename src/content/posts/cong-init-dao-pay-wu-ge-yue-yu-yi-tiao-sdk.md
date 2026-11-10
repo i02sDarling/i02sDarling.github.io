@@ -5,6 +5,7 @@ updated: "2025-06-01"
 slug: "cong-init-dao-pay-wu-ge-yue-yu-yi-tiao-sdk"
 description: "五个月里我把收银台 SDK 从 init 跑通到 pay，真正上线的只有三块功能，学到的东西却是这几块的好几倍。"
 tags: ["实习", "网商银行", "支付", "前端"]
+group: "实习"
 public: false
 source: "未命名-20261110-1322"
 ---
@@ -15,6 +16,7 @@ source: "未命名-20261110-1322"
 > date: 2025-06-01
 > updated: 2025-06-01
 > tags: 实习, 网商银行, 支付, 前端
+> group: 实习
 > description: 五个月里我把收银台 SDK 从 init 跑通到 pay，真正上线的只有三块功能，学到的东西却是这几块的好几倍。
 > public: false
 
