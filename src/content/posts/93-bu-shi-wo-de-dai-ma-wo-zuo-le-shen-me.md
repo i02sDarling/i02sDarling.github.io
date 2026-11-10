@@ -6,6 +6,7 @@ slug: "93-bu-shi-wo-de-dai-ma-wo-zuo-le-shen-me"
 description: "投资业务线十一个月，代码生成占比从 49% 涨到 93%；离开时留下的不是代码，是 43 个 Skill 和一套判断顺序。"
 tags: ["离职", "AI", "Agent", "前端", "复盘"]
 public: false
+deleted: true
 source: "未命名-20261110-1754"
 ---
 
@@ -17,6 +18,7 @@ source: "未命名-20261110-1754"
 > tags: 离职, AI, Agent, 前端, 复盘
 > description: 投资业务线十一个月，代码生成占比从 49% 涨到 93%；离开时留下的不是代码，是 43 个 Skill 和一套判断顺序。
 > public: false
+> deleted: true
 
 最后一通电话是下午四点多，和后端对字段：这个金额传到前端是分还是元，回调重复的时候状态字段会不会连着来两次。
 
