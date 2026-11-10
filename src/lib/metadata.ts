@@ -16,11 +16,12 @@ export interface PostMetadata {
   date?: string
   updated?: string
   tags?: string[]
+  group?: string
   description?: string
   public?: boolean
 }
 
-const KEYS = new Set(['title', 'slug', 'date', 'updated', 'tags', 'description', 'public'])
+const KEYS = new Set(['title', 'slug', 'date', 'updated', 'tags', 'group', 'description', 'public'])
 const HEADER_RE = /^\s*>\s*metadata\s*:?\s*$/i
 const QUOTE_RE = /^\s*>/
 const FIELD_RE = /^\s*(?:[-*]\s+)?([A-Za-z][\w-]*)\s*:\s?(.*)$/
@@ -117,6 +118,10 @@ export function parseMetadataBlock(source = ''): ParsedMetadataBlock {
           .filter(Boolean)
         break
       }
+      case 'group': {
+        metadata.group = oneLine(raw)
+        break
+      }
       case 'description': {
         metadata.description = oneLine(raw)
         break
@@ -156,6 +161,7 @@ export interface PostDataView {
   slug: string
   description: string
   tags: string[]
+  group: string
   public: boolean
 }
 
@@ -175,6 +181,7 @@ export function resolvePostData(post: PostLike): PostDataView {
     slug: block.slug || data.slug || post.id,
     description: 'description' in block ? (block.description ?? '') : (data.description ?? ''),
     tags: 'tags' in block ? (block.tags ?? []) : (data.tags ?? []),
+    group: 'group' in block ? (block.group ?? '') : (data.group ?? ''),
     public: 'public' in block ? Boolean(block.public) : Boolean(data.public),
   }
 }

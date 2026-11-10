@@ -12,6 +12,8 @@ const posts = defineCollection({
     slug: z.string().optional(),
     description: z.string().default(''),
     tags: z.array(z.string()).default([]),
+    // 文章分组：列表里显示在标题左侧的小标签（如「日语」），空串 = 不分组
+    group: z.string().default(''),
     public: z.boolean().default(false),
     // 来源笔记名：ip-studio 用来识别「同一篇再次发布」，站点不用
     source: z.string().optional(),
