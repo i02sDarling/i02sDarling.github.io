@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content'
 import Base from '../../layouts/Base.astro'
-import { formatPostDate, groupByYear, readingMinutes } from '../../lib/posts.ts'
+import { formatPostDate, groupByYear, postMonthNumber, readingMinutes } from '../../lib/posts.ts'
 import { postSlug, resolvePostData, stripMetadataBlock } from '../../lib/metadata.ts'
 
 // 本地 dev 连草稿一起列，线上只渲染公开文章；标了软删除的一律不出现
@@ -45,7 +45,9 @@ const groups = groupByYear(posts.map((entry) => ({ ...entry, data: entry.meta })
                         <span class="post-row-title">{post.meta.title}</span>
                       </span>
                       <span class="post-row-meta">
-                        <span>{formatPostDate(post.meta.date)}</span>
+                        <span class="post-row-date" data-month={postMonthNumber(post.meta.date)}>
+                          {formatPostDate(post.meta.date)}
+                        </span>
                         <span class="post-row-dot" aria-hidden="true">
                           ·
                         </span>

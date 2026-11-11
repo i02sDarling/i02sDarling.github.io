@@ -25,6 +25,11 @@ export function postYear(date: string): string {
   return date.slice(0, 4)
 }
 
+/** 发布日期 → 两位月份数字（列表里悬浮 2 秒后显示，如 Feb → 02） */
+export function postMonthNumber(date: string): string {
+  return date.slice(5, 7)
+}
+
 /** 估算阅读时长，最少 1 分钟 */
 export function readingMinutes(body = ''): number {
   const text = body.replace(/```[\s\S]*?```/g, ' ')
