@@ -22,7 +22,7 @@ source: "未命名-20261110-2327"
 
 老虎机的规则只有一条：你不知道下一次会不会中，但你可以再拉一次。
 
-### VibeCoding的定义
+## VibeCoding 的定义
 
 2025 年 2 月 2 日，Karpathy 在 X 上给一种写法起了名字，vibe coding。原帖不长，前半句被引用过无数次：
 
@@ -102,7 +102,7 @@ AI 编程工具一开始不是这么设计的。GitHub Copilot 在 2024 年 12 �
 
 <span class="hl-red-bg">90% 的幻觉不是白送的，它把账单挪到了两个月后。</span>
 
-<!-- 图 3 | https://www.gitclear.com/ai_assistant_code_quality_2025_research | 摘要里 copy/pasted 从 8.3% 到 12.3% 那两行 | 那 10% 的返工最后去了哪里 -->
+<!-- 图 2 | https://www.gitclear.com/ai_assistant_code_quality_2025_research | 摘要里 copy/pasted 从 8.3% 到 12.3% 那两行 | 那 10% 的返工最后去了哪里 -->
 
 ## 技能杠杆
 

@@ -26,7 +26,7 @@ Chrome 的证书错误页上没有输入框。
 
 我第一次看到这段描述，脑子里跳出来的是魂斗罗的 `↑ ↑ ↓ ↓ ← → ← → B A`。一个浏览器为什么要留作弊码？
 
-这个问题的答案在 [Thomas Countz 2025 年 7 月那篇文章](https://thomascountz.com/2025/07/17/chromes-ssl-bypass-cheatcode) 里，他翻了 Chromium 的提交历史。但真正让我停下来重读的，是 2018 年那次改动给出的理由：
+这个问题的答案在 [Thomas Countz 那篇文章](https://thomascountz.com/2025/07/17/chromes-ssl-bypass-cheatcode) 里，他翻了 Chromium 的提交历史。但真正让我停下来重读的，是 2018 年那次改动给出的理由：
 
 <span class="hl-red">它被换掉，是因为博客和社交媒体上写它的人太多了。</span>
 

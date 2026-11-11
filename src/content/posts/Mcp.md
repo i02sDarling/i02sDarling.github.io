@@ -3,8 +3,8 @@ title: "MCP还是我们的优先选择吗"
 date: "2026-02-08"
 updated: "2026-02-08"
 slug: "Mcp"
-description: ""
-tags: []
+description: "同一件事在微软、Anthropic、Cloudflare 那里的统计互相打架；省 token 的地方不在换壳，在决定读多少。"
+tags: ["AI", "MCP", "CLI", "Agent"]
 public: false
 source: "001"
 ---
@@ -14,9 +14,9 @@ source: "001"
 > slug: Mcp
 > date: 2026-02-08
 > updated: 2026-02-08
+> tags: AI, MCP, CLI, Agent
+> description: 同一件事在微软、Anthropic、Cloudflare 那里的统计互相打架；省 token 的地方不在换壳，在决定读多少。
 > public: false
-
-# MCP还是我们的优先选择吗
 
 今天本来只是让 opencode 帮我调研爬虫。需求很具体：一套能长期跑下来的采集流程——主力是 MediaCrawler，通用网页（新闻、政策原文、招标公告）交给 Crawl4AI，需要登录态的时候再临时挂一个浏览器。
 
@@ -98,7 +98,7 @@ README 那句总结用词很准：**「Token-efficient. Does not force page data
 
 Playwright 团队 2026 年 2 月放过一组对比：同一个任务，MCP 约 114,000 tokens，CLI 约 26,800，差不多 4 倍。这组数字后来被引用得到处都是。
 
-2026 年 11 月，UI Verify 用当时最新版复测（`@playwright/mcp` 0.0.84 / `@playwright/cli` 0.1.23），同一件事，结论是另一副样子：
+另一组是 2025 年 11 月的：UI Verify 用当时最新版复测（`@playwright/mcp` 0.0.84 / `@playwright/cli` 0.1.23），同一件事，结论是另一副样子：
 
 | 做法 | MCP | CLI |
 |---|---|---|

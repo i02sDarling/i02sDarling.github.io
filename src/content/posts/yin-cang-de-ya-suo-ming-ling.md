@@ -3,8 +3,8 @@ title: "隐藏的compact命令"
 date: "2026-07-05"
 updated: "2026-07-06"
 slug: "yin-cang-de-ya-suo-ming-ling"
-description: ""
-tags: []
+description: "`/compact` 不是用多了被禁用，是一行 disabled 判断加一次菜单过滤；你连它存在过都看不见。"
+tags: ["OpenCode", "源码", "排错"]
 public: false
 source: "隐藏的压缩命令"
 ---
@@ -14,9 +14,11 @@ source: "隐藏的压缩命令"
 > slug: yin-cang-de-ya-suo-ming-ling
 > date: 2026-07-05
 > updated: 2026-07-06
+> tags: OpenCode, 源码, 排错
+> description: `/compact` 不是用多了被禁用，是一行 disabled 判断加一次菜单过滤；你连它存在过都看不见。
 > public: false
 
-# 不是 compact 用多了，是菜单把灰项删了
+先给结论：**不是 compact 用多了，是菜单把灰项删了。**
 
 ![](/images/yin-cang-de-ya-suo-ming-ling/a27bdc6766.webp)
 
@@ -145,9 +147,6 @@ OpenCode 2.x 有一条改动：会话历史从「最近一次完成的 compactio
 - #60841、#61246 都被判为它的重复并关闭
 
 想彻底修的话，方向是把 `disabled` 从 `visibleUserMessages().length === 0` 改成 `messages().length === 0`，或者干脆允许任何时候压缩。
-
-（说明：这篇里的两段代码和 issue 号都来自这次对话提供的调研结论。本地没有那份仓库，我没有重新跑一遍源码；要动手改构建，建议先按路径核对。）
-
 
 ## 总结：三个方面
 
