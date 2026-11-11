@@ -539,30 +539,6 @@ main {
   opacity: 0.6;
 }
 
-/* 首页分节标题：比文章 H2 小一档，避免五段标题压过正文 */
-.intro h2 {
-  margin-top: 0;
-  font-size: 1.125rem;
-}
-
-/* 「我怎么做事」：dt 是判断，dd 是具体做法，不做列表符号 */
-.intro-points {
-  margin: 0 0 0.2em;
-}
-
-.intro-points > div {
-  margin-bottom: 1.15em;
-}
-
-.intro-points dt {
-  font-weight: 600;
-  color: var(--fg-deep);
-}
-
-.intro-points dd {
-  margin: 0;
-}
-
 .actions {
   display: flex;
   flex-wrap: wrap;
