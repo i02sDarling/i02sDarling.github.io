@@ -25,6 +25,8 @@ const json = JSON.stringify(resumeData).replace(/</g, '\\u003c')
 
     <div class="resume-toolbar">
       <button class="btn primary" type="button" data-action="export">导出 PDF</button>
+      <button class="btn" type="button" data-action="export-md">导出 MD</button>
+      <button class="btn" type="button" data-action="import-md">导入 MD</button>
       <button class="btn" type="button" data-action="edit">完成编辑</button>
       <button class="btn" type="button" data-action="reset">恢复示例</button>
       <button class="btn" type="button" data-action="blank">清空重填</button>
@@ -41,6 +43,7 @@ const json = JSON.stringify(resumeData).replace(/</g, '\\u003c')
     <p class="resume-tip muted">
       正文支持轻量标记：<code>## 小标题</code>、<code>1. 条目</code>、<code>- 子条目</code>、<code>**加粗**</code>；
       一行一条，空行会被忽略。导出会按 A4 自动分页，不会带浏览器页眉 / 页脚 / 网址。
+      「导出 MD」拿到的是一份可读可改的 Markdown（不含头像），用编辑器或 AI 改完再「导入 MD」贴回来即可。
     </p>
 
     <div class="resume-toast" data-resume-toast hidden role="status" aria-live="polite"></div>

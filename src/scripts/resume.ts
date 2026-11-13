@@ -493,6 +493,248 @@ async function shrinkPhoto(file: File): Promise<string> {
   return canvas.toDataURL('image/jpeg', 0.86)
 }
 
+/* ── Markdown 导入 / 导出（与 ip-studio 同一套格式，两边能互相导） ── */
+
+/** frontmatter 的键，与 basics 字段同名。 */
+const META_KEYS: (keyof Basics)[] = [
+  'name',
+  'gender',
+  'age',
+  'phone',
+  'email',
+  'education',
+  'experience',
+  'targetRole',
+  'targetCity',
+  'homepage',
+  'github',
+  'summary',
+]
+
+/** 没写标题的条目，导出时占个位；导入时还原成空标题。 */
+const UNTITLED = '（未命名）'
+
+function metaScalar(text: string): string {
+  if (!text) return "''"
+  const safe = /^[A-Za-z0-9\u4e00-\u9fa5][^"'#\n\r\t]*$/.test(text) && !/:\s/.test(text) && !/:\s*$/.test(text)
+  return safe ? text : JSON.stringify(text)
+}
+
+function parseScalar(raw: string): string {
+  const value = raw.trim()
+  if (!value) return ''
+  if (value.startsWith('"') && value.endsWith('"') && value.length > 1) {
+    try {
+      return String(JSON.parse(value))
+    } catch {
+      return value.slice(1, -1)
+    }
+  }
+  if (value.startsWith("'") && value.endsWith("'") && value.length > 1) return value.slice(1, -1)
+  return value
+}
+
+/** 标题 → 模块类型：先认标准名，再按关键词猜，猜不到算自定义。 */
+function kindFromTitle(title: string): SectionKind {
+  for (const kind of SECTION_KINDS) {
+    if (title === kind.label) return kind.value
+  }
+  if (/教育|学历|学校/.test(title)) return 'education'
+  if (/工作|实习|经历/.test(title)) return 'work'
+  if (/项目/.test(title)) return 'project'
+  if (/技能|能力|擅长/.test(title)) return 'skills'
+  return 'custom'
+}
+
+function listLine(line: string): string {
+  return /^([-*+]|\d+[.、)])\s/.test(line) ? line : `- ${line}`
+}
+
+/** 简历 → Markdown（头像不写进 md：base64 会变成一屏乱码）。 */
+function toMarkdown(data: ResumeData): string {
+  const out: string[] = ['---']
+  for (const key of META_KEYS) {
+    const value = (data.basics[key] ?? '').trim()
+    if (value) out.push(`${key}: ${metaScalar(value)}`)
+  }
+  out.push('---', '')
+
+  const title = [data.basics.name.trim(), data.basics.targetRole.trim()].filter(Boolean).join(' · ')
+  out.push(`# ${title || '未命名简历'}`)
+  const summary = data.basics.summary.trim()
+  if (summary) out.push('', `> ${summary}`)
+
+  for (const section of data.sections) {
+    const lines = section.lines.map((line) => line.trim()).filter(Boolean)
+    const entries = section.entries.filter(
+      (entry) => entry.title.trim() || entry.subtitle.trim() || entry.bullets.some((line) => line.trim()),
+    )
+    if (!lines.length && !entries.length) continue
+
+    const heading = section.title.trim() || SECTION_KINDS.find((item) => item.value === section.kind)?.label || ''
+    out.push('', `## ${heading}`)
+    // 标题认不出类型时补一行注释，导回来才不会丢 kind
+    if (kindFromTitle(heading) !== section.kind) out.push('', `<!-- kind: ${section.kind} -->`)
+
+    if (lines.length) {
+      out.push('')
+      for (const line of lines) out.push(listLine(line))
+    }
+
+    for (const entry of entries) {
+      out.push('', `### ${entry.title.trim() || UNTITLED}`)
+      const fields: string[] = []
+      if (entry.subtitle.trim()) fields.push(`- 副标题：${entry.subtitle.trim()}`)
+      const start = entry.start.trim()
+      const end = entry.end.trim()
+      if (start || end) fields.push(`- 时间：${start}${start && end ? ' - ' : ''}${end}`)
+      if (entry.meta.trim()) fields.push(`- 备注：${entry.meta.trim()}`)
+      if (entry.tags.trim()) fields.push(`- 标签：${entry.tags.trim()}`)
+      if (fields.length) out.push('', ...fields)
+
+      const bullets = entry.bullets.map((line) => line.trim()).filter(Boolean)
+      if (bullets.length) {
+        out.push('')
+        for (const bullet of bullets) out.push(/^##\s/.test(bullet) ? `#### ${bullet.slice(2).trim()}` : bullet)
+      }
+    }
+  }
+
+  return `${out.join('\n').trimEnd()}\n`
+}
+
+function splitFrontmatter(markdown: string): { meta: Record<string, string>; body: string } {
+  const text = markdown.replace(/^\uFEFF/, '').replace(/\r\n?/g, '\n')
+  const lines = text.split('\n')
+  if (lines[0]?.trim() !== '---') return { meta: {}, body: text }
+  let end = -1
+  for (let index = 1; index < lines.length; index += 1) {
+    if (lines[index].trim() === '---') {
+      end = index
+      break
+    }
+  }
+  if (end < 0) return { meta: {}, body: text }
+
+  const meta: Record<string, string> = {}
+  for (const line of lines.slice(1, end)) {
+    const match = /^([A-Za-z_][\w-]*)\s*:\s*(.*)$/.exec(line)
+    if (!match) continue
+    meta[match[1]] = parseScalar(match[2])
+  }
+  return { meta, body: lines.slice(end + 1).join('\n') }
+}
+
+const FIELD_LINE = /^[-*]\s*(副标题|时间|备注|标签|subtitle|time|meta|tags)\s*[：:]\s*(.*)$/
+
+function applyField(entry: Entry, key: string, value: string): void {
+  const text = value.trim()
+  if (key === '副标题' || key === 'subtitle') entry.subtitle = text
+  else if (key === '备注' || key === 'meta') entry.meta = text
+  else if (key === '标签' || key === 'tags') entry.tags = text
+  else {
+    const match = /^(.*?)\s[-–—~]\s(.*)$/.exec(text)
+    if (match) {
+      entry.start = match[1].trim()
+      entry.end = match[2].trim()
+    } else {
+      entry.start = text
+    }
+  }
+}
+
+/** Markdown → 简历数据；读不懂的地方一律留空，不抛错。 */
+function fromMarkdown(markdown: string): ResumeData {
+  const { meta, body } = splitFrontmatter(markdown)
+  const basics: Basics = {
+    name: '',
+    gender: '',
+    age: '',
+    phone: '',
+    email: '',
+    education: '',
+    experience: '',
+    targetCity: '',
+    targetRole: '',
+    homepage: '',
+    github: '',
+    photo: '',
+    summary: '',
+  }
+  for (const key of META_KEYS) {
+    const value = (meta[key] ?? '').trim()
+    if (value) basics[key] = value
+  }
+
+  const sections: Section[] = []
+  let section: Section | null = null
+  let entry: Entry | null = null
+  let fieldsDone = false
+  let inFence = false
+
+  for (const rawLine of body.split('\n')) {
+    const trimmed = rawLine.trim()
+    if (/^```/.test(trimmed)) {
+      inFence = !inFence
+      continue
+    }
+    if (inFence || !trimmed) continue
+
+    const kindNote = /^<!--\s*kind\s*:\s*([a-z]+)\s*-->$/i.exec(trimmed)
+    if (kindNote) {
+      const kind = kindNote[1] as SectionKind
+      if (section && !section.entries.length && SECTION_KINDS.some((item) => item.value === kind)) section.kind = kind
+      continue
+    }
+    if (trimmed.startsWith('<!--') || trimmed.startsWith('>') || trimmed === '---') continue
+    if (/^#\s/.test(trimmed)) continue
+
+    const h4 = /^####\s+(.*)$/.exec(trimmed)
+    if (h4) {
+      const text = `## ${h4[1].trim()}`
+      if (entry) entry.bullets.push(text)
+      else if (section) section.lines.push(text)
+      continue
+    }
+
+    const h3 = /^###\s+(.*)$/.exec(trimmed)
+    if (h3) {
+      if (!section) continue
+      const title = h3[1].trim()
+      entry = { ...blankEntry(), title: title === UNTITLED ? '' : title, bullets: [] }
+      section.entries.push(entry)
+      fieldsDone = false
+      continue
+    }
+
+    const h2 = /^##\s+(.*)$/.exec(trimmed)
+    if (h2) {
+      const heading = h2[1].trim()
+      section = { id: uid(), kind: kindFromTitle(heading), title: heading, entries: [], lines: [] }
+      sections.push(section)
+      entry = null
+      fieldsDone = false
+      continue
+    }
+
+    if (!section) continue
+
+    if (entry && !fieldsDone) {
+      const field = FIELD_LINE.exec(trimmed)
+      if (field) {
+        applyField(entry, field[1], field[2])
+        continue
+      }
+      fieldsDone = true
+    }
+
+    if (entry) entry.bullets.push(trimmed)
+    else section.lines.push(trimmed.replace(/^[-*+]\s+/, ''))
+  }
+
+  return { version: 1, basics, sections }
+}
+
 /* ── 页面装配 ──────────────────────────────────────────────── */
 
 export function bootResume(): void {
@@ -580,6 +822,56 @@ export function bootResume(): void {
   paintEditor()
   status.textContent = '修改只保存在本机浏览器'
 
+  /** 下载一份文本文件（导出的 md 落到浏览器的下载目录）。 */
+  function downloadText(fileName: string, text: string): void {
+    const blob = new Blob([text], { type: 'text/markdown;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = fileName
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000)
+  }
+
+  function exportMarkdown(): void {
+    downloadText(`${safeFileName(`${data.basics.name.trim() || '简历'}-简历`)}.md`, toMarkdown(data))
+    showToast('已导出 Markdown，改完可以再「导入 MD」贴回来')
+  }
+
+  function importMarkdown(): void {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.accept = '.md,.markdown,text/markdown'
+    input.style.display = 'none'
+    document.body.appendChild(input)
+    input.addEventListener('change', () => {
+      const file = input.files?.[0]
+      input.remove()
+      if (!file) return
+      void file
+        .text()
+        .then((text) => {
+          const parsed = fromMarkdown(text)
+          const hasContent =
+            parsed.sections.length > 0 || Object.values(parsed.basics).some((value) => value.trim())
+          if (!hasContent) {
+            window.alert('这份 md 里没读到简历内容，确认一下是不是「导出 MD」那份。')
+            return
+          }
+          if (!window.confirm('导入会替换掉当前页面上的内容（只影响你自己的浏览器），继续？')) return
+          data = { ...parsed, basics: { ...parsed.basics, photo: data.basics.photo } }
+          paint()
+          paintEditor()
+          persist()
+          showToast('已导入 Markdown')
+        })
+        .catch(() => window.alert('这个文件读不出来，换一份 md 试试。'))
+    })
+    input.click()
+  }
+
   /* 输入：只更新数据 + 预览，不重渲染表单（否则会丢焦点） */
   editor.addEventListener('input', (event) => {
     const field = event.target as HTMLInputElement | HTMLTextAreaElement | null
@@ -648,6 +940,12 @@ export function bootResume(): void {
       }
       case 'export':
         void exportPdf()
+        break
+      case 'export-md':
+        exportMarkdown()
+        break
+      case 'import-md':
+        importMarkdown()
         break
       case 'photo-clear':
         data.basics.photo = ''
