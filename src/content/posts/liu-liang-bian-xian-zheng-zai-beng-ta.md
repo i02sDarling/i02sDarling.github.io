@@ -5,7 +5,7 @@ updated: "2025-09-23"
 slug: "liu-liang-bian-xian-zheng-zai-beng-ta"
 description: "内容方拿内容换流量、再拿流量换广告，这条链条的计价单位是「点击」；答案引擎让点击消失，价格就没地方挂了。"
 tags: ["内容", "广告", "搜索", "AI"]
-public: false
+public: true
 source: "未命名-20261111-145351-157"
 ---
 
@@ -16,7 +16,7 @@ source: "未命名-20261111-145351-157"
 > updated: 2025-09-23
 > tags: 内容, 广告, 搜索, AI
 > description: 内容方拿内容换流量、再拿流量换广告，这条链条的计价单位是「点击」；答案引擎让点击消失，价格就没地方挂了。
-> public: false
+> public: true
 
 去年十一月写过博客没流量，结论是入口不在自己手上。这次问的是钱。
 

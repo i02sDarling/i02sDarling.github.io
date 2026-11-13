@@ -5,7 +5,7 @@ updated: "2026-08-09"
 slug: "ji-shu-mian-shi-zai-ni-zuo-xia-zhi-qian-jiu-jie-shu-le"
 description: "技术行业里简历和作品已经决定八成，面试更像是核实真假，顺便看看这个人的长相和嘴。"
 tags: ["面试", "招聘", "技术行业"]
-public: false
+public: true
 source: "未命名"
 ---
 
@@ -16,7 +16,7 @@ source: "未命名"
 > updated: 2026-08-09
 > tags: 面试, 招聘, 技术行业
 > description: 技术行业里简历和作品已经决定八成，面试更像是核实真假，顺便看看这个人的长相和嘴。
-> public: false
+> public: true
 
 问：「一般你们这种大厂的面试会有什么？」
 

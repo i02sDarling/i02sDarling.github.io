@@ -5,7 +5,7 @@ updated: "2024-11-30"
 slug: "bo-ke-mei-you-liu-liang-ke-neng-bu-shi-nei-rong-wen-ti"
 description: "卡片只剩一张图、搜索直接给答案，平台在两处就把链接掐断了；没人看的文章，问题常常在入口而不在文字。"
 tags: ["博客", "流量", "平台", "搜索"]
-public: false
+public: true
 source: "未命名-20261111-120049-958"
 ---
 
@@ -16,7 +16,7 @@ source: "未命名-20261111-120049-958"
 > updated: 2024-11-30
 > tags: 博客, 流量, 平台, 搜索
 > description: 卡片只剩一张图、搜索直接给答案，平台在两处就把链接掐断了；没人看的文章，问题常常在入口而不在文字。
-> public: false
+> public: true
 
 博客门户这么长时间以来，流量一直平平。第一反应是内容不行。
 

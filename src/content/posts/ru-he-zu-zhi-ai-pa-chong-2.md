@@ -5,7 +5,7 @@ updated: "2025-03-22"
 slug: "ru-he-zu-zhi-ai-pa-chong-2"
 description: "Anubis 不判断来的是不是机器人，它只给每个请求加一道要算一分多钟的算术题，把抓取的价格抬到买不起。"
 tags: ["爬虫", "反爬", "工作量证明"]
-public: false
+public: true
 source: "如何阻止 AI 爬虫"
 ---
 
@@ -16,7 +16,7 @@ source: "如何阻止 AI 爬虫"
 > updated: 2025-03-22
 > tags: 爬虫, 反爬, 工作量证明
 > description: Anubis 不判断来的是不是机器人，它只给每个请求加一道要算一分多钟的算术题，把抓取的价格抬到买不起。
-> public: false
+> public: true
 
 一月写过 Chrome 的后门口令，说藏起来挡不住人；这次反过来，让访问变贵。
 

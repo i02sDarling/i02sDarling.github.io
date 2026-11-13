@@ -5,7 +5,7 @@ updated: "2026-06-07"
 slug: "93-bu-shi-wo-de-dai-ma-wo-zuo-le-shen-me"
 description: "投资业务线十一个月，20 万行代码里 93% 由 AI 生成；离开那天我留下的不是代码，是 43 个 Skill 和一套判断顺序。"
 tags: ["离职", "AI", "Agent", "前端", "复盘"]
-public: false
+public: true
 source: "93% 不是我的代码，我做了什么"
 ---
 
@@ -16,7 +16,7 @@ source: "93% 不是我的代码，我做了什么"
 > updated: 2026-06-07
 > tags: 离职, AI, Agent, 前端, 复盘
 > description: 投资业务线十一个月，20 万行代码里 93% 由 AI 生成；离开那天我留下的不是代码，是 43 个 Skill 和一套判断顺序。
-> public: false
+> public: true
 
 交接那天我干的最后一件事不是改 bug，是把 `.claude/skills` 打成一个压缩包，发给接手的人。
 

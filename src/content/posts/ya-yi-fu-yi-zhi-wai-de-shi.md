@@ -5,7 +5,7 @@ updated: "2024-11-07"
 slug: "ya-yi-fu-yi-zhi-wai-de-shi"
 description: "从选址到退押金：看房先看电表，签约前先录一段视频，能避开的坑都得写在合同之前。"
 tags: ["租房", "合同", "生活"]
-public: false
+public: true
 source: "未命名-20261110-1209"
 ---
 
@@ -16,7 +16,7 @@ source: "未命名-20261110-1209"
 > updated: 2024-11-07
 > tags: 租房, 合同, 生活
 > description: 从选址到退押金：看房先看电表，签约前先录一段视频，能避开的坑都得写在合同之前。
-> public: false
+> public: true
 
 ## 推荐流程
 

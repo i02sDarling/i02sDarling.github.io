@@ -5,7 +5,7 @@ updated: "2024-03-29"
 slug: "suo-you-dai-ma-dou-shi-ji-shu-zhai"
 description: "技术债的原意不是「代码写得脏」，是「我们还没弄明白」；利息按改动次数收，不碰的代码一分不付。"
 tags: ["技术债", "重构", "代码质量"]
-public: false
+public: true
 source: "未命名-20261111-145343-086"
 ---
 
@@ -16,7 +16,7 @@ source: "未命名-20261111-145343-086"
 > updated: 2024-03-29
 > tags: 技术债, 重构, 代码质量
 > description: 技术债的原意不是「代码写得脏」，是「我们还没弄明白」；利息按改动次数收，不碰的代码一分不付。
-> public: false
+> public: true
 
 第一次看到「交付代码就像负债累累」，我以为是说代码写得脏。
 

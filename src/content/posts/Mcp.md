@@ -5,7 +5,7 @@ updated: "2026-02-08"
 slug: "Mcp"
 description: "同一件事在微软、Anthropic、Cloudflare 那里的统计互相打架；省 token 的地方不在换壳，在决定读多少。"
 tags: ["AI", "MCP", "CLI", "Agent"]
-public: false
+public: true
 source: "001"
 ---
 
@@ -16,7 +16,7 @@ source: "001"
 > updated: 2026-02-08
 > tags: AI, MCP, CLI, Agent
 > description: 同一件事在微软、Anthropic、Cloudflare 那里的统计互相打架；省 token 的地方不在换壳，在决定读多少。
-> public: false
+> public: true
 
 今天本来只是让 opencode 帮我调研爬虫。需求很具体：一套能长期跑下来的采集流程——主力是 MediaCrawler，通用网页（新闻、政策原文、招标公告）交给 Crawl4AI，需要登录态的时候再临时挂一个浏览器。
 

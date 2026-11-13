@@ -1,10 +1,11 @@
 ---
 title: "Nuxt 3 初体验：四条不报错的坑"
 date: "2024-06-14"
+updated: "2026-11-13"
 slug: "nuxt-3-chu-ti-yan-si-tiao-bu-bao-cuo-de-keng"
 description: "2024 年 6 月第一次上手 Nuxt 3 撞到的四个坑：空白页、两次请求、动态路由卡死、跨请求状态泄漏，全都不抛错。"
 tags: ["Nuxt", "Vue", "SSR", "数据获取"]
-public: false
+public: true
 source: "未命名-20261109-2256"
 ---
 
@@ -12,9 +13,10 @@ source: "未命名-20261109-2256"
 > title: Nuxt 3 初体验：四条不报错的坑
 > slug: nuxt-3-chu-ti-yan-si-tiao-bu-bao-cuo-de-keng
 > date: 2024-06-14
+> updated: 2026-11-13
 > tags: Nuxt, Vue, SSR, 数据获取
 > description: 2024 年 6 月第一次上手 Nuxt 3 撞到的四个坑：空白页、两次请求、动态路由卡死、跨请求状态泄漏，全都不抛错。
-> public: false
+> public: true
 
 2024 年 6 月，我第一次正经用 Nuxt。
 

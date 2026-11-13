@@ -5,7 +5,7 @@ updated: "2026-11-13"
 slug: "bian-ma-yi-ci-jie-ma-n-ci"
 description: "Encoder 一次性算完就冻结，Decoder 每吐一个词都回头查同一份中文编码。交叉注意力里的 Q 到底是谁的？"
 tags: ["Transformer", "编码器", "解码器"]
-public: false
+public: true
 source: "未命名-20261111-201857-024"
 ---
 
@@ -16,7 +16,7 @@ source: "未命名-20261111-201857-024"
 > updated: 2026-11-13
 > tags: Transformer, 编码器, 解码器
 > description: Encoder 一次性算完就冻结，Decoder 每吐一个词都回头查同一份中文编码。交叉注意力里的 Q 到底是谁的？
-> public: false
+> public: true
 
 > **Transformer 三讲 · 第三篇**
 >

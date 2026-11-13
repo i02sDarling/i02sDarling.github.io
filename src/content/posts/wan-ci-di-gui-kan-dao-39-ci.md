@@ -5,7 +5,7 @@ updated: "2024-04-01"
 slug: "wan-ci-di-gui-kan-dao-39-ci"
 description: "同一份输入，不剪枝要跑六万九千次递归，三条剪枝全开只剩 39 次；顺序和剪枝是怎么定下来的。"
 tags: ["算法", "搜索", "剪枝", "C++"]
-public: false
+public: true
 source: "未命名-3-20261109-2302"
 ---
 
@@ -16,7 +16,7 @@ source: "未命名-3-20261109-2302"
 > updated: 2024-04-01
 > tags: 算法, 搜索, 剪枝, C++
 > description: 同一份输入，不剪枝要跑六万九千次递归，三条剪枝全开只剩 39 次；顺序和剪枝是怎么定下来的。
-> public: false
+> public: true
 
 又翻到这道木棍题。
 

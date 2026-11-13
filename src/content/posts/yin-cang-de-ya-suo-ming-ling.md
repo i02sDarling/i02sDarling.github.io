@@ -5,7 +5,7 @@ updated: "2026-07-06"
 slug: "yin-cang-de-ya-suo-ming-ling"
 description: "`/compact` 不是用多了被禁用，是一行 disabled 判断加一次菜单过滤；你连它存在过都看不见。"
 tags: ["OpenCode", "源码", "排错"]
-public: false
+public: true
 source: "隐藏的压缩命令"
 ---
 
@@ -16,7 +16,7 @@ source: "隐藏的压缩命令"
 > updated: 2026-07-06
 > tags: OpenCode, 源码, 排错
 > description: `/compact` 不是用多了被禁用，是一行 disabled 判断加一次菜单过滤；你连它存在过都看不见。
-> public: false
+> public: true
 
 先给结论：**不是 compact 用多了，是菜单把灰项删了。**
 

@@ -5,7 +5,7 @@ updated: "2026-11-13"
 slug: "transformer-dao-di-zai-suan-shen-me"
 description: "Transformer 的本质是一个巨大的 Y = F(X)：先看清四大模块和三种架构，再把一句话走成 n×d 矩阵，最后补上位置这件事。"
 tags: ["Transformer", "注意力机制", "深度学习"]
-public: false
+public: true
 source: "未命名-20261111-163924-019"
 ---
 
@@ -16,7 +16,7 @@ source: "未命名-20261111-163924-019"
 > updated: 2026-11-13
 > tags: Transformer, 注意力机制, 深度学习
 > description: Transformer 的本质是一个巨大的 Y = F(X)：先看清四大模块和三种架构，再把一句话走成 n×d 矩阵，最后补上位置这件事。
-> public: false
+> public: true
 
 > **Transformer 三讲 · 第一篇**
 >

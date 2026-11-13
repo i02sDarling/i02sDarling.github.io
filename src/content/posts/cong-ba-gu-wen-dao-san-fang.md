@@ -5,7 +5,7 @@ updated: "2024-11-05"
 slug: "cong-ba-gu-wen-dao-san-fang"
 description: "校招从头到尾的黑话：base、年包、白菜 SP、泡池子、OC、三方，一条流程串下来。"
 tags: ["求职", "校招", "术语"]
-public: false
+public: true
 source: "未命名-20261109-2311"
 ---
 
@@ -16,7 +16,7 @@ source: "未命名-20261109-2311"
 > updated: 2024-11-05
 > tags: 求职, 校招, 术语
 > description: 校招从头到尾的黑话：base、年包、白菜 SP、泡池子、OC、三方，一条流程串下来。
-> public: false
+> public: true
 
 **基础流程**：背八股文 → 投递 → 笔试 → 面试大档 → 技术面 → 主管面 → 泡池子 → 开奖大档 → HR 面（OC）→ 意向函 → Offer → 三方。
 

@@ -1,11 +1,11 @@
-﻿---
+---
 title: "注意力只做一件事"
 date: "2026-08-23"
 updated: "2026-11-13"
 slug: "zhu-yi-li-zhi-zuo-yi-jian-shi"
 description: "注意力只做一件事：看别的词对自己的影响有多大，再按权重调整自己的语义。从 Q/K/V 的分工，到 93 分怎么变成 0.442。"
 tags: ["Transformer", "注意力机制", "QKV"]
-public: false
+public: true
 source: "未命名-20261111-202530-162"
 ---
 
@@ -16,7 +16,7 @@ source: "未命名-20261111-202530-162"
 > updated: 2026-11-13
 > tags: Transformer, 注意力机制, QKV
 > description: 注意力只做一件事：看别的词对自己的影响有多大，再按权重调整自己的语义。从 Q/K/V 的分工，到 93 分怎么变成 0.442。
-> public: false
+> public: true
 
 > **Transformer 三讲 · 第二篇**
 >
