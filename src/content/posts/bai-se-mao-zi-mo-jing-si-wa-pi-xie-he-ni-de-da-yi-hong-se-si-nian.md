@@ -5,6 +5,7 @@ updated: "2024-02-06"
 slug: "bai-se-mao-zi-mo-jing-si-wa-pi-xie-he-ni-de-da-yi-hong-se-si-nian"
 description: "发了霉的梦、脱不下的长衫、十年前的子弹——没来得及说出口的遗憾，都收在同一顶白色帽子底下。"
 tags: ["随笔", "记忆", "青春", "诗"]
+cover: "/images/bai-se-mao-zi-mo-jing-si-wa-pi-xie-he-ni-de-da-yi-hong-se-si-nian/dd40804e40.webp"
 public: false
 source: "未命名"
 ---
@@ -16,6 +17,7 @@ source: "未命名"
 > updated: 2024-02-06
 > tags: 随笔, 记忆, 青春, 诗
 > description: 发了霉的梦、脱不下的长衫、十年前的子弹——没来得及说出口的遗憾，都收在同一顶白色帽子底下。
+> cover: /images/bai-se-mao-zi-mo-jing-si-wa-pi-xie-he-ni-de-da-yi-hong-se-si-nian/dd40804e40.webp
 > public: false
 
 > 我在乡间的小路上 社会的边缘里
