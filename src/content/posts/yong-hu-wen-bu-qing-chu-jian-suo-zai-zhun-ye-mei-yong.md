@@ -5,7 +5,7 @@ updated: "2026-09-08"
 slug: "yong-hu-wen-bu-qing-chu-jian-suo-zai-zhun-ye-mei-yong"
 description: "语料侧优化到尽头之后，问题就出在 query 这一侧——六种改法都试过，实测发现原始 query 往往已经最好。"
 tags: ["RAG", "查询转换", "混合检索", "知识图谱"]
-public: false
+public: true
 source: "未命名-20261114-210947-019"
 ---
 
@@ -16,7 +16,7 @@ source: "未命名-20261114-210947-019"
 > updated: 2026-09-08
 > tags: RAG, 查询转换, 混合检索, 知识图谱
 > description: 语料侧优化到尽头之后，问题就出在 query 这一侧——六种改法都试过，实测发现原始 query 往往已经最好。
-> public: false
+> public: true
 
 离线侧优化做到头之后，剩下的所有问题都指向同一处：query 和答案之间那道语义裂缝。
 

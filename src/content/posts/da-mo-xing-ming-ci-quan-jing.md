@@ -5,7 +5,7 @@ updated: "2026-09-02"
 slug: "da-mo-xing-ming-ci-quan-jing"
 description: "把大模型领域最容易混的名词按数据流排成八段流水线，每个词都说清它站在哪一格、有没有被替代。"
 tags: ["大模型", "Transformer", "RAG", "面试"]
-public: false
+public: true
 source: "未命名-20261113-122232-778"
 ---
 
@@ -16,7 +16,7 @@ source: "未命名-20261113-122232-778"
 > updated: 2026-09-02
 > tags: 大模型, Transformer, RAG, 面试
 > description: 把大模型领域最容易混的名词按数据流排成八段流水线，每个词都说清它站在哪一格、有没有被替代。
-> public: false
+> public: true
 
 > 这篇文章只做一件事：把大模型领域最容易混、最爱被问到的那批名词，按**数据流的先后顺序**摆到同一条流水线上。
 

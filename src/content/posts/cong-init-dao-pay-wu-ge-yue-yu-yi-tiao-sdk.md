@@ -6,7 +6,7 @@ slug: "cong-init-dao-pay-wu-ge-yue-yu-yi-tiao-sdk"
 description: "五个月里我把收银台 SDK 从 init 跑通到 pay，真正上线的只有三块功能，学到的东西却是这几块的好几倍。"
 tags: ["实习", "网商银行", "支付", "前端"]
 group: "实习"
-public: false
+public: true
 source: "未命名-20261110-1322"
 ---
 
@@ -18,7 +18,7 @@ source: "未命名-20261110-1322"
 > tags: 实习, 网商银行, 支付, 前端
 > group: 实习
 > description: 五个月里我把收银台 SDK 从 init 跑通到 pay，真正上线的只有三块功能，学到的东西却是这几块的好几倍。
-> public: false
+> public: true
 
 五月的最后一周，我在开发环境里又跑了一笔转账。金额 **0.01 元**，收款方是我自己。截图存进交接文档，然后回后台把权限一项一项点掉：代码仓库、发布平台、监控看板、值班群。
 

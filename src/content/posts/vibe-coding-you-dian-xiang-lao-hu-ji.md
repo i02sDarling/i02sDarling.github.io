@@ -5,7 +5,7 @@ updated: "2025-08-11"
 slug: "vibe-coding-you-dian-xiang-lao-hu-ji"
 description: "命名者自己在原帖里写了「随便改点什么直到它消失」——老虎机的结构不在提示词里，在这一步。"
 tags: ["AI", "vibe coding", "编程", "产品"]
-public: false
+public: true
 source: "未命名-20261110-2327"
 ---
 
@@ -16,7 +16,7 @@ source: "未命名-20261110-2327"
 > updated: 2025-08-11
 > tags: AI, vibe coding, 编程, 产品
 > description: 命名者自己在原帖里写了「随便改点什么直到它消失」——老虎机的结构不在提示词里，在这一步。
-> public: false
+> public: true
 
 ![](/images/vibe-coding-you-dian-xiang-lao-hu-ji/483db079d6.webp)
 

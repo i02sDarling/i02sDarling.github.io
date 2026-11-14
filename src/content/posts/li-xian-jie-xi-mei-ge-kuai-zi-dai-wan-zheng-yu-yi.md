@@ -5,7 +5,7 @@ updated: "2026-09-07"
 slug: "li-xian-jie-xi-mei-ge-kuai-zi-dai-wan-zheng-yu-yi"
 description: "语义分块实测从 1 掉到 0.5，块标题却从 0.5 升到 1——离线模块的优化能不能做，全看它动的是哪一步。"
 tags: ["RAG", "文本分块", "语义分块", "多模态"]
-public: false
+public: true
 source: "未命名-20261114-210814-969"
 ---
 
@@ -16,7 +16,7 @@ source: "未命名-20261114-210814-969"
 > updated: 2026-09-07
 > tags: RAG, 文本分块, 语义分块, 多模态
 > description: 语义分块实测从 1 掉到 0.5，块标题却从 0.5 升到 1——离线模块的优化能不能做，全看它动的是哪一步。
-> public: false
+> public: true
 
 切块是唯一一个「切错了，后面所有优化都补不回来」的环节。所以先从这里开刀。
 

@@ -6,7 +6,7 @@ slug: "jiu-zuo-yi-xiao-shi-shen-ti-kai-shi-ji-zhang"
 description: "平板当不了副屏，咖啡不必买贵的；真正要算账的，是久坐那一小时。"
 tags: ["工位", "健康", "生活"]
 group: "健康"
-public: false
+public: true
 source: "久坐人的经验"
 ---
 
@@ -18,7 +18,7 @@ source: "久坐人的经验"
 > tags: 工位, 健康, 生活
 > group: 健康
 > description: 平板当不了副屏，咖啡不必买贵的；真正要算账的，是久坐那一小时。
-> public: false
+> public: true
 
 ## 副屏
 

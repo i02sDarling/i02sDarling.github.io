@@ -5,7 +5,7 @@ updated: "2025-11-03"
 slug: "why-be-kind-to-a-thing-that-cannot-feel"
 description: "它读不懂颜色，也摸不到按钮，却会因为一句脏话改变下一句。两篇论文对这件事给出了相反的答案。"
 tags: ["AI", "模型福祉", "论文"]
-public: false
+public: true
 source: "未命名-20261113-215519-284"
 ---
 
@@ -16,7 +16,7 @@ source: "未命名-20261113-215519-284"
 > updated: 2025-11-03
 > tags: AI, 模型福祉, 论文
 > description: 它读不懂颜色，也摸不到按钮，却会因为一句脏话改变下一句。两篇论文对这件事给出了相反的答案。
-> public: false
+> public: true
 
 我说过一句挺重的话：它聪明得吓人，可它摸到的世界只有黑和白。
 

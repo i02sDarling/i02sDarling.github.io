@@ -5,7 +5,7 @@ updated: "2026-09-11"
 slug: "chong-pai-ya-suo-yu-fan-kui-hui-lu"
 description: "在线链路的每一步都要付延迟和 token，重排、压缩、反馈回路能加分，但每一分都要算清代价。"
 tags: ["RAG", "重排序", "上下文压缩", "反馈回路"]
-public: false
+public: true
 source: "未命名-20261114-211107-005"
 ---
 
@@ -16,7 +16,7 @@ source: "未命名-20261114-211107-005"
 > updated: 2026-09-11
 > tags: RAG, 重排序, 上下文压缩, 反馈回路
 > description: 在线链路的每一步都要付延迟和 token，重排、压缩、反馈回路能加分，但每一分都要算清代价。
-> public: false
+> public: true
 
 检索回来的东西，往往不是最终答案该用的东西。在线链路的收尾，就是把它们挑一遍、压一遍、记住了下次别再算一遍。
 

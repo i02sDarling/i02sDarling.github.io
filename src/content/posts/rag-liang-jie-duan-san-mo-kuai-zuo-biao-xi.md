@@ -5,7 +5,7 @@ updated: "2026-09-05"
 slug: "rag-liang-jie-duan-san-mo-kuai-zuo-biao-xi"
 description: "20 个优化点真正要记的不是招式名，而是每一招站在「两阶段三模块六个原子环节」里的哪一格。"
 tags: ["RAG", "LlamaIndex", "检索增强"]
-public: false
+public: true
 source: "未命名-20261114-210617-057"
 ---
 
@@ -16,7 +16,7 @@ source: "未命名-20261114-210617-057"
 > updated: 2026-09-05
 > tags: RAG, LlamaIndex, 检索增强
 > description: 20 个优化点真正要记的不是招式名，而是每一招站在「两阶段三模块六个原子环节」里的哪一格。
-> public: false
+> public: true
 
 20 个优化点，一个点配一个 notebook。要记的不是这 20 个名字，是它们各自站在流程的哪一格。
 
