@@ -18,6 +18,8 @@ export interface PostMetadata {
   tags?: string[]
   group?: string
   description?: string
+  /** 文章封面（站点 public 下的 /images/...）；空 = 不显示 */
+  cover?: string
   public?: boolean
   /** 软删除：ip-studio 删除文章时写 true，站点据此隐藏（文件还在，可恢复） */
   deleted?: boolean
@@ -31,6 +33,7 @@ const KEYS = new Set([
   'tags',
   'group',
   'description',
+  'cover',
   'public',
   'deleted',
 ])
@@ -138,6 +141,10 @@ export function parseMetadataBlock(source = ''): ParsedMetadataBlock {
         metadata.description = oneLine(raw)
         break
       }
+      case 'cover': {
+        metadata.cover = oneLine(raw)
+        break
+      }
       case 'public': {
         const value = toBoolean(raw)
         if (value !== null) metadata.public = value
@@ -179,6 +186,8 @@ export interface PostDataView {
   description: string
   tags: string[]
   group: string
+  /** 封面图地址；空 = 不显示 */
+  cover: string
   public: boolean
   /** 软删除：true = 不进列表、不生成页面 */
   deleted: boolean
@@ -201,6 +210,7 @@ export function resolvePostData(post: PostLike): PostDataView {
     description: 'description' in block ? (block.description ?? '') : (data.description ?? ''),
     tags: 'tags' in block ? (block.tags ?? []) : (data.tags ?? []),
     group: 'group' in block ? (block.group ?? '') : (data.group ?? ''),
+    cover: 'cover' in block ? (block.cover ?? '') : (data.cover ?? ''),
     public: 'public' in block ? Boolean(block.public) : Boolean(data.public),
     deleted: 'deleted' in block ? Boolean(block.deleted) : Boolean(data.deleted),
   }

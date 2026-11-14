@@ -79,6 +79,13 @@ const lastEdited = meta.updated || meta.date
 
     <div class="article">
       <Content />
+      {
+        meta.cover ? (
+          <figure class="post-cover" style={`--cover: url('${meta.cover}')`}>
+            <img src={meta.cover} alt={`${meta.title} 封面`} loading="lazy" decoding="async" />
+          </figure>
+        ) : null
+      }
     </div>
 
     <hr />

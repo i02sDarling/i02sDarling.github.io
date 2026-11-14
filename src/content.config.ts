@@ -14,6 +14,8 @@ const posts = defineCollection({
     tags: z.array(z.string()).default([]),
     // 文章分组：列表里显示在标题左侧的小标签（如「日语」），空串 = 不分组
     group: z.string().default(''),
+    // 文章封面：只在文章详情页正文顶部显示，列表 / RSS 都不用
+    cover: z.string().default(''),
     public: z.boolean().default(false),
     // 软删除标记：ip-studio 删除文章时只写这个字段，站点据此把文章从列表和页面里过滤掉，
     // 不删文件——这样每次更新都是增量改写，恢复也只是把标记去掉。

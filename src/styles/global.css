@@ -838,6 +838,132 @@ html.dark .post-year {
   font-size: 1rem;
 }
 
+/* ── 文章封面：一张压在厚玻璃下的照片 ───────────────────────── */
+/*
+ * 位置：正文末尾（列表页与 RSS 不读 cover）。
+ * 做法：同一张封面图铺两遍——
+ *   · 底层 `::before` 是同一张图按 cover 铺满 + 轻微放大与模糊（含 14px 内边距），
+ *     只从围边那一圈露出来：这就是「隔着厚玻璃看照片边缘」的折射 / 树皮纹；
+ *   · 上层 `img` 是清晰的原图，圆角一收，跟围边只差 1px 亮线。
+ * 再补一层极淡的斜光与内高光当玻璃面；不倾斜、不翻动、不做立体卡片。
+ * 图片地址从 `.post-cover` 上的 `--cover` 变量拿，两处共用一张图。
+ */
+.article .post-cover {
+  position: relative;
+  margin: 2.6em 0 0;
+  padding: 14px;
+  border: 1px solid var(--border-4);
+  border-radius: 14px;
+  background: var(--fill-1);
+  overflow: hidden;
+  isolation: isolate;
+  box-shadow: 0 18px 34px -28px rgb(0 0 0 / 0.45);
+}
+
+/* 轻微立体：只抬 1px，不做倾斜和弹跳 */
+@media (hover: hover) {
+  .article .post-cover:hover {
+    transform: translateY(-1px);
+  }
+}
+
+/* 折射层：同一张图按 cover 铺满整块（含内边距），几乎不缩放，
+   所以围边那圈就是照片自己往外延续的一段，只是被玻璃糊开 */
+.article .post-cover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: var(--cover);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center 35%;
+  transform: scale(1.04) scaleY(1.03);
+  filter: blur(5px) saturate(1.24) contrast(1.06) brightness(1.01);
+}
+
+/* 玻璃面：一道很淡的斜光 + 围边内高光；鼠标点图片仍然能开大图 */
+.article .post-cover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      116deg,
+      transparent 20%,
+      rgb(255 255 255 / 0.12) 27%,
+      rgb(255 255 255 / 0.03) 33%,
+      transparent 40%
+    ),
+    linear-gradient(180deg, rgb(255 255 255 / 0.1), transparent 12%);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.3),
+    inset 0 -1px 12px rgb(0 0 0 / 0.1);
+}
+
+/* 16:9 的封面带：图片撑满整块，多出来的方向只裁不拉伸 */
+.article .post-cover img {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  max-width: 100%;
+  margin: 0;
+  border: none;
+  border-radius: 6px;
+  background: var(--fill-1);
+  object-fit: cover;
+  object-position: center 35%;
+  cursor: zoom-in;
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.4);
+}
+
+html.dark .article .post-cover {
+  border-color: var(--border-4);
+  box-shadow: 0 20px 38px -28px rgb(0 0 0 / 0.85);
+}
+
+html.dark .article .post-cover::before {
+  filter: blur(5px) saturate(1.1) contrast(1.04) brightness(0.84);
+}
+
+html.dark .article .post-cover::after {
+  background:
+    linear-gradient(
+      116deg,
+      transparent 20%,
+      rgb(255 255 255 / 0.08) 27%,
+      rgb(255 255 255 / 0.02) 33%,
+      transparent 40%
+    ),
+    linear-gradient(180deg, rgb(255 255 255 / 0.06), transparent 12%);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.14),
+    inset 0 -1px 14px rgb(0 0 0 / 0.35);
+}
+
+html.dark .article .post-cover img {
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.12);
+}
+
+@media (max-width: 640px) {
+  .article .post-cover {
+    margin-top: 2em;
+    padding: 9px;
+    border-radius: 11px;
+  }
+
+  .article .post-cover img {
+    border-radius: 4px;
+  }
+}
+
 /* 正文图片：统一成同一个「画框」——宽度跟满正文列、固定 4:3 的画框，
    长截图 / 宽截图都按 object-fit: contain 装进去，不再一张大一张小；
    点一下走下面的 lightbox 放大看原图。 */
