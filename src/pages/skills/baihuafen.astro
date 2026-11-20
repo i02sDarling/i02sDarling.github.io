@@ -1,0 +1,2896 @@
+---
+import Base from '../../layouts/Base.astro'
+---
+
+<Base
+  title="百化分训练器"
+  description="行测资料分析·百化分条件反射训练：随机出百分数，目标秒答 1/n，带记忆法解释、计算器和草稿纸。"
+>
+  <section class="wrap bhf" id="bhfRoot">
+    <div class="bhf-head">
+      <div>
+        <p class="bhf-kicker"><a href="/skills/">← 工具</a> · 行测资料分析</p>
+        <h1 class="bhf-title">百化分训练器</h1>
+      </div>
+      <div class="topacts">
+        <button class="icon" id="btnTable" type="button" title="1/n 基础百分表">1/n 表</button>
+        <button class="icon" id="btnFull" type="button" title="全屏 / 沉浸模式">全屏</button>
+        <button class="icon" id="btnSet" type="button" title="设置">设置</button>
+      </div>
+    </div>
+
+    <p class="lead">
+      随机出一个数，把它秒翻成 <b>1/n</b>。答错会告诉你课件里的记忆法；算不过来就打开计算器，
+      算完点「提交答案」直接判分。
+    </p>
+
+    <div class="stats">
+      <div class="st"><span class="k">正确</span><span class="v" id="sRight">0 / 0</span></div>
+      <div class="st"><span class="k">连击</span><span class="v" id="sStreak">0</span></div>
+      <div class="st"><span class="k">平均用时</span><span class="v" id="sTime">—</span></div>
+    </div>
+    <div class="meta" id="sMeta">正向 · 中等</div>
+
+    <div class="card" id="card">
+      <div class="qtype" id="qtype">百 分 数 → 分 母</div>
+      <div class="q" id="q">—</div>
+      <div class="sub" id="sub"></div>
+      <div class="fb" id="fb"></div>
+    </div>
+
+    <div class="numrow" id="numRow">
+      <button class="nk" type="button" data-k="1">1</button>
+      <button class="nk" type="button" data-k="2">2</button>
+      <button class="nk" type="button" data-k="3">3</button>
+      <button class="nk" type="button" data-k="4">4</button>
+      <button class="nk" type="button" data-k="5">5</button>
+      <button class="nk" type="button" data-k="6">6</button>
+      <button class="nk" type="button" data-k="7">7</button>
+      <button class="nk" type="button" data-k="8">8</button>
+      <button class="nk" type="button" data-k="9">9</button>
+      <button class="nk" type="button" data-k="0">0</button>
+      <button class="nk" type="button" data-k=".">.</button>
+      <button class="nk fn" type="button" data-k="back">←</button>
+    </div>
+
+    <div class="actrow"><button id="btnGo" type="button">提交 (Enter)</button></div>
+
+    <div class="toolbar">
+      <button class="tbtn" id="btnTool" type="button">🧮 计算器 ⇄</button>
+      <span class="thint">心里算不出来就点开，这个按钮在两种工具间切换</span>
+    </div>
+
+    <div class="tool" id="tool" hidden>
+      <div class="tooltabs">
+        <button class="tt on" type="button" data-t="calc">计算器</button>
+        <button class="tt" type="button" data-t="pad">草稿纸</button>
+        <span class="sp"></span>
+        <button class="tt" id="btnToolClose" type="button">收起</button>
+      </div>
+      <div class="toolbody">
+        <div id="paneCalc">
+          <div class="cdisp">
+            <input id="calcIn" type="text" inputmode="none" autocomplete="off" spellcheck="false" placeholder="345/1.14" />
+            <div class="cout dim" id="calcOut">0</div>
+          </div>
+          <div class="keys" id="calcKeys">
+            <button class="k fn" type="button" data-k="C">C</button>
+            <button class="k fn" type="button" data-k="back">←</button>
+            <button class="k fn" type="button" data-k="(">(</button>
+            <button class="k fn" type="button" data-k=")">)</button>
+            <button class="k" type="button" data-k="7">7</button>
+            <button class="k" type="button" data-k="8">8</button>
+            <button class="k" type="button" data-k="9">9</button>
+            <button class="k op" type="button" data-k="÷">÷</button>
+            <button class="k" type="button" data-k="4">4</button>
+            <button class="k" type="button" data-k="5">5</button>
+            <button class="k" type="button" data-k="6">6</button>
+            <button class="k op" type="button" data-k="×">×</button>
+            <button class="k" type="button" data-k="1">1</button>
+            <button class="k" type="button" data-k="2">2</button>
+            <button class="k" type="button" data-k="3">3</button>
+            <button class="k op" type="button" data-k="−">−</button>
+            <button class="k" type="button" data-k="0">0</button>
+            <button class="k" type="button" data-k=".">.</button>
+            <button class="k op" type="button" data-k="%">%</button>
+            <button class="k op" type="button" data-k="+">+</button>
+            <div class="eqrow">
+              <button class="k eq" type="button" data-k="=">=</button>
+              <button class="k send" id="calcSend" type="button" title="把计算结果填入答案并提交">提交答案</button>
+            </div>
+          </div>
+        </div>
+        <div id="panePad" hidden>
+          <div class="padbar">
+            <button class="pbtn on" id="padPen" type="button">笔</button>
+            <button class="pbtn" id="padErase" type="button">擦</button>
+            <button class="pdot on" type="button" data-pen="1" aria-label="墨色"></button>
+            <button class="pdot" type="button" data-pen="2" aria-label="橙色"></button>
+            <button class="pdot" type="button" data-pen="3" aria-label="青色"></button>
+            <button class="pbtn on" type="button" data-w="2.5">细</button>
+            <button class="pbtn" type="button" data-w="5">粗</button>
+            <span class="sp"></span>
+            <button class="pbtn" id="padUndo" type="button">撤销</button>
+            <button class="pbtn" id="padClear" type="button">清空</button>
+          </div>
+          <canvas id="pad"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="hist">
+      <div class="histhead">
+        <h2>最近答题 · 点一条可重做</h2>
+        <div class="tools">
+          <span class="cnt" id="hCount">0 条</span>
+          <button id="btnClear" type="button">清空</button>
+        </div>
+      </div>
+      <div class="histlist" id="histList"></div>
+    </div>
+
+    <div class="foot">
+      <div>Δ = 现期 × r / (1+r) = 现期 ÷ (1 + 1/r)</div>
+      <div>
+        r = <code>1/n</code> 时，增长量 = 现期 ÷ <code>(n+1)</code>　·　反向估算：<code>百分数↑ → 分母↓</code>
+      </div>
+    </div>
+
+    <!-- 设置 -->
+    <div class="modal" id="setModal" hidden>
+      <div class="sheet">
+        <div class="sheethead"><h2>设置</h2><button class="icon" id="setClose" type="button">完成</button></div>
+        <p class="lead">
+          随机出一个数，你要秒回它属于 <b>1/n</b>。答错会告诉你课件里的记忆法。<br />
+          <b>简单</b>只出表里 1/2–1/20 三段（基础 / 进阶 / 高阶）和它们的倍数（2/3、3/8、7/10…）；<br />
+          <b>中等</b>只出「一步能变形」的题：53% ← 5.3%、28.6% ← 2/7、249% ≈ 250%。
+        </p>
+        <div class="row">
+          <span class="rowlabel">题型</span>
+          <div class="chips" id="modeChips">
+            <button class="chip on" type="button" data-m="fwd">% → 分母</button>
+            <button class="chip" type="button" data-m="rev">分母 → %</button>
+            <button class="chip" type="button" data-m="growth">增长量</button>
+            <button class="chip" type="button" data-m="est">反向估算</button>
+            <button class="chip" type="button" data-m="mixed">混合</button>
+          </div>
+        </div>
+        <div class="row">
+          <span class="rowlabel">难度</span>
+          <div class="chips" id="levelChips">
+            <button class="chip" type="button" data-l="0">简单</button>
+            <button class="chip on" type="button" data-l="1">中等</button>
+            <button class="chip" type="button" data-l="2">困难</button>
+          </div>
+          <span class="lvnote" id="lvNote">表内值一步变形</span>
+        </div>
+        <div class="row">
+          <span class="rowlabel">范围</span>
+          <div class="chips" id="groupChips">
+            <button class="chip on" type="button" data-g="basic">2–10 基础</button>
+            <button class="chip on" type="button" data-g="mid">11–15 进阶</button>
+            <button class="chip on" type="button" data-g="high">16–20 高阶</button>
+            <button class="chip on" type="button" data-g="dec">小数分母</button>
+            <button class="chip on" type="button" data-g="big">超 100%</button>
+          </div>
+        </div>
+        <div class="row">
+          <span class="rowlabel">工具</span>
+          <div class="chips">
+            <button class="chip" id="btnTable2" type="button">1/n 百分表</button>
+            <button class="chip" id="btnCalcQuick" type="button">计算器 / 草稿纸</button>
+          </div>
+        </div>
+        <div class="snote">
+          判定规则：分母题要与标准值相差 <b>不到 0.01</b> 才算对；百分数题容差 ±2%；增长量题按除数 ±0.01。<br />
+          答题直接用题目下面那排小键盘，不会弹系统键盘；计算器算完点「提交答案」，结果会直接填进答案并提交。<br />
+          手机上浏览器多半不支持真全屏，点「全屏」会收起站点页头页脚；想真全屏可以「添加到主屏幕」再打开。
+        </div>
+      </div>
+    </div>
+
+    <!-- 1/n 表 -->
+    <div class="modal" id="tblModal" hidden>
+      <div class="sheet">
+        <div class="sheethead"><h2>1/n 百分表</h2><button class="icon" id="tblClose" type="button">关闭</button></div>
+        <div class="tblmode" id="tblMode">
+          <button class="chip on" type="button" data-tm="easy">简单</button>
+          <button class="chip" type="button" data-tm="all">全部</button>
+        </div>
+        <div id="tblBody"></div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style is:global>
+  /* =========================================================
+     百化分训练器：跟随站点的浅色 / 暗色主题
+     ========================================================= */
+  .bhf {
+    --panel: #ffffff;
+    --panel2: #f5f5f7;
+    --key: #fbfbfc;
+    --line: #e5e5e9;
+    --txt: #141416;
+    --dim: #6f6f78;
+    --faint: #9a9aa2;
+    --ok: #0f9d76;
+    --bad: #e11d48;
+    --accent: #6d28d9;
+    --on-accent: #ffffff;
+    --accent-weak: rgba(109, 40, 217, 0.08);
+    --accent-line: rgba(109, 40, 217, 0.38);
+    --send: #0f9d76;
+    --on-send: #ffffff;
+    --overlay: rgba(24, 24, 28, 0.38);
+    --pad-bg: #ffffff;
+    --pad-dot: #e3e3e9;
+    --pen1: #1c1c1f;
+    --pen2: #d97706;
+    --pen3: #0d9488;
+    color: var(--txt);
+  }
+
+  html.dark .bhf {
+    --panel: #0e0e10;
+    --panel2: #17171a;
+    --key: #0b0b0d;
+    --line: #2a2a30;
+    --txt: #ececf1;
+    --dim: #a0a0aa;
+    --faint: #6f6f7a;
+    --ok: #34d399;
+    --bad: #fb7185;
+    --accent: #a78bfa;
+    --on-accent: #15101f;
+    --accent-weak: rgba(167, 139, 250, 0.12);
+    --accent-line: rgba(167, 139, 250, 0.4);
+    --send: #2fd4a0;
+    --on-send: #062a20;
+    --overlay: rgba(0, 0, 0, 0.65);
+    --pad-bg: #0b0b0d;
+    --pad-dot: #232329;
+    --pen1: #eaeaef;
+    --pen2: #fbbf24;
+    --pen3: #4ecdc4;
+  }
+
+  .bhf .bhf-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .bhf .bhf-kicker {
+    margin: 0 0 8px;
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  .bhf .bhf-kicker a {
+    border-bottom: none;
+    color: var(--faint);
+    transition: color 0.2s;
+  }
+
+  .bhf .bhf-kicker a:hover {
+    color: var(--accent);
+  }
+
+  .bhf .bhf-title {
+    margin: 0 0 10px;
+    font-size: clamp(1.55rem, 5vw, 2rem);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  .bhf .lead {
+    margin: 0 0 20px;
+    max-width: 37rem;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--dim);
+  }
+
+  .bhf .lead b {
+    color: var(--txt);
+    font-weight: 600;
+  }
+
+  .bhf button {
+    font-family: inherit;
+    touch-action: manipulation;
+  }
+
+  /* ---------- 顶栏按钮 ---------- */
+  .bhf .topacts {
+    display: flex;
+    gap: 6px;
+    padding-bottom: 10px;
+  }
+
+  .bhf .icon {
+    height: 34px;
+    min-width: 34px;
+    padding: 0 10px;
+    border-radius: 8px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    color: var(--dim);
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.15s;
+  }
+
+  .bhf .icon:hover {
+    color: var(--txt);
+    border-color: var(--accent-line);
+  }
+
+  .bhf .icon:active {
+    transform: scale(0.96);
+  }
+
+  .bhf .icon.on {
+    background: var(--accent-weak);
+    border-color: var(--accent-line);
+    color: var(--accent);
+  }
+
+  /* ---------- 统计 ---------- */
+  .bhf .stats {
+    display: flex;
+    gap: 9px;
+    margin: 0 0 9px;
+  }
+
+  .bhf .st {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 11px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--panel);
+  }
+
+  .bhf .st .k {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--faint);
+  }
+
+  .bhf .st .v {
+    font-size: 16.5px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .bhf .meta {
+    margin: 0 0 13px;
+    font-size: 11.5px;
+    letter-spacing: 0.02em;
+    color: var(--faint);
+  }
+
+  .bhf .meta b {
+    color: var(--txt);
+    font-weight: 600;
+  }
+
+  /* ---------- 题目卡 ---------- */
+  .bhf .card {
+    position: relative;
+    margin: 0;
+    padding: 12px 14px 11px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--panel);
+    text-align: center;
+    transition: border-color 0.18s, box-shadow 0.18s;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  }
+
+  .bhf .card.ok {
+    border-color: rgba(15, 157, 118, 0.5);
+    box-shadow: 0 0 0 3px rgba(15, 157, 118, 0.07);
+  }
+
+  html.dark .bhf .card.ok {
+    border-color: rgba(52, 211, 153, 0.55);
+    box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.08);
+  }
+
+  .bhf .card.bad {
+    border-color: rgba(225, 29, 72, 0.45);
+    box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.06);
+    animation: bhf-shake 0.32s;
+  }
+
+  html.dark .bhf .card.bad {
+    border-color: rgba(251, 113, 133, 0.5);
+    box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.07);
+  }
+
+  @keyframes bhf-shake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    20% {
+      transform: translateX(-7px);
+    }
+    40% {
+      transform: translateX(6px);
+    }
+    60% {
+      transform: translateX(-4px);
+    }
+    80% {
+      transform: translateX(3px);
+    }
+  }
+
+  .bhf .qtype {
+    margin-bottom: 5px;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    color: var(--faint);
+  }
+
+  .bhf .q {
+    margin-bottom: 5px;
+    font-size: clamp(28px, 8vw, 44px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    font-variant-numeric: tabular-nums;
+    color: var(--txt);
+  }
+
+  .bhf .sub {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    min-height: 38px;
+    font-size: clamp(17px, 4.6vw, 23px);
+    color: var(--dim);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bhf .sub .small {
+    font-size: 13.5px;
+    color: var(--faint);
+  }
+
+  .bhf .sub .baseline {
+    flex: 0 0 100%;
+  }
+
+  .bhf .sub input {
+    width: 112px;
+    padding: 4px 8px;
+    border: 2px solid var(--line);
+    border-radius: 10px;
+    outline: none;
+    background: var(--key);
+    color: var(--txt);
+    font-family: inherit;
+    font-size: clamp(19px, 5vw, 24px);
+    font-weight: 600;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .bhf .sub input:focus,
+  .bhf .sub input.active {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-weak);
+  }
+
+  .bhf .sub input::placeholder {
+    color: var(--faint);
+    font-weight: 400;
+  }
+
+  .bhf .sub input.nudge {
+    border-color: var(--bad);
+    animation: bhf-shake 0.3s;
+  }
+
+  .bhf .optrow {
+    flex: 0 0 100%;
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    max-width: 460px;
+    margin: 4px auto 0;
+  }
+
+  .bhf .opt {
+    flex: 1;
+    padding: 12px 8px;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    background: var(--panel2);
+    color: var(--txt);
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.3;
+    cursor: pointer;
+    transition: 0.15s;
+  }
+
+  .bhf .opt:hover {
+    border-color: var(--accent);
+    background: var(--accent-weak);
+  }
+
+  .bhf .opt.right {
+    border-color: var(--ok);
+    background: rgba(15, 157, 118, 0.1);
+    color: var(--ok);
+  }
+
+  html.dark .bhf .opt.right {
+    background: rgba(52, 211, 153, 0.12);
+  }
+
+  .bhf .opt.wrong {
+    border-color: var(--bad);
+    background: rgba(225, 29, 72, 0.08);
+    color: var(--bad);
+  }
+
+  html.dark .bhf .opt.wrong {
+    background: rgba(251, 113, 133, 0.1);
+  }
+
+  .bhf .opt .kbd {
+    display: block;
+    margin-top: 4px;
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--faint);
+  }
+
+  /* ---------- 反馈 ---------- */
+  .bhf .fb {
+    margin-top: 10px;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  .bhf .fb:empty {
+    display: none;
+  }
+
+  .bhf .fb .ok {
+    color: var(--ok);
+    font-weight: 600;
+  }
+
+  .bhf .fb .bad {
+    color: var(--bad);
+    font-weight: 600;
+  }
+
+  .bhf .fb .tip {
+    display: inline-block;
+    max-width: 100%;
+    margin-top: 9px;
+    padding: 9px 13px;
+    border: 1px dashed var(--line);
+    border-radius: 9px;
+    background: var(--panel2);
+    color: var(--dim);
+    font-size: 12.5px;
+    line-height: 1.75;
+    text-align: left;
+  }
+
+  .bhf .fb .tip b {
+    color: var(--txt);
+  }
+
+  .bhf .fb .tip em {
+    color: var(--accent);
+    font-style: normal;
+    font-weight: 600;
+  }
+
+  .bhf .fb .near {
+    margin-top: 7px;
+    font-size: 12px;
+    color: var(--faint);
+  }
+
+  /* ---------- 答题小键盘 ---------- */
+  .bhf .numrow {
+    display: flex;
+    gap: 5px;
+    margin: 10px auto 0;
+    max-width: 440px;
+  }
+
+  .bhf .nk {
+    flex: 1 1 0;
+    min-width: 0;
+    height: 44px;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--panel2);
+    color: var(--txt);
+    font-family: inherit;
+    font-size: 17px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .bhf .nk:hover {
+    border-color: var(--accent-line);
+  }
+
+  .bhf .nk:active {
+    background: var(--accent-weak);
+    transform: scale(0.95);
+  }
+
+  .bhf .nk.fn {
+    color: var(--dim);
+    font-size: 15px;
+  }
+
+  .bhf .numrow.off {
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  .bhf .actrow {
+    max-width: 440px;
+    margin: 10px auto 0;
+  }
+
+  .bhf #btnGo {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    background: var(--accent);
+    color: var(--on-accent);
+    font-family: inherit;
+    font-size: 15.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter 0.15s, transform 0.08s;
+  }
+
+  .bhf #btnGo:hover {
+    filter: brightness(1.08);
+  }
+
+  .bhf #btnGo:active {
+    transform: scale(0.99);
+  }
+
+  /* ---------- 历史 ---------- */
+  .bhf .hist {
+    margin-top: 26px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+
+  .bhf .histhead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .bhf .histhead h2 {
+    margin: 0;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--dim);
+  }
+
+  .bhf .histhead .tools {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .bhf .histhead .cnt {
+    font-size: 11px;
+    color: var(--faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bhf #btnClear {
+    padding: 4px 10px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: none;
+    color: var(--dim);
+    font-family: inherit;
+    font-size: 11.5px;
+    cursor: pointer;
+    transition: 0.15s;
+  }
+
+  .bhf #btnClear:hover {
+    color: var(--bad);
+    border-color: var(--bad);
+  }
+
+  .bhf .histlist {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 340px;
+    overflow: auto;
+    padding-right: 4px;
+  }
+
+  .bhf .hrow {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex-wrap: wrap;
+    padding: 8px 11px;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--line);
+    border-radius: 8px;
+    background: var(--panel);
+    font-size: 12.5px;
+    line-height: 1.5;
+  }
+
+  .bhf .hrow.canredo {
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .bhf .hrow.canredo:hover {
+    border-color: var(--accent-line);
+    background: var(--panel2);
+  }
+
+  .bhf .hrow.ok {
+    border-left-color: var(--ok);
+  }
+
+  .bhf .hrow.bad {
+    border-left-color: var(--bad);
+  }
+
+  .bhf .hrow .tag {
+    flex: none;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--panel2);
+    color: var(--dim);
+    font-size: 10px;
+  }
+
+  .bhf .hrow .qt {
+    flex: 1 1 auto;
+    min-width: 0;
+    color: var(--txt);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bhf .hrow .an {
+    flex: 1 0 100%;
+    order: 9;
+    color: var(--faint);
+    font-size: 11.5px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bhf .hrow .an b {
+    color: var(--ok);
+    font-weight: 600;
+  }
+
+  .bhf .hrow .tm {
+    flex: none;
+    color: var(--faint);
+    font-size: 10px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bhf .hrow .mark {
+    flex: none;
+    font-weight: 700;
+  }
+
+  .bhf .hrow.ok .mark {
+    color: var(--ok);
+  }
+
+  .bhf .hrow.bad .mark {
+    color: var(--bad);
+  }
+
+  .bhf .hempty {
+    padding: 6px 2px;
+    font-size: 12px;
+    color: var(--faint);
+  }
+
+  .bhf .foot {
+    margin-top: 24px;
+    font-size: 11.5px;
+    line-height: 2;
+    text-align: center;
+    color: var(--faint);
+  }
+
+  .bhf .foot code {
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--panel2);
+    color: var(--dim);
+    font-size: 11px;
+  }
+
+  .bhf [hidden] {
+    display: none !important;
+  }
+
+  /* ---------- 工具块 ---------- */
+  .bhf .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-top: 12px;
+  }
+
+  .bhf .tbtn {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 13px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--panel);
+    color: var(--txt);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.15s;
+  }
+
+  .bhf .tbtn:hover {
+    border-color: var(--accent-line);
+  }
+
+  .bhf .tbtn.on {
+    border-color: var(--accent-line);
+    background: var(--accent-weak);
+    color: var(--accent);
+  }
+
+  .bhf .thint {
+    font-size: 11px;
+    line-height: 1.4;
+    color: var(--faint);
+  }
+
+  .bhf .tool {
+    margin-top: 9px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--panel);
+    overflow: hidden;
+  }
+
+  .bhf .tooltabs {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 9px;
+    border-bottom: 1px solid var(--line);
+    background: var(--panel2);
+  }
+
+  .bhf .tooltabs .sp,
+  .bhf .padbar .sp {
+    flex: 1;
+  }
+
+  .bhf .tt {
+    padding: 5px 11px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    background: none;
+    color: var(--dim);
+    font-family: inherit;
+    font-size: 12.5px;
+    cursor: pointer;
+  }
+
+  .bhf .tt.on {
+    border-color: var(--accent-line);
+    background: var(--accent-weak);
+    color: var(--accent);
+  }
+
+  .bhf .toolbody {
+    padding: 10px;
+  }
+
+  .bhf .cdisp {
+    max-width: 420px;
+    margin: 0 auto 8px;
+    padding: 7px 11px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--key);
+  }
+
+  .bhf #calcIn {
+    width: 100%;
+    padding: 2px 0;
+    border: none;
+    outline: none;
+    background: none;
+    color: var(--txt);
+    font-family: inherit;
+    font-size: 18px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  .bhf #calcIn::placeholder {
+    color: var(--faint);
+    font-weight: 400;
+  }
+
+  .bhf .cout {
+    min-height: 27px;
+    overflow: hidden;
+    color: var(--accent);
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1.3;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bhf .cout.dim {
+    color: var(--faint);
+    font-size: 14px;
+    font-weight: 400;
+  }
+
+  .bhf .keys {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 7px;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  .bhf .keys .k {
+    height: 45px;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--panel2);
+    color: var(--txt);
+    font-family: inherit;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .bhf .keys .k:hover {
+    border-color: var(--accent-line);
+  }
+
+  .bhf .keys .k:active {
+    background: var(--accent-weak);
+  }
+
+  .bhf .keys .k.fn {
+    color: var(--dim);
+    font-size: 14.5px;
+  }
+
+  .bhf .keys .k.op {
+    color: var(--accent);
+  }
+
+  .bhf .keys .k.eq {
+    grid-column: auto;
+    height: 43px;
+    border: none;
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+
+  .bhf .eqrow {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 7fr 3fr;
+    gap: 7px;
+  }
+
+  .bhf .keys .k.send {
+    height: 43px;
+    padding: 0;
+    border: none;
+    border-radius: 10px;
+    background: var(--send);
+    color: var(--on-send);
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .bhf .keys .k.send:active {
+    filter: brightness(0.94);
+  }
+
+  .bhf .padbar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+
+  .bhf .pbtn {
+    height: 29px;
+    padding: 0 10px;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    background: var(--panel2);
+    color: var(--dim);
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  .bhf .pbtn.on {
+    border-color: var(--accent-line);
+    background: var(--accent-weak);
+    color: var(--accent);
+  }
+
+  .bhf .pdot {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  .bhf .pdot[data-pen='1'] {
+    background: var(--pen1);
+  }
+
+  .bhf .pdot[data-pen='2'] {
+    background: var(--pen2);
+  }
+
+  .bhf .pdot[data-pen='3'] {
+    background: var(--pen3);
+  }
+
+  .bhf .pdot.on {
+    border-color: var(--txt);
+    box-shadow: 0 0 0 2px var(--accent-weak);
+  }
+
+  .bhf #pad {
+    display: block;
+    width: 100%;
+    height: clamp(190px, 32dvh, 300px);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background-color: var(--pad-bg);
+    background-image: radial-gradient(var(--pad-dot) 1px, transparent 1px);
+    background-size: 22px 22px;
+    touch-action: none;
+    cursor: crosshair;
+  }
+
+  /* ---------- 弹层 ---------- */
+  .bhf .modal {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+    background: var(--overlay);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+  }
+
+  .bhf .sheet {
+    width: 100%;
+    max-width: 520px;
+    max-height: calc(100dvh - 28px);
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 15px 15px calc(16px + env(safe-area-inset-bottom));
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--panel);
+    box-shadow: 0 30px 80px -24px rgba(0, 0, 0, 0.45);
+    animation: bhf-pop 0.16s ease-out;
+  }
+
+  html.dark .bhf .sheet {
+    box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.9);
+  }
+
+  @keyframes bhf-pop {
+    from {
+      transform: translateY(12px) scale(0.985);
+      opacity: 0.5;
+    }
+    to {
+      transform: none;
+      opacity: 1;
+    }
+  }
+
+  .bhf .sheethead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .bhf .sheethead h2 {
+    margin: 0;
+    font-size: 15px;
+    letter-spacing: 0.01em;
+  }
+
+  .bhf .sheet .lead {
+    margin-bottom: 4px;
+    font-size: 12.5px;
+  }
+
+  .bhf .row {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    margin: 12px 0 0;
+  }
+
+  .bhf .rowlabel {
+    width: auto;
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    color: var(--faint);
+  }
+
+  .bhf .chips {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+  }
+
+  /* 简单难度下范围固定为基础 + 倍数，这里的选项临时锁住 */
+  .bhf .chips.lock {
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  .bhf .chip {
+    padding: 5px 11px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--panel2);
+    color: var(--dim);
+    font-family: inherit;
+    font-size: 12.5px;
+    cursor: pointer;
+    transition: 0.15s;
+  }
+
+  .bhf .chip:hover {
+    color: var(--txt);
+    border-color: var(--accent-line);
+  }
+
+  .bhf .chip.on {
+    border-color: var(--accent-line);
+    background: var(--accent-weak);
+    color: var(--accent);
+  }
+
+  .bhf .lvnote {
+    font-size: 11px;
+    color: var(--faint);
+    letter-spacing: 0.02em;
+  }
+
+  .bhf .snote {
+    margin-top: 14px;
+    padding-top: 11px;
+    border-top: 1px solid var(--line);
+    font-size: 11.5px;
+    line-height: 1.8;
+    color: var(--dim);
+  }
+
+  .bhf .tblmode {
+    display: flex;
+    gap: 7px;
+    margin: 0 0 11px;
+  }
+
+  .bhf .tsec {
+    margin: 14px 0 7px;
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    color: var(--faint);
+  }
+
+  .bhf .tsec:first-child {
+    margin-top: 2px;
+  }
+
+  .bhf .tblgrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(86px, 1fr));
+    gap: 6px;
+  }
+
+  .bhf .tg {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 6px;
+    padding: 7px 9px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--panel2);
+    font-size: 12.5px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bhf .tg b {
+    color: var(--txt);
+    font-weight: 600;
+  }
+
+  .bhf .tg span {
+    color: var(--accent);
+  }
+
+  /* ---------- 全屏 / 沉浸 ---------- */
+  body.bhf-fs .site-header,
+  body.bhf-fs .site-footer,
+  body.bhf-fs [data-to-top] {
+    display: none !important;
+  }
+
+  body.bhf-fs main {
+    padding-top: 18px;
+  }
+
+  /* ---------- 小屏 ---------- */
+  @media (max-width: 560px) {
+    .bhf .bhf-title {
+      font-size: 1.5rem;
+    }
+
+    .bhf .icon {
+      height: 32px;
+      min-width: 32px;
+      padding: 0 8px;
+      font-size: 12px;
+    }
+
+    .bhf .st {
+      padding: 7px 9px;
+    }
+
+    .bhf .st .v {
+      font-size: 15px;
+    }
+
+    .bhf .card {
+      padding: 14px 11px 12px;
+      border-radius: 14px;
+    }
+
+    .bhf .sub input {
+      width: 104px;
+    }
+
+    .bhf .numrow {
+      gap: 4px;
+    }
+
+    .bhf .nk {
+      height: 42px;
+      border-radius: 9px;
+      font-size: 15.5px;
+    }
+
+    .bhf .keys {
+      gap: 6px;
+    }
+
+    .bhf .keys .k {
+      height: 43px;
+    }
+
+    .bhf .histlist {
+      max-height: none;
+    }
+
+    .bhf .hrow .tm {
+      display: none;
+    }
+
+    .bhf .hrow {
+      gap: 7px;
+      padding: 7px 9px;
+      font-size: 12px;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .bhf .icon {
+      padding: 0 7px;
+      font-size: 11px;
+    }
+
+    .bhf .topacts {
+      gap: 4px;
+    }
+
+    .bhf .thint {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  ;(() => {
+    function start(root) {
+      if (root.dataset.ready === '1') return
+      root.dataset.ready = '1'
+
+    /* 离开本页时清掉挂在 document / window 上的监听，避免影响其他页面 */
+    const ac = new AbortController()
+    const sig = { signal: ac.signal }
+    document.addEventListener('astro:before-swap', () => {
+      ac.abort()
+      clearTimeout(state.autoNext)
+    }, { once: true, ...sig })
+
+    /* =========================================================
+       题库：全部来自课件「百化分」一节
+       n = 分母，pct = 课件上写的百分数
+       ========================================================= */
+    const DATA = [
+      /* --- 倍数组① 依次砍一半 --- */
+      { n: 2, pct: 50, g: 'basic', tip: '一半。÷2 等于 ×50%；同理除 5 乘 2、除 25 乘 4' },
+      { n: 4, pct: 25, g: 'basic', tip: '1/4 = 25%，口算表第一条：除 25 乘 4' },
+      { n: 8, pct: 12.5, g: 'basic', tip: '8+12=20；也是 25 的一半' },
+      /* --- 倍数组② --- */
+      { n: 3, pct: 33.3, g: 'basic', tip: '33.3%，比真正的 1/3 小一点点' },
+      { n: 6, pct: 16.7, g: 'basic', tip: '33.3 砍一半 ≈ 16.7' },
+      /* --- 中间 --- */
+      { n: 5, pct: 20, g: 'basic', tip: '÷5 = ×20%，除 5 乘 2' },
+      { n: 7, pct: 14.3, g: 'basic', tip: '714 互换组：1/7 = 14.3%，反过来 1/14 = 7.1%' },
+      { n: 9, pct: 11.1, g: 'basic', tip: '9+11=20；与 1/11 = 9.1% 是一对' },
+      { n: 10, pct: 10, g: 'basic', tip: '10+10=20，最规整的一个' },
+
+      /* --- 进阶 11–15 --- */
+      { n: 11, pct: 9.1, g: 'mid', tip: '11+9=20；和 1/9 互换' },
+      { n: 12, pct: 8.3, g: 'mid', tip: '12+8=20；33.3 的四分之一' },
+      { n: 13, pct: 7.7, g: 'mid', tip: 'double 7 = 7.7，没有规律，硬记' },
+      { n: 14, pct: 7.1, g: 'mid', tip: '14+7=20；1/7 反过来' },
+      { n: 15, pct: 6.7, g: 'mid', tip: '2/3=66.6 → 1/1.5=66.6 → 1/15=6.7' },
+
+      /* --- 高阶 等差组 --- */
+      { n: 16, pct: 6.25, g: 'high', tip: '12.5 再砍一半 = 6.25' },
+      { n: 17, pct: 5.9, g: 'high', tip: '17、18、19、20 公差 0.3% 的等差组，起点 5.9' },
+      { n: 18, pct: 5.6, g: 'high', tip: '5.9 − 0.3 = 5.6' },
+      { n: 19, pct: 5.3, g: 'high', tip: '5.6 − 0.3 = 5.3' },
+      { n: 20, pct: 5, g: 'high', tip: '5%，等差组终点' },
+
+      /* --- 小数分母：1+一点几 的常客 --- */
+      { n: 1.1, pct: 90.9, g: 'dec', tip: '1/1.1 = 10/11 ≈ 90.9%，比 1 小一点点' },
+      { n: 1.2, pct: 83.3, g: 'dec', tip: '1/1.2 = 5/6 ≈ 83.3%' },
+      { n: 1.25, pct: 80, g: 'dec', tip: '1/1.25 = 4/5 = 80%' },
+      { n: 1.4, pct: 71.4, g: 'dec', tip: '1/1.4 = 5/7 ≈ 71.4%' },
+      { n: 1.5, pct: 66.7, g: 'dec', tip: '2/3，也就是 1/1.5' },
+      { n: 1.6, pct: 62.5, g: 'dec', tip: '5/8 = 62.5%' },
+      { n: 1.7, pct: 58.8, g: 'dec', lv: 2, tip: '1/1.7 = 10/17 ≈ 58.8%' },
+      { n: 1.8, pct: 55.6, g: 'dec', tip: '5/9 = 55.6%' },
+      {
+        n: 1.9,
+        pct: 53,
+        g: 'dec',
+        tip: '1/1.9 ≈ 52.6%，取 53%。<b>1 + 53% = 2.9</b> → 增长量 = 现期 ÷ 2.9',
+      },
+      { n: 2.2, pct: 45.5, g: 'dec', tip: '1/2.2 = 5/11 ≈ 45.5%' },
+      { n: 2.5, pct: 40, g: 'dec', tip: '2/5 = 40%' },
+      { n: 2.8, pct: 35.7, g: 'dec', lv: 2, tip: '1/2.8 = 5/14 ≈ 35.7%' },
+      { n: 3.5, pct: 28.6, g: 'dec', tip: '2/7 = 28.6%' },
+      { n: 4.5, pct: 22.2, g: 'dec', tip: '2/9 = 22.2%' },
+      { n: 5.5, pct: 18.2, g: 'dec', tip: '2/11 = 18.2%' },
+      { n: 6.5, pct: 15.4, g: 'dec', lv: 2, tip: '1/6.5 = 2/13 ≈ 15.4%' },
+      { n: 7.5, pct: 13.3, g: 'dec', lv: 2, tip: '1/7.5 = 2/15 ≈ 13.3%' },
+
+      /* --- 中等：由表内值一步变形（×2 / ×3 / 取补） --- */
+      {
+        n: 2.67,
+        pct: 37.5,
+        g: 'dec',
+        tip: '37.5% = 12.5% × 3 = 3/8 → 倒数 8/3 ≈ 2.67。看到 37.5 先想 1/8',
+      },
+      {
+        n: 2.33,
+        pct: 42.9,
+        g: 'dec',
+        tip: '42.9% = 14.3% × 3 = 3/7 → 倒数 7/3 ≈ 2.33。7 的倍数：14.3 / 28.6 / 42.9 / 57.1 / 71.4 / 85.7',
+      },
+      {
+        n: 1.75,
+        pct: 57.1,
+        g: 'dec',
+        tip: '57.1% = 14.3% × 4 = 4/7 → 倒数 7/4 = 1.75。和 28.6%（2/7）是一家人',
+      },
+      {
+        n: 1.17,
+        pct: 85.7,
+        g: 'dec',
+        tip: '85.7% = 14.3% × 6 = 6/7 → 倒数 7/6 ≈ 1.17。离 100% 只差 1/7',
+      },
+      {
+        n: 1.57,
+        pct: 63.6,
+        g: 'dec',
+        tip: '63.6% = 9.1% × 7 = 7/11 → 倒数 11/7 ≈ 1.57。11 的倍数：18.2 / 27.3 / 36.4 / 45.5 …',
+      },
+      {
+        n: 1.22,
+        pct: 81.8,
+        g: 'dec',
+        tip: '81.8% = 9.1% × 9 = 9/11 → 倒数 11/9 ≈ 1.22。差 1/11 就到 100%',
+      },
+      {
+        n: 1.02,
+        pct: 98,
+        g: 'dec',
+        tip: '98% 离 100% 只差 2%，2% ≈ 1/50 → 倒数 ≈ 1.02。记成「99% ≈ 1/1.01」也行，误差都能选对',
+      },
+
+      /* --- 超 100%：分母是小数 --- */
+      {
+        n: 0.5,
+        pct: 200,
+        g: 'big',
+        tip: '200% 的倒数是 <b>0.5</b>。涨 200% 就是 3 倍，Δ = 现期 ÷ 3',
+      },
+      {
+        n: 0.125,
+        pct: 800,
+        g: 'big',
+        tip: '800% = 8 倍，倒数 <b>0.125</b>。<b>Δ = 现期 ÷ 1.125</b>，1/8 那个 12.5% 就是它的倒数',
+      },
+      { n: 0.25, pct: 400, g: 'big', tip: '400% 的倒数 0.25；涨 400% = 5 倍，Δ = 现期 ÷ 5' },
+      { n: 0.2, pct: 500, g: 'big', tip: '500% 的倒数 0.2；涨 500% = 6 倍' },
+      { n: 0.4, pct: 250, g: 'big', tip: '250% 的倒数 0.4；涨 250% = 3.5 倍' },
+      {
+        n: 0.667,
+        pct: 150,
+        g: 'big',
+        lv: 2,
+        tip: '150% → 倒数 2/3 ≈ 0.667；涨 150% = 2.5 倍',
+      },
+      { n: 0.8, pct: 125, g: 'big', tip: '125% 的倒数 0.8；涨 125% = 2.25 倍' },
+      { n: 0.333, pct: 300, g: 'big', tip: '300% 的倒数 1/3；涨 300% = 4 倍' },
+      {
+        n: 0.75,
+        pct: 133,
+        g: 'big',
+        lv: 2,
+        tip: '133% ≈ 4/3，倒数 0.75；涨 133% = 2.33 倍',
+      },
+      { n: 0.571, pct: 175, g: 'big', lv: 2, tip: '175% = 7/4，倒数 4/7 ≈ 0.571' },
+
+      /* --- 中等：整数倍 / 简单分数的倒数 --- */
+      {
+        n: 0.91,
+        pct: 110,
+        g: 'big',
+        tip: '110% = 11/10，倒数 10/11 ≈ 0.91。就是 1/1.1',
+      },
+      { n: 0.83, pct: 120, g: 'big', tip: '120% = 6/5，倒数 5/6 ≈ 0.83。涨 120% = 2.2 倍' },
+      { n: 0.71, pct: 140, g: 'big', tip: '140% = 7/5，倒数 5/7 ≈ 0.71。涨 140% = 2.4 倍' },
+      {
+        n: 0.625,
+        pct: 160,
+        g: 'big',
+        tip: '160% = 8/5，倒数 5/8 = 0.625。正好是 62.5% 的倒数',
+      },
+      { n: 0.56, pct: 180, g: 'big', tip: '180% = 9/5，倒数 5/9 ≈ 0.56。涨 180% = 2.8 倍' },
+      {
+        n: 0.45,
+        pct: 220,
+        g: 'big',
+        tip: '220% = 11/5，倒数 5/11 ≈ 0.45。涨 220% = 3.2 倍',
+      },
+      {
+        n: 0.4,
+        pct: 249,
+        real: 250,
+        g: 'big',
+        tip: '249% 差 1% 就到 250%；250% = 5/2，倒数 <b>0.4</b>。近似后完全够选',
+      },
+      {
+        n: 0.5,
+        pct: 198,
+        real: 200,
+        g: 'big',
+        tip: '198% ≈ 200%，倒数 0.5。差 2% 不影响判断',
+      },
+      {
+        n: 0.36,
+        pct: 275,
+        g: 'big',
+        tip: '275% = 11/4，倒数 4/11 ≈ 0.36。涨 275% = 3.75 倍',
+      },
+      {
+        n: 0.29,
+        pct: 350,
+        g: 'big',
+        tip: '350% = 7/2，倒数 2/7 ≈ 0.29。就是 28.6% 这条的倒数',
+      },
+      {
+        n: 0.22,
+        pct: 450,
+        g: 'big',
+        tip: '450% = 9/2，倒数 2/9 ≈ 0.22。就是 22.2% 这条的倒数',
+      },
+      {
+        n: 0.14,
+        pct: 700,
+        g: 'big',
+        tip: '700% = 7 倍，倒数 <b>1/7 ≈ 0.14</b>。涨 700% = 8 倍',
+      },
+      {
+        n: 0.11,
+        pct: 900,
+        g: 'big',
+        tip: '900% = 9 倍，倒数 <b>1/9 ≈ 0.11</b>。涨 900% = 10 倍',
+      },
+    ]
+
+    /* =========================================================
+       简单难度题库：基础表（1/n，n=2..10）的 k 倍，写成 k/n
+       只列约分后分子不再是 1 的，避免与基础表撞车（2/4 就是 1/2）
+       ========================================================= */
+    const MULTD = [
+      { k: 2, n: 3, pct: 66.7, tip: '33.3% 的两倍，也就是 1/1.5。看到 66.7 先想 2/3' },
+      { k: 3, n: 4, pct: 75, tip: '25% 的三倍；和 1/4 差 25%，凑整就是 3/4' },
+      { k: 2, n: 5, pct: 40, tip: '20% 的两倍；记住 2/5 = 40% 比记 1/2.5 快' },
+      { k: 3, n: 5, pct: 60, tip: '20% 的三倍；也就是 3/5，和 2/5 差 20%' },
+      { k: 4, n: 5, pct: 80, tip: '20% 的四倍；离 100% 只差 1/5' },
+      { k: 5, n: 6, pct: 83.3, tip: '16.7% 的五倍；离 100% 只差 1/6' },
+      { k: 2, n: 7, pct: 28.6, tip: '14.3% 的两倍；7 的倍数：14.3 / 28.6 / 42.9 / 57.1 / 71.4 / 85.7' },
+      { k: 3, n: 7, pct: 42.9, tip: '14.3% 的三倍；7 的倍数第三个' },
+      { k: 4, n: 7, pct: 57.1, tip: '14.3% 的四倍；4/7 的倒数就是 1.75' },
+      { k: 5, n: 7, pct: 71.4, tip: '14.3% 的五倍；和 1/1.4 是一回事' },
+      { k: 6, n: 7, pct: 85.7, tip: '14.3% 的六倍；离 100% 只差 1/7' },
+      { k: 3, n: 8, pct: 37.5, tip: '12.5% 的三倍；3/8 比 1/2.67 好记，考试直接报分母 8' },
+      { k: 5, n: 8, pct: 62.5, tip: '12.5% 的五倍；也是 1/1.6，看你怎么顺口' },
+      { k: 7, n: 8, pct: 87.5, tip: '12.5% 的七倍；离 100% 只差 1/8' },
+      { k: 2, n: 9, pct: 22.2, tip: '11.1% 的两倍；2/9 的倒数是 4.5' },
+      { k: 4, n: 9, pct: 44.4, tip: '11.1% 的四倍；4/9 的倒数是 2.25' },
+      { k: 5, n: 9, pct: 55.6, tip: '11.1% 的五倍；5/9 的倒数是 1.8' },
+      { k: 7, n: 9, pct: 77.8, tip: '11.1% 的七倍；查表时别和 7/8 = 87.5% 混了' },
+      { k: 8, n: 9, pct: 88.9, tip: '11.1% 的八倍；离 100% 只差 1/9' },
+      { k: 3, n: 10, pct: 30, tip: '10% 的三倍；3/10 是最省事的一批' },
+      { k: 7, n: 10, pct: 70, tip: '10% 的七倍；离 100% 差 30%' },
+      { k: 9, n: 10, pct: 90, tip: '10% 的九倍；离 100% 只差 10%' },
+    ]
+
+    /* =========================================================
+       反向估算题库：[基准分母, 基准百分数, 题面百分数]
+       ========================================================= */
+    const EST = [
+      [7, 14.3, 14.5], [7, 14.3, 14.1], [7, 14.3, 14.6], [7, 14.3, 14.0],
+      [6, 16.7, 16.5], [6, 16.7, 16.9], [6, 16.7, 16.4], [6, 16.7, 17.0],
+      [8, 12.5, 12.7], [8, 12.5, 12.3], [8, 12.5, 12.8],
+      [9, 11.1, 11.3], [9, 11.1, 10.9], [9, 11.1, 11.4],
+      [11, 9.1, 9.2], [11, 9.1, 9.0], [11, 9.1, 9.3],
+      [12, 8.3, 8.5], [12, 8.3, 8.2], [12, 8.3, 8.6],
+      [13, 7.7, 7.8], [13, 7.7, 7.6],
+      [15, 6.7, 6.9], [15, 6.7, 6.5],
+      [17, 5.9, 6.1], [17, 5.9, 5.8],
+      [19, 5.3, 5.4], [19, 5.3, 5.2],
+      [4, 25, 25.3], [4, 25, 24.8],
+      [5, 20, 20.2], [5, 20, 19.8],
+      [3, 33.3, 33.6], [3, 33.3, 33.0],
+      [10, 10, 10.1], [10, 10, 9.9],
+    ].map((a) => ({ n: a[0], basePct: a[1], pct: a[2] }))
+
+    /* 给每条题目标号：点历史记录重做原题时用 */
+    DATA.forEach((d, i) => { d._i = i })
+    EST.forEach((d, i) => { d._e = i })
+    MULTD.forEach((d, i) => { d._m = i })
+
+    /* 简单难度的出题池：基础 1/2–1/10 + 进阶 1/11–1/15 + 高阶 1/16–1/20，再加倍数 */
+    const EASY_GROUPS = { basic: true, mid: true, high: true }
+    const EASY_POOL = DATA.filter((d) => EASY_GROUPS[d.g] && d.real === undefined).concat(MULTD)
+    /* 简单难度的估算题只用 3–20 的基准（正好覆盖表里三段） */
+    const EST_EASY = EST.filter((d) => d.n <= 20)
+
+    const MONEY = [1000, 1200, 1500, 1800, 2000, 2500, 3000, 345, 420, 560, 860, 1250, 1600, 2400]
+
+    const r2 = (v) => Math.round(v * 100) / 100
+    const randOf = (a) => a[Math.floor(Math.random() * a.length)]
+    // 有些题面是近似值（249% ≈ 250%），反向题要用精确值 250
+    const pctOf = (e) => (e.real === undefined ? e.pct : e.real)
+    /* 分数写法：1/n 或 k/n */
+    const fracOf = (e) => (e.k ? e.k + '/' + e.n : '1/' + e.n)
+    /* 增长量的除数 = 1 + 1/r = 1 + n/k */
+    const divisor = (e) => 1 + e.n / (e.k || 1)
+
+    const state = {
+      groups: { basic: true, mid: true, high: true, dec: true, big: true },
+      level: 1,
+      mode: 'fwd',
+      total: 0, right: 0, streak: 0, best: 0, timeSum: 0,
+      wrongs: [], bag: [], last: null, recent: [],
+      history: [],
+      q: null, phase: 'ask', t0: 0, autoNext: 0, replay: false,
+    }
+
+    const $ = (id) => document.getElementById(id)
+    let qseq = 0
+
+    /* ---------------- 抽题：洗牌袋，一轮内不重复 ---------------- */
+    function pool() {
+      // 简单：固定为基础表 + 倍数，不受「范围」影响
+      if (state.level === 0) return EASY_POOL
+      const avail = (d) => (d.lv || 1) <= state.level
+      let p = DATA.filter((d) => state.groups[d.g] && avail(d))
+      if (!p.length) p = DATA.filter(avail)
+      if (!p.length) p = DATA
+      return p
+    }
+
+    function shuffleInPlace(a) {
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1))
+        const t = a[i]
+        a[i] = a[j]
+        a[j] = t
+      }
+      return a
+    }
+
+    function drawBag() {
+      const p = pool()
+      // 范围被用户改过：把袋子里已经不在范围内的清掉
+      state.bag = state.bag.filter((d) => p.indexOf(d) >= 0)
+
+      if (!state.bag.length) {
+        state.bag = shuffleInPlace(p.slice())
+        // 把上一题挪到袋底：本轮最后才轮到它，保证新的一轮不会开口就重
+        const i = state.last ? state.bag.indexOf(state.last) : -1
+        if (i > 0) {
+          const x = state.bag.splice(i, 1)[0]
+          state.bag.unshift(x)
+        }
+      }
+      return state.bag.pop()
+    }
+
+    function pickEntry() {
+      const p = pool()
+      // 错题优先：但排除刚出过的那题，比例也从 35% 降到 25%
+      const weak = state.wrongs.filter((d) => p.indexOf(d) >= 0 && state.recent.indexOf(d) < 0)
+      if (weak.length && Math.random() < 0.25) {
+        const e = randOf(weak)
+        // 从袋子里摘掉，保证同一轮里不会又抽回它
+        const bi = state.bag.indexOf(e)
+        if (bi >= 0) state.bag.splice(bi, 1)
+        return e
+      }
+      return drawBag()
+    }
+
+    /* ---------------- 答题记录：缓存到 localStorage ---------------- */
+    const HKEY = 'bhf_history_v1'
+    const TYPE_LABEL = { fwd: '正向', rev: '分母', growth: '增长量', est: '估算' }
+    const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+
+    function loadHistory() {
+      try {
+        const raw = localStorage.getItem(HKEY)
+        const arr = raw ? JSON.parse(raw) : []
+        return Array.isArray(arr) ? arr : []
+      } catch (e) {
+        return []
+      }
+    }
+
+    function saveHistory() {
+      try {
+        localStorage.setItem(HKEY, JSON.stringify(state.history.slice(0, 100)))
+      } catch (e) {}
+    }
+
+    function fmtTime(ts) {
+      const d = new Date(ts)
+      const p = (x) => (x < 10 ? '0' + x : '' + x)
+      return p(d.getHours()) + ':' + p(d.getMinutes())
+    }
+
+    function qBrief(q) {
+      if (q.type === 'fwd') return q.e.pct + '% → ' + (q.e.k ? q.e.k + '/?' : '1/?')
+      if (q.type === 'rev') return fracOf(q.e) + ' → ?%'
+      if (q.type === 'growth') return '现期 ' + q.money + ' · 增 ' + q.e.pct + '% → ÷?'
+      return q.pct + '% 对比 1/' + q.e.n + ' 基准'
+    }
+
+    function recordRow(it, i) {
+      const can = it.di != null || it.ei != null || it.mi != null
+      return (
+        '<div class="hrow ' + (it.ok ? 'ok' : 'bad') + (can ? ' canredo' : '') + '"' +
+        (can ? ' data-i="' + i + '" title="点一下重做这道题"' : '') + '>' +
+        '<span class="tag">' + (TYPE_LABEL[it.type] || it.type) + '</span>' +
+        '<span class="qt">' + esc(it.brief) + '</span>' +
+        '<span class="tm">' + fmtTime(it.ts) + '</span>' +
+        '<span class="mark">' + (it.ok ? '✓' : '✗') + '</span>' +
+        '<span class="an">你 ' + esc(it.your) + '　应 <b>' + esc(it.correct) + '</b></span>' +
+        '</div>'
+      )
+    }
+
+    function renderHistory() {
+      const list = $('histList')
+      if (!state.history.length) {
+        list.innerHTML = '<div class="hempty">还没有记录，答完第一题就会出现在这里。</div>'
+        $('hCount').textContent = '0 条'
+        return
+      }
+      $('hCount').textContent = state.history.length + ' 条'
+      list.innerHTML = state.history.slice(0, 40).map(recordRow).join('')
+    }
+
+    /* ---------------- 点历史记录 → 回到那一题 ---------------- */
+    function replayHistory(i) {
+      const it = state.history[i]
+      if (!it) return
+      let q = null
+      if (it.ei != null && EST[it.ei]) {
+        const e = EST[it.ei]
+        q = { type: 'est', e: e, pct: e.pct }
+      } else if (it.mi != null && MULTD[it.mi]) {
+        const e = MULTD[it.mi]
+        q = { type: it.type, e: e, money: it.money || randOf(MONEY), replay: true }
+      } else if (it.di != null && DATA[it.di]) {
+        const e = DATA[it.di]
+        q = { type: it.type, e: e, money: it.money || randOf(MONEY), replay: true }
+      }
+      if (!q) return
+
+      clearTimeout(state.autoNext)
+      state.phase = 'ask'
+      state.q = q
+      state.replay = true
+      renderQuestion()
+      updateBtn()
+
+      const top = $('card').getBoundingClientRect().top + window.pageYOffset - 10
+      try {
+        window.scrollTo({ top: top, behavior: 'smooth' })
+      } catch (e) {
+        window.scrollTo(0, top)
+      }
+    }
+
+    function pushHistory(q, ok, your, dt) {
+      state.history.unshift({
+        ts: Date.now(),
+        type: q.type,
+        brief: qBrief(q),
+        your: String(your),
+        correct: answerText(q),
+        ok: ok,
+        ms: Math.round(dt),
+        di: q.e && q.e._i !== undefined ? q.e._i : null,
+        ei: q.e && q.e._e !== undefined ? q.e._e : null,
+        mi: q.e && q.e._m !== undefined ? q.e._m : null,
+        money: q.money || 0,
+      })
+      if (state.history.length > 100) state.history.length = 100
+      saveHistory()
+      renderHistory()
+    }
+
+    function buildQuestion() {
+      let type = state.mode
+      if (type === 'mixed') type = randOf(['fwd', 'rev', 'growth'])
+
+      if (type === 'est') {
+        const e = randOf(state.level === 0 ? EST_EASY : EST)
+        return { type: 'est', e: e, pct: e.pct }
+      }
+      const e = pickEntry()
+      return { type: type, e: e, money: type === 'growth' ? randOf(MONEY) : 0 }
+    }
+
+    /* ---------------- 渲染 ---------------- */
+    function inputHtml(ph) {
+      return (
+        '<input id="ans" type="text" inputmode="none" autocomplete="off" spellcheck="false" placeholder="' +
+        ph +
+        '">'
+      )
+    }
+
+    function hasFinePointer() {
+      try {
+        return window.matchMedia && matchMedia('(pointer:fine)').matches
+      } catch (e) {
+        return false
+      }
+    }
+
+    function renderQuestion() {
+      const q = state.q, e = q.e
+      $('card').className = 'card'
+      $('fb').className = 'fb'
+      $('fb').innerHTML = ''
+
+      if (q.type === 'fwd') {
+        $('qtype').textContent = '百 分 数 → 分 母'
+        $('q').textContent = e.pct + '%'
+        $('sub').innerHTML = '≈ ' + (e.k || 1) + ' / ' + inputHtml('?')
+      } else if (q.type === 'rev') {
+        $('qtype').textContent = '分 母 → 百 分 数'
+        $('q').textContent = fracOf(e)
+        $('sub').innerHTML = '≈ ' + inputHtml('?') + ' %'
+      } else if (q.type === 'growth') {
+        $('qtype').textContent = '增 长 量 · 现 期 ÷ (1 + 1/r)'
+        $('q').textContent = e.pct + '%'
+        $('sub').innerHTML =
+          '<span class="small">现期 ' + q.money + ' 的增长量 = ' + q.money + ' ÷</span>' + inputHtml('除数')
+      } else {
+        $('qtype').textContent = '反 向 估 算 · 判 方 向'
+        $('q').textContent = e.pct + '%'
+        $('sub').innerHTML =
+          '<span class="small baseline">基准　1/' + e.n + ' = ' + e.basePct + '%</span>' +
+          '<div class="optrow">' +
+          '<button class="opt" type="button" data-v="-1">' + e.n + ' 不到分之 1<span class="kbd">按 1</span></button>' +
+          '<button class="opt" type="button" data-v="1">' + e.n + ' 加分之 1<span class="kbd">按 2</span></button>' +
+          '</div>'
+        const opts = $('sub').querySelectorAll('.opt')
+        for (let i = 0; i < opts.length; i++) {
+          opts[i].addEventListener('click', function () {
+            pickEst(parseInt(this.dataset.v, 10))
+          })
+        }
+      }
+
+      const inp = $('ans')
+      if (inp) {
+        inp.value = ''
+        inp.disabled = false
+        // 桌面端自动聚焦方便物理键盘；触屏端不聚焦，避免弹系统键盘
+        if (hasFinePointer()) inp.focus()
+      }
+      $('numRow').hidden = q.type === 'est'
+      $('numRow').classList.remove('off')
+      if (state.replay) {
+        $('qtype').textContent += ' · 历史重做'
+        state.replay = false
+      }
+      state.t0 = performance.now()
+    }
+
+    function nextQuestion() {
+      clearTimeout(state.autoNext)
+      state.replay = false
+      state.phase = 'ask'
+      state.q = buildQuestion()
+      state.last = state.q.e
+      state.recent.unshift(state.q.e)
+      if (state.recent.length > 3) state.recent.pop()
+      qseq++
+      renderQuestion()
+      updateBtn()
+    }
+
+    function updateBtn() {
+      $('btnGo').textContent = state.phase === 'ask' ? '提交 (Enter)' : '下一题 (Enter)'
+    }
+
+    /* ---------------- 判定 ----------------
+       分母题：与「表里的 n」或「100 ÷ 百分数」相差 < 0.01 才算对
+       （两条都认，是因为 53% 这种表里取 1.9、精确值其实是 1.887）
+       ------------------------------------------------------- */
+    function expN(e) {
+      return 100 / pctOf(e)
+    }
+
+    function judge(v, q) {
+      if (q.type === 'fwd') {
+        return Math.abs(v - q.e.n) < 0.01 || Math.abs(v - expN(q.e)) < 0.01
+      }
+      if (q.type === 'rev') {
+        const p = pctOf(q.e)
+        return Math.abs(v - p) <= Math.max(0.2, p * 0.02)
+      }
+      const t = divisor(q.e), te = expN(q.e) + 1
+      return Math.abs(v - t) < 0.01 || Math.abs(v - te) < 0.01
+    }
+
+    function answerText(q) {
+      if (q.type === 'fwd') return fracOf(q.e)
+      if (q.type === 'rev') return pctOf(q.e) + '%'
+      if (q.type === 'est') {
+        return q.e.n + (q.pct > q.e.basePct ? ' 不到分之 1' : ' 加分之 1')
+      }
+      return '÷ ' + r2(divisor(q.e)) + '　→　增长量 ≈ ' + Math.round(q.money / r2(divisor(q.e)))
+    }
+
+    /* 答错时把你写的值和标准值差多少摆出来，避免「好像差不多」的错觉 */
+    function diffNote(q, your) {
+      if (q.type !== 'fwd') return ''
+      const v = parseFloat(your)
+      if (!isFinite(v)) return ''
+      const d = Math.abs(v - q.e.n)
+      if (d <= 0.01) return ''
+      return (
+        '<div class="near">你写 ' + esc(your) + '，与标准值 ' + q.e.n +
+        ' 相差 ' + Math.round(d * 1000) / 1000 + '，超过 0.01 判错。</div>'
+      )
+    }
+
+    function tipText(q) {
+      if (q.type === 'growth') {
+        const d = r2(divisor(q.e))
+        return (
+          '增长率 <em>' + q.e.pct + '%</em> = <em>' + fracOf(q.e) +
+          '</em>，所以增长量 = 现期 ÷ (1 + 1/r) = 现期 ÷ <em>' + d + '</em>。<br>' +
+          '例：' + q.money + ' 增 ' + q.e.pct + '% → ' + q.money + ' ÷ ' + d + ' ≈ ' +
+          Math.round(q.money / d) + '。'
+        )
+      }
+      if (q.type === 'est') {
+        const up = q.pct > q.e.basePct
+        const real = 100 / q.pct
+        const err = (Math.abs(real - q.e.n) / q.e.n) * 100
+        return (
+          '题面 <b>' + q.pct + '%</b>，比基准 ' + q.e.basePct + '% ' + (up ? '大' : '小') +
+          ' → 分数值' + (up ? '变大' : '变小') + ' → 分母要' + (up ? '变小' : '变大') +
+          '，所以是「<em>' + q.e.n + (up ? ' 不到' : ' 加') + '分之 1</em>」。<br>' +
+          '精确算：1 ÷ ' + q.pct + '% ≈ <em>' + real.toFixed(1) + '</em>，只比 ' + q.e.n + ' ' +
+          (up ? '小' : '大') + '约 ' + err.toFixed(1) + '%，考试里不用算，方向对就够选。'
+        )
+      }
+      return q.e.tip
+    }
+
+    /* ---------------- 结算 ---------------- */
+    function finish(ok, q, keepOnRight, your) {
+      const dt = performance.now() - state.t0
+      state.total++
+      state.timeSum += dt
+
+      pushHistory(q, ok, your === undefined ? '—' : your, dt)
+
+      if (ok) {
+        state.right++
+        state.streak++
+        if (state.streak > state.best) state.best = state.streak
+        // 已经答对，从错题池里摘掉，不再反复重出
+        const wi = state.wrongs.indexOf(q.e)
+        if (wi >= 0) state.wrongs.splice(wi, 1)
+        $('card').className = 'card ok'
+        $('fb').innerHTML =
+          '<span class="ok">✓ ' + answerText(q) + '</span>' +
+          (keepOnRight ? '<div class="tip">' + tipText(q) + '</div>' : '')
+        state.phase = 'fb'
+        $('numRow').classList.add('off')
+        updateBtn()
+        updateStats()
+        const my = qseq
+        if (!keepOnRight) {
+          clearTimeout(state.autoNext)
+          state.autoNext = setTimeout(function () {
+            if (qseq === my && state.phase === 'fb') nextQuestion()
+          }, 520)
+        }
+      } else {
+        state.streak = 0
+        if (state.wrongs.indexOf(q.e) < 0) state.wrongs.push(q.e)
+        if (state.wrongs.length > 12) state.wrongs.shift()
+        $('card').className = 'card bad'
+        $('fb').innerHTML =
+          '<span class="bad">✗ 正确答案：' + answerText(q) + '</span>' +
+          diffNote(q, your) +
+          '<div class="tip">' + tipText(q) + '</div>'
+        state.phase = 'fb'
+        $('numRow').classList.add('off')
+        updateBtn()
+        updateStats()
+      }
+    }
+
+    /* ---------------- 提交 ---------------- */
+    function submit() {
+      if (state.phase === 'fb') {
+        nextQuestion()
+        return
+      }
+      if (state.q.type === 'est') return
+
+      const inp = $('ans')
+      const raw = inp.value.trim().replace(/[,，。]/g, '.')
+      if (raw === '') {
+        nudge(inp)
+        return
+      }
+      const v = parseFloat(raw)
+      if (!isFinite(v)) {
+        nudge(inp)
+        return
+      }
+
+      finish(judge(v, state.q), state.q, false, raw)
+    }
+
+    function pickEst(dir) {
+      if (state.phase !== 'ask' || !state.q || state.q.type !== 'est') return
+      const q = state.q
+      const correct = q.pct > q.e.basePct ? -1 : 1
+
+      const opts = $('sub').querySelectorAll('.opt')
+      for (let i = 0; i < opts.length; i++) {
+        const v = parseInt(opts[i].dataset.v, 10)
+        if (v === correct) opts[i].classList.add('right')
+        else if (v === dir) opts[i].classList.add('wrong')
+        opts[i].disabled = true
+      }
+      finish(dir === correct, q, true, q.e.n + (dir === -1 ? ' 不到分之 1' : ' 加分之 1'))
+    }
+
+    function nudge(inp) {
+      inp.classList.add('nudge')
+      setTimeout(function () {
+        inp.classList.remove('nudge')
+      }, 320)
+    }
+
+    function updateStats() {
+      $('sRight').textContent = state.right + ' / ' + state.total
+      $('sStreak').textContent = state.streak + (state.streak >= 5 ? ' 🔥' : '')
+      $('sTime').textContent = state.total ? (state.timeSum / state.total / 1000).toFixed(1) + 's' : '—'
+    }
+
+    /* ---------------- 交互 ---------------- */
+    const modalOpen = () => !$('setModal').hidden || !$('tblModal').hidden
+
+    document.addEventListener(
+      'keydown',
+      function (e) {
+        if (modalOpen()) return
+        const el = document.activeElement
+        // 别抢站点导航的键盘操作
+        if (el && (el.tagName === 'A' || (el.tagName === 'BUTTON' && el.id !== 'btnGo'))) return
+
+        if (state.q && state.q.type === 'est' && state.phase === 'ask') {
+          if (e.key === '1') {
+            e.preventDefault()
+            pickEst(-1)
+            return
+          }
+          if (e.key === '2') {
+            e.preventDefault()
+            pickEst(1)
+            return
+          }
+        }
+        if (e.key === 'Enter') {
+          e.preventDefault()
+          submit()
+        }
+      },
+      sig,
+    )
+
+    $('btnGo').addEventListener('click', submit)
+
+    /* ---------------- 答题小键盘（替代系统键盘） ---------------- */
+    $('numRow').addEventListener('click', function (e) {
+      const b = e.target.closest('.nk')
+      if (!b || state.phase !== 'ask') return
+      const inp = $('ans')
+      if (!inp || inp.disabled) return
+      const k = b.dataset.k
+      if (k === 'back') {
+        inp.value = inp.value.slice(0, -1)
+      } else if (k === '.') {
+        if (inp.value.indexOf('.') >= 0) return
+        inp.value = inp.value ? inp.value + '.' : '0.'
+      } else {
+        inp.value += k
+      }
+      inp.classList.remove('nudge')
+      inp.classList.add('active')
+    })
+
+    /* ---------------- 计算器结果 → 直接提交为答案 ---------------- */
+    $('calcSend').addEventListener('click', function () {
+      if (!state.q || state.phase !== 'ask') {
+        calcOut.textContent = '先答完当前这题，再算下一题'
+        calcOut.classList.add('dim')
+        return
+      }
+      if (state.q.type === 'est') {
+        calcOut.textContent = '这道是选择题，直接点选项'
+        calcOut.classList.add('dim')
+        return
+      }
+      const src = calcIn.value.trim()
+      if (!src) return
+      const v = calcEval(src)
+      if (!isFinite(v)) {
+        calcOut.textContent = '算式看不懂'
+        calcOut.classList.add('dim')
+        return
+      }
+      const f = calcFormat(v)
+      calcIn.value = f
+      calcOut.textContent = '= ' + f
+      calcOut.classList.remove('dim')
+      calcFresh = true
+
+      const inp = $('ans')
+      if (!inp) return
+      inp.value = f
+      submit()
+
+      const top = $('card').getBoundingClientRect().top + window.pageYOffset - 8
+      try {
+        window.scrollTo({ top: top, behavior: 'smooth' })
+      } catch (err) {
+        window.scrollTo(0, top)
+      }
+    })
+
+    /* ---------------- 难度 ---------------- */
+    const LKEY = 'bhf_level_v1'
+    const LV_NOTE = {
+      0: '表里 1/2–1/20 三段 + 倍数：2/3、3/8、7/10…（范围固定）',
+      1: '表内值一步变形：×10 / ×2 / 取补 / 近似整百',
+      2: '全部题库，含需硬记的小数分母',
+    }
+    function updateLvNote() {
+      $('lvNote').textContent = LV_NOTE[state.level]
+    }
+
+    /* 难度三档共用的界面同步：高亮当前档 + 简单档锁住「范围」 */
+    function syncLevelUI() {
+      ;[].forEach.call($('levelChips').querySelectorAll('.chip'), function (b) {
+        b.classList.toggle('on', parseInt(b.dataset.l, 10) === state.level)
+      })
+      $('groupChips').classList.toggle('lock', state.level === 0)
+      updateLvNote()
+    }
+
+    $('levelChips').addEventListener('click', function (e) {
+      const b = e.target.closest('.chip')
+      if (!b) return
+      const lv = parseInt(b.dataset.l, 10)
+      state.level = lv === 0 ? 0 : lv === 2 ? 2 : 1
+      try {
+        localStorage.setItem(LKEY, String(state.level))
+      } catch (err) {}
+      state.bag = []
+      state.recent = []
+      syncLevelUI()
+      updateMeta()
+      nextQuestion()
+    })
+
+    $('modeChips').addEventListener('click', function (e) {
+      const b = e.target.closest('.chip')
+      if (!b) return
+      ;[].forEach.call(this.querySelectorAll('.chip'), function (x) {
+        x.classList.remove('on')
+      })
+      b.classList.add('on')
+      state.mode = b.dataset.m
+      updateMeta()
+      nextQuestion()
+    })
+
+    $('groupChips').addEventListener('click', function (e) {
+      const b = e.target.closest('.chip')
+      if (!b) return
+      const g = b.dataset.g
+      const onCount = Object.keys(state.groups).filter(function (k) {
+        return state.groups[k]
+      }).length
+      if (state.groups[g] && onCount === 1) return
+      state.groups[g] = !state.groups[g]
+      b.classList.toggle('on', state.groups[g])
+      updateMeta()
+      nextQuestion()
+    })
+
+    document.addEventListener(
+      'click',
+      function (e) {
+        if (e.target.closest('#tool, .modal, .hist, .foot, .actrow, .bhf-head, header, footer, a, button')) return
+        const inp = $('ans')
+        if (inp && !inp.disabled && document.activeElement !== inp) inp.focus()
+      },
+      sig,
+    )
+
+    $('btnClear').addEventListener('click', function () {
+      state.history = []
+      saveHistory()
+      renderHistory()
+    })
+
+    /* ---------------- 顶部一行摘要 ---------------- */
+    const MODE_LABEL = { fwd: '% → 分母', rev: '分母 → %', growth: '增长量', est: '反向估算', mixed: '混合' }
+    const LV_LABEL = { 0: '简单', 1: '中等', 2: '困难' }
+    const GROUP_LABEL = { basic: '2–10', mid: '11–15', high: '16–20', dec: '小数分母', big: '超 100%' }
+
+    function updateMeta() {
+      const keys = Object.keys(state.groups)
+      const gs = keys.filter(function (k) {
+        return state.groups[k]
+      })
+      $('sMeta').innerHTML =
+        '<b>' + (MODE_LABEL[state.mode] || state.mode) + '</b> · ' +
+        LV_LABEL[state.level] + ' · ' +
+        (state.level === 0
+          ? '1/2–1/20 + 倍数'
+          : gs.length === keys.length
+            ? '全部范围'
+            : gs.map((k) => GROUP_LABEL[k]).join(' / '))
+    }
+
+    /* ---------------- 弹层 ---------------- */
+    function openModal(id) {
+      $(id).hidden = false
+      document.body.classList.add('lock')
+    }
+    function closeModal(id) {
+      $(id).hidden = true
+      if ($('setModal').hidden && $('tblModal').hidden) document.body.classList.remove('lock')
+    }
+
+    $('btnSet').addEventListener('click', function () {
+      openModal('setModal')
+    })
+    $('setClose').addEventListener('click', function () {
+      closeModal('setModal')
+    })
+    $('btnTable').addEventListener('click', function () {
+      openModal('tblModal')
+    })
+    $('btnTable2').addEventListener('click', function () {
+      closeModal('setModal')
+      openModal('tblModal')
+    })
+    $('tblClose').addEventListener('click', function () {
+      closeModal('tblModal')
+    })
+    $('setModal').addEventListener('click', function (e) {
+      if (e.target === this) closeModal('setModal')
+    })
+    $('tblModal').addEventListener('click', function (e) {
+      if (e.target === this) closeModal('tblModal')
+    })
+
+    document.addEventListener(
+      'keydown',
+      function (e) {
+        if (e.key !== 'Escape') return
+        if (!$('tblModal').hidden) closeModal('tblModal')
+        else if (!$('setModal').hidden) closeModal('setModal')
+      },
+      sig,
+    )
+
+    /* ---------------- 1/n 百分表 ---------------- */
+    /* 简单模式的倍数直接用题库 MULTD，保证表和题目完全一致 */
+    const TMODE_KEY = 'bhf_table_mode_v1'
+    let tblMode = 'easy'
+    try {
+      if (localStorage.getItem(TMODE_KEY) === 'all') tblMode = 'all'
+    } catch (e) {}
+
+    function syncTblMode() {
+      ;[].forEach.call($('tblMode').querySelectorAll('.chip'), function (b) {
+        b.classList.toggle('on', b.dataset.tm === tblMode)
+      })
+    }
+
+    function tgCell(label, pct) {
+      return '<div class="tg"><b>' + label + '</b><span>' + pct + '%</span></div>'
+    }
+
+    function buildTable() {
+      let html = ''
+
+      if (tblMode === 'easy') {
+        /* 简单模式：表里三段（基础 / 进阶 / 高阶）+ 基础表的倍数 */
+        const easySecs = [
+          { t: '基础　1/2 – 1/10', g: 'basic' },
+          { t: '进阶　1/11 – 1/15', g: 'mid' },
+          { t: '高阶　1/16 – 1/20', g: 'high' },
+        ]
+        easySecs.forEach(function (s) {
+          const arr = DATA.filter((d) => d.g === s.g && d.real === undefined).sort((a, b) => a.n - b.n)
+          html += '<div class="tsec">' + s.t + '</div><div class="tblgrid">'
+          arr.forEach(function (d) {
+            html += tgCell('1/' + d.n, d.pct)
+          })
+          html += '</div>'
+        })
+
+        html += '<div class="tsec">基础表的倍数</div><div class="tblgrid">'
+        MULTD.forEach(function (m) {
+          html += tgCell(m.k + '/' + m.n, m.pct)
+        })
+        html += '</div>'
+
+        $('tblBody').innerHTML =
+          html +
+          '<div class="snote">简单模式只放基础表 1/2 – 1/20 和它们的倍数（2/3 = 66.7%、3/8 = 37.5%、7/9 = 77.8%……）。' +
+          '这一页背熟再切「全部」，看小数分母和超 100%。</div>'
+        return
+      }
+
+      const secs = [
+        { t: '基础　1/1 – 1/10', g: 'basic' },
+        { t: '进阶　1/11 – 1/15', g: 'mid' },
+        { t: '高阶　1/16 – 1/20', g: 'high' },
+        { t: '小数分母', g: 'dec' },
+        { t: '超 100%（分母 < 1）', g: 'big' },
+      ]
+      secs.forEach(function (s) {
+        const arr = DATA.filter((d) => d.g === s.g && d.real === undefined).sort((a, b) => a.n - b.n)
+        if (!arr.length) return
+        html += '<div class="tsec">' + s.t + '</div><div class="tblgrid">'
+        arr.forEach(function (d) {
+          html += tgCell('1/' + d.n, d.pct)
+        })
+        html += '</div>'
+      })
+      $('tblBody').innerHTML =
+        html +
+        '<div class="snote">表里的百分数是课件上的常用近似值；分母题按「表里的 n」或「100 ÷ 百分数」任一命中就算对。<br>' +
+        '只想背最常用的那一小撮，点上面的「简单」。</div>'
+    }
+
+    $('tblMode').addEventListener('click', function (e) {
+      const b = e.target.closest('.chip[data-tm]')
+      if (!b) return
+      tblMode = b.dataset.tm === 'all' ? 'all' : 'easy'
+      try {
+        localStorage.setItem(TMODE_KEY, tblMode)
+      } catch (err) {}
+      syncTblMode()
+      buildTable()
+    })
+
+    /* =========================================================
+       工具块：计算器 ⇄ 草稿纸（同一个块，一个按钮来回切）
+       ========================================================= */
+    const calcIn = $('calcIn'), calcOut = $('calcOut')
+    let calcFresh = false
+
+    function calcFormat(v) {
+      if (!isFinite(v)) return '—'
+      if (v !== 0 && (Math.abs(v) >= 1e9 || Math.abs(v) < 1e-4)) return v.toExponential(4)
+      return String(Math.round(v * 1e6) / 1e6)
+    }
+
+    function calcEval(src) {
+      const s = String(src)
+        .replace(/[×xX*]/g, '*')
+        .replace(/[÷/]/g, '/')
+        .replace(/[−–—]/g, '-')
+        .replace(/[,，\s]/g, '')
+        .replace(/％/g, '%')
+      if (!s) return NaN
+
+      const out = [], ops = []
+      const prec = { '+': 1, '-': 1, '*': 2, '/': 2 }
+      let i = 0, prevIsValue = false
+
+      while (i < s.length) {
+        const c = s[i]
+        if ((c >= '0' && c <= '9') || c === '.') {
+          let j = i
+          while (j < s.length && ((s[j] >= '0' && s[j] <= '9') || s[j] === '.')) j++
+          const num = parseFloat(s.slice(i, j))
+          if (!isFinite(num)) return NaN
+          out.push(num)
+          prevIsValue = true
+          i = j
+          continue
+        }
+        if (c === '%') {
+          if (!prevIsValue) return NaN
+          out.push(out.pop() / 100)
+          i++
+          continue
+        }
+        if (c === '(') {
+          ops.push(c)
+          prevIsValue = false
+          i++
+          continue
+        }
+        if (c === ')') {
+          while (ops.length && ops[ops.length - 1] !== '(') out.push(ops.pop())
+          if (!ops.length) return NaN
+          ops.pop()
+          prevIsValue = true
+          i++
+          continue
+        }
+        if (prec[c]) {
+          if (c === '-' && !prevIsValue) out.push(0) // 一元负号
+          else if (!prevIsValue) return NaN
+          while (ops.length && prec[ops[ops.length - 1]] >= prec[c]) out.push(ops.pop())
+          ops.push(c)
+          prevIsValue = false
+          i++
+          continue
+        }
+        return NaN
+      }
+      while (ops.length) {
+        const o = ops.pop()
+        if (o === '(') return NaN
+        out.push(o)
+      }
+
+      const st = []
+      for (let k = 0; k < out.length; k++) {
+        const t = out[k]
+        if (typeof t === 'number') {
+          st.push(t)
+          continue
+        }
+        const b = st.pop(), a = st.pop()
+        if (a === undefined || b === undefined) return NaN
+        if (t === '+') st.push(a + b)
+        else if (t === '-') st.push(a - b)
+        else if (t === '*') st.push(a * b)
+        else if (t === '/') {
+          if (!b) return NaN
+          st.push(a / b)
+        } else return NaN
+      }
+      return st.length === 1 ? st[0] : NaN
+    }
+
+    function calcPreview() {
+      const src = calcIn.value
+      if (!src.trim()) {
+        calcOut.textContent = '0'
+        calcOut.classList.add('dim')
+        return
+      }
+      const v = calcEval(src)
+      if (!isFinite(v)) {
+        calcOut.textContent = '…'
+        calcOut.classList.add('dim')
+        return
+      }
+      calcOut.textContent = '= ' + calcFormat(v)
+      calcOut.classList.remove('dim')
+    }
+
+    function doCalcEq() {
+      const src = calcIn.value.trim()
+      if (!src) return
+      const v = calcEval(src)
+      if (!isFinite(v)) {
+        calcOut.textContent = '算式看不懂'
+        calcOut.classList.add('dim')
+        return
+      }
+      const f = calcFormat(v)
+      calcIn.value = f
+      calcOut.textContent = '= ' + f
+      calcOut.classList.remove('dim')
+      calcFresh = true
+    }
+
+    calcIn.addEventListener('input', function () {
+      calcFresh = false
+      calcPreview()
+    })
+    calcIn.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault()
+        e.stopPropagation()
+        doCalcEq()
+      }
+    })
+
+    $('calcKeys').addEventListener('click', function (e) {
+      const b = e.target.closest('button[data-k]')
+      if (!b) return
+      const k = b.dataset.k
+      if (k === 'C') {
+        calcIn.value = ''
+        calcFresh = false
+        calcPreview()
+        return
+      }
+      if (k === 'back') {
+        calcIn.value = calcIn.value.slice(0, -1)
+        calcFresh = false
+        calcPreview()
+        return
+      }
+      if (k === '=') {
+        doCalcEq()
+        return
+      }
+      if (calcFresh && (k === '.' || (k >= '0' && k <= '9'))) calcIn.value = ''
+      calcFresh = false
+      calcIn.value += k
+      calcPreview()
+    })
+
+    /* ---------------- 草稿纸 ---------------- */
+    const pad = $('pad')
+    const pctx = pad.getContext('2d')
+    let penIdx = 1, penW = 2.5, erasing = false, drawing = false
+    const undoStack = []
+
+    /* 墨色跟着主题走：画的时候再取 CSS 变量，切主题后下笔就是新颜色 */
+    function penColor() {
+      try {
+        return getComputedStyle(root).getPropertyValue('--pen' + penIdx).trim() || '#1c1c1f'
+      } catch (e) {
+        return '#1c1c1f'
+      }
+    }
+
+    function resizePad() {
+      const r = pad.getBoundingClientRect()
+      if (!r.width) return
+      const dpr = Math.min(window.devicePixelRatio || 1, 2.5)
+      const prev = document.createElement('canvas')
+      if (pad.width) {
+        prev.width = pad.width
+        prev.height = pad.height
+        prev.getContext('2d').drawImage(pad, 0, 0)
+      }
+      pad.width = Math.max(1, Math.round(r.width * dpr))
+      pad.height = Math.max(1, Math.round(r.height * dpr))
+      pctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      pctx.lineCap = 'round'
+      pctx.lineJoin = 'round'
+      if (prev.width) {
+        pctx.save()
+        pctx.setTransform(1, 0, 0, 1, 0, 0)
+        pctx.drawImage(prev, 0, 0, pad.width, pad.height)
+        pctx.restore()
+      }
+    }
+
+    function padSnapshot() {
+      const c = document.createElement('canvas')
+      c.width = pad.width
+      c.height = pad.height
+      c.getContext('2d').drawImage(pad, 0, 0)
+      undoStack.push(c)
+      if (undoStack.length > 15) undoStack.shift()
+    }
+
+    function padPos(e) {
+      const r = pad.getBoundingClientRect()
+      return { x: e.clientX - r.left, y: e.clientY - r.top }
+    }
+
+    pad.addEventListener('pointerdown', function (e) {
+      e.preventDefault()
+      if (!pad.width) resizePad()
+      drawing = true
+      padSnapshot()
+      try {
+        pad.setPointerCapture(e.pointerId)
+      } catch (err) {}
+      const p = padPos(e)
+      pctx.globalCompositeOperation = erasing ? 'destination-out' : 'source-over'
+      pctx.strokeStyle = penColor()
+      pctx.lineWidth = erasing ? penW * 5 : penW
+      pctx.beginPath()
+      pctx.moveTo(p.x, p.y)
+      pctx.lineTo(p.x + 0.1, p.y + 0.1)
+      pctx.stroke()
+    })
+
+    pad.addEventListener('pointermove', function (e) {
+      if (!drawing) return
+      e.preventDefault()
+      const p = padPos(e)
+      pctx.lineTo(p.x, p.y)
+      pctx.stroke()
+    })
+
+    function padEnd() {
+      if (!drawing) return
+      drawing = false
+      pctx.globalCompositeOperation = 'source-over'
+    }
+    pad.addEventListener('pointerup', padEnd)
+    pad.addEventListener('pointercancel', padEnd)
+    pad.addEventListener('pointerleave', padEnd)
+
+    $('padPen').addEventListener('click', function () {
+      erasing = false
+      this.classList.add('on')
+      $('padErase').classList.remove('on')
+    })
+    $('padErase').addEventListener('click', function () {
+      erasing = true
+      this.classList.add('on')
+      $('padPen').classList.remove('on')
+    })
+
+    ;[].forEach.call(document.querySelectorAll('#panePad .pdot'), function (b) {
+      b.addEventListener('click', function () {
+        penIdx = parseInt(b.dataset.pen, 10) || 1
+        erasing = false
+        ;[].forEach.call(document.querySelectorAll('#panePad .pdot'), function (x) {
+          x.classList.toggle('on', x === b)
+        })
+        $('padErase').classList.remove('on')
+        $('padPen').classList.add('on')
+      })
+    })
+
+    ;[].forEach.call(document.querySelectorAll('#panePad .pbtn[data-w]'), function (b) {
+      b.addEventListener('click', function () {
+        penW = parseFloat(b.dataset.w) || 2.5
+        ;[].forEach.call(document.querySelectorAll('#panePad .pbtn[data-w]'), function (x) {
+          x.classList.toggle('on', x === b)
+        })
+      })
+    })
+
+    $('padUndo').addEventListener('click', function () {
+      const c = undoStack.pop()
+      if (!c) return
+      pctx.save()
+      pctx.setTransform(1, 0, 0, 1, 0, 0)
+      pctx.clearRect(0, 0, pad.width, pad.height)
+      pctx.drawImage(c, 0, 0)
+      pctx.restore()
+    })
+
+    $('padClear').addEventListener('click', function () {
+      padSnapshot()
+      pctx.save()
+      pctx.setTransform(1, 0, 0, 1, 0, 0)
+      pctx.clearRect(0, 0, pad.width, pad.height)
+      pctx.restore()
+    })
+
+    window.addEventListener(
+      'resize',
+      function () {
+        if (!$('panePad').hidden) resizePad()
+      },
+      sig,
+    )
+    window.addEventListener(
+      'orientationchange',
+      function () {
+        setTimeout(function () {
+          if (!$('panePad').hidden) resizePad()
+        }, 250)
+      },
+      sig,
+    )
+
+    /* ---------------- 工具块开合 / 切换 ---------------- */
+    let toolTab = 'calc'
+
+    function setTool(t) {
+      toolTab = t
+      $('paneCalc').hidden = t !== 'calc'
+      $('panePad').hidden = t !== 'pad'
+      ;[].forEach.call(document.querySelectorAll('#tool .tt[data-t]'), function (b) {
+        b.classList.toggle('on', b.dataset.t === t)
+      })
+      $('btnTool').textContent = t === 'calc' ? '🧮 计算器 ⇄' : '✏️ 草稿纸 ⇄'
+      if (t === 'pad') setTimeout(resizePad, 0)
+    }
+
+    function openTool(t) {
+      $('tool').hidden = false
+      $('btnTool').classList.add('on')
+      setTool(t || toolTab)
+    }
+
+    $('btnTool').addEventListener('click', function () {
+      if ($('tool').hidden) {
+        openTool(toolTab)
+      } else {
+        setTool(toolTab === 'calc' ? 'pad' : 'calc')
+      }
+    })
+
+    ;[].forEach.call(document.querySelectorAll('#tool .tt[data-t]'), function (b) {
+      b.addEventListener('click', function () {
+        setTool(b.dataset.t)
+      })
+    })
+
+    $('btnToolClose').addEventListener('click', function () {
+      $('tool').hidden = true
+      $('btnTool').classList.remove('on')
+    })
+
+    $('btnCalcQuick').addEventListener('click', function () {
+      closeModal('setModal')
+      openTool('calc')
+    })
+
+    /* ---------------- 全屏 / 沉浸 ---------------- */
+    const fsBtn = $('btnFull')
+
+    function fsElement() {
+      return (
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.msFullscreenElement ||
+        null
+      )
+    }
+    function setFsUI(on) {
+      document.body.classList.toggle('bhf-fs', !!on)
+      fsBtn.textContent = on ? '退出' : '全屏'
+      fsBtn.classList.toggle('on', !!on)
+    }
+
+    fsBtn.addEventListener('click', function () {
+      if (fsElement()) {
+        const ex = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen
+        if (ex) ex.call(document)
+        return
+      }
+      const el = document.documentElement
+      const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen
+      if (req) {
+        try {
+          const p = req.call(el)
+          if (p && p.then) {
+            p.then(function () {
+              setFsUI(true)
+            }).catch(function () {
+              setFsUI(!document.body.classList.contains('bhf-fs'))
+            })
+          } else setFsUI(true)
+        } catch (err) {
+          setFsUI(!document.body.classList.contains('bhf-fs'))
+        }
+      } else {
+        // iPhone Safari 没有元素全屏：退化成沉浸模式
+        setFsUI(!document.body.classList.contains('bhf-fs'))
+      }
+    })
+
+    document.addEventListener('fullscreenchange', function () {
+      setFsUI(!!fsElement())
+    }, sig)
+    document.addEventListener('webkitfullscreenchange', function () {
+      setFsUI(!!fsElement())
+    }, sig)
+
+    /* ---------------- 点历史记录重做 ---------------- */
+    $('histList').addEventListener('click', function (e) {
+      const row = e.target.closest('.hrow.canredo')
+      if (!row) return
+      replayHistory(parseInt(row.dataset.i, 10))
+    })
+
+    try {
+      const savedLv = localStorage.getItem(LKEY)
+      if (savedLv === '0') state.level = 0
+      else if (savedLv === '2') state.level = 2
+    } catch (e) {}
+    syncLevelUI()
+
+    state.history = loadHistory()
+    renderHistory()
+    syncTblMode()
+    buildTable()
+    setTool('calc')
+    updateMeta()
+    nextQuestion()
+    updateStats()
+    }
+
+    /*
+     * ClientRouter 换页时，脚本可能比新的 <body> 先到；这时 #bhfRoot 已存在
+     * 但题目节点还没有，直接初始化会拿到 null。等节点齐了再启动一次。
+     */
+    function boot(tries) {
+      const root = document.getElementById('bhfRoot')
+      if (!root || root.dataset.ready === '1') return
+      if (!document.getElementById('card') || !document.getElementById('numRow')) {
+        if ((tries || 0) < 200) setTimeout(() => boot((tries || 0) + 1), 20)
+        return
+      }
+      start(root)
+    }
+
+    /*
+     * ClientRouter 同一个脚本只会执行一次，第二次回到本页不会重跑；
+     * 所以挂一个持久的 page-load 钩子，每次换页进来都重新启动。
+     */
+    const w = window as unknown as { __bhfBootHooked?: boolean }
+    if (!w.__bhfBootHooked) {
+      w.__bhfBootHooked = true
+      document.addEventListener('astro:page-load', () => boot(0))
+    }
+
+    boot(0)
+  })()
+</script>

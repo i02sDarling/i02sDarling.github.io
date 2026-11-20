@@ -24,17 +24,48 @@ function formatSize(bytes: number): string {
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
   return `${(bytes / 1024 / 1024).toFixed(2)} MB`
 }
+
+/** 在浏览器里直接能用的小工具，不下载、不安装 */
+const onlineTools = [
+  {
+    href: '/skills/baihuafen/',
+    title: '百化分训练器',
+    desc: '行测资料分析的条件反射训练：随机出一个百分数，秒答它属于 1/n。答错给记忆法，自带计算器与草稿纸。',
+    tags: ['行测', '资料分析', '纯前端'],
+  },
+]
 ---
 
 <Base title="工具" description="妲零在用的工具与脚本，公开出来方便复用">
   <section class="wrap">
     <h1>工具</h1>
     <p class="muted">
-      这些是我自己在用的工具，公开出来方便你复用。下载后请校验 sha256，避免文件被篡改。
+      这些是我自己在用的东西：能在线用的直接点开，需要安装的打包成 zip，下载后请校验 sha256，避免文件被篡改。
     </p>
 
+    <h2>在线小工具</h2>
+    <div class="tool-cards">
+      {
+        onlineTools.map((tool) => (
+          <a class="tool-card" href={tool.href}>
+            <span class="tool-card-head">
+              <strong>{tool.title}</strong>
+              <span class="tool-card-go">打开 →</span>
+            </span>
+            <span class="tool-card-desc">{tool.desc}</span>
+            <span class="tool-card-tags">
+              {tool.tags.map((tag) => (
+                <span class="tool-tag">{tag}</span>
+              ))}
+            </span>
+          </a>
+        ))
+      }
+    </div>
+
+    <h2>skill 包</h2>
     {entries.length === 0 ? (
-      <p class="empty">还没有发布任何 skill 包。</p>
+      <p class="empty">还没有发布，等整理好再放上来。</p>
     ) : (
       entries.map((entry) => (
         <div class="skill-item">
@@ -52,9 +83,78 @@ function formatSize(bytes: number): string {
 
     <h2>怎么用</h2>
     <ol>
-      <li>下载上面的 zip 并解压。</li>
-      <li>把解压出的目录放进你的 skills 目录。</li>
-      <li>按其中的 SKILL.md 说明调用即可。</li>
+      <li>在线工具直接点开，数据只存在你自己的浏览器里。</li>
+      <li>skill 包下载 zip 并解压。</li>
+      <li>把解压出的目录放进你的 skills 目录，按其中的 SKILL.md 说明调用即可。</li>
     </ol>
   </section>
 </Base>
+
+<style>
+  .tool-cards {
+    display: grid;
+    gap: 12px;
+    margin: 16px 0 8px;
+  }
+
+  .tool-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px 18px;
+    border: 1px solid var(--border-3);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--c-text) 2%, transparent);
+    border-bottom: 1px solid var(--border-3);
+    transition: border-color 0.2s ease-out, background 0.2s ease-out;
+  }
+
+  .tool-card:hover {
+    border-color: var(--accent);
+    background: rgb(109 40 217 / 0.06);
+  }
+
+  .tool-card-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .tool-card-head strong {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--fg-deeper);
+  }
+
+  .tool-card-go {
+    flex: none;
+    font-size: 0.8125rem;
+    color: var(--accent);
+  }
+
+  .tool-card-desc {
+    font-size: 0.875rem;
+    line-height: 1.7;
+    color: var(--fg);
+  }
+
+  .tool-card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .tool-tag {
+    padding: 1px 7px;
+    border: 1px solid var(--border-3);
+    border-radius: 999px;
+    font-size: 0.6875rem;
+    line-height: 1.7;
+    color: var(--fg-light);
+  }
+
+  h2 {
+    margin-top: 2.4em;
+  }
+</style>
