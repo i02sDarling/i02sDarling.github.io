@@ -3,16 +3,56 @@ import 'katex/dist/katex.min.css'
 import '../styles/global.css'
 import Logo from '../components/Logo.astro'
 import { ClientRouter } from 'astro:transitions'
+import { GOATCOUNTER_ORIGIN, HAS_PAGEVIEWS } from '../lib/analytics.ts'
 
 interface Props {
   title: string
   description?: string
+  /** 社交卡片大图（文章封面）；不传就只出纯文字卡片 */
+  image?: string
+  /** website（默认）/ article */
+  type?: 'website' | 'article'
+  /** 文章的发布 / 最后编辑日期（ISO），只给 article 用 */
+  published?: string
+  modified?: string
+  /** 额外的结构化数据（文章页传 BlogPosting），会和站点级 WebSite 一起输出 */
+  jsonLd?: Record<string, unknown>
+  /** 不进搜索引擎（例如本地草稿预览） */
+  noindex?: boolean
 }
+
+const SITE_DESCRIPTION = '妲零的个人博客：记录在做的事、学到的东西，以及还没想清楚的念头。'
 
 const {
   title,
-  description = '妲零的个人博客：记录在做的事、学到的东西，以及还没想清楚的念头。',
+  description = SITE_DESCRIPTION,
+  image,
+  type = 'website',
+  published,
+  modified,
+  jsonLd,
+  noindex = false,
 } = Astro.props
+
+/**
+ * SEO 的几个绝对地址：canonical / og:url / og:image 都必须是完整 URL
+ * （相对路径社交平台不认），所以统一用 Astro.site 拼。
+ */
+const canonical = new URL(Astro.url.pathname, Astro.site).href
+const homeUrl = new URL('/home/', Astro.site).href
+const socialImage = image ? new URL(image, Astro.site).href : ''
+const siteLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: '妲零',
+  alternateName: 'i02sDarling',
+  url: new URL('/', Astro.site).href,
+  description: SITE_DESCRIPTION,
+  inLanguage: 'zh-CN',
+  author: { '@type': 'Person', name: '妲零', url: homeUrl },
+  publisher: { '@type': 'Person', name: '妲零', url: homeUrl },
+}
+const structuredData = jsonLd ? [siteLd, jsonLd] : [siteLd]
 
 const nav = [
   { href: '/home/', label: 'Home' },
@@ -40,11 +80,25 @@ const siteTitle = title === '妲零' ? '妲零' : `${title} · 妲零`
     <title>{siteTitle}</title>
     <meta name="description" content={description} />
     <meta name="theme-color" content="#ffffff" />
+    <link rel="canonical" href={canonical} />
+    {noindex ? <meta name="robots" content="noindex, nofollow" /> : <meta name="robots" content="index, follow, max-image-preview:large" />}
+    <link rel="alternate" type="application/rss+xml" title="妲零 · Blog" href="/rss.xml" />
     <meta property="og:site_name" content="妲零" />
     <meta property="og:title" content={siteTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="zh_CN" />
+    {socialImage ? <meta property="og:image" content={socialImage} /> : null}
+    {type === 'article' && published ? <meta property="article:published_time" content={published} /> : null}
+    {type === 'article' && modified ? <meta property="article:modified_time" content={modified} /> : null}
+    {type === 'article' ? <meta property="article:author" content="妲零" /> : null}
+    <meta name="twitter:card" content={socialImage ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:title" content={siteTitle} />
+    <meta name="twitter:description" content={description} />
+    {socialImage ? <meta name="twitter:image" content={socialImage} /> : null}
     <meta name="generator" content={Astro.generator} />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
     <ClientRouter />
     <slot name="head" />
     <!--
@@ -176,6 +230,22 @@ const siteTitle = title === '妲零' ? '妲零' : `${title} · 妲零`
       </button>
       <img data-lightbox-img alt="" />
     </div>
+
+    {
+      HAS_PAGEVIEWS ? (
+        <>
+          <script
+            is:inline
+            data-goatcounter={`${GOATCOUNTER_ORIGIN}/count`}
+            async
+            src="https://gc.zgo.at/count.js"
+          />
+          <script>
+            import '../scripts/pageviews.ts'
+          </script>
+        </>
+      ) : null
+    }
 
     <script>
       import { mountBackground, syncBackground } from '../scripts/background.ts'
