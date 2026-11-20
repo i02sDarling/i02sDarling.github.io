@@ -762,12 +762,6 @@ html.dark .post-year {
   opacity: 0.7;
 }
 
-/* 列表页每篇的阅读量：和日期 / 分钟数同一行，窄屏也不换行 */
-.post-row-views {
-  font-variant-numeric: tabular-nums;
-  opacity: 0.9;
-}
-
 /* 日期（Aug 9）：悬浮 2 秒后在日期上方淡出一个小标签，显示月份数字（08）。
    纯 CSS + transition-delay，线上仍然零 JS；鼠标移开立刻消失。 */
 .post-row-date {
@@ -1369,17 +1363,6 @@ html.dark .article th {
 .post-edited {
   font-size: 0.75rem;
   color: var(--fg-light);
-}
-
-/* 阅读量：数字还没回来之前整个元素带 hidden，不会先闪一个 0 */
-.post-views {
-  font-size: 0.75rem;
-  color: var(--fg-light);
-  font-variant-numeric: tabular-nums;
-}
-
-[data-pv-path][hidden] {
-  display: none;
 }
 
 /* 文末终端式导航：程序员的浪漫，但只占两行、不喧哗 */

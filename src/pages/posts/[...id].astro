@@ -4,7 +4,6 @@ import type { GetStaticPaths } from 'astro'
 import Base from '../../layouts/Base.astro'
 import { formatPostDate, readingMinutes } from '../../lib/posts.ts'
 import { postSlug, resolvePostData, stripMetadataBlock } from '../../lib/metadata.ts'
-import { HAS_PAGEVIEWS, pageviewPath } from '../../lib/analytics.ts'
 
 export const getStaticPaths: GetStaticPaths = async () => {
   // 本地 dev 连草稿一起生成页面，线上只构建公开文章
@@ -39,7 +38,6 @@ const tocItems = detailed.filter((heading) => heading.depth <= 3).length >= 30
 const lastEdited = meta.updated || meta.date
 const canonical = new URL(Astro.url.pathname, Astro.site).href
 const absoluteCover = meta.cover ? new URL(meta.cover, Astro.site).href : ''
-const viewsPath = pageviewPath(Astro.url.pathname)
 
 /** 结构化数据：文章本体 + 面包屑，Google/Bing 会拿它生成「文章 + 路径」富摘要 */
 const postLd = {
@@ -130,17 +128,6 @@ const breadcrumbLd = {
 
     <div class="post-nav">
       <span class="post-edited">最后编辑于 {lastEdited}</span>
-      {
-        HAS_PAGEVIEWS ? (
-          <span
-            class="post-views"
-            data-pv-path={viewsPath}
-            data-pv-suffix=" 次阅读"
-            title="阅读量（GoatCounter 统计，缓存约 4 小时）"
-            hidden
-          />
-        ) : null
-      }
     </div>
 
     {

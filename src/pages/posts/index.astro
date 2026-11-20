@@ -3,7 +3,6 @@ import { getCollection } from 'astro:content'
 import Base from '../../layouts/Base.astro'
 import { formatPostDate, groupByYear, postMonthNumber, readingMinutes } from '../../lib/posts.ts'
 import { postSlug, resolvePostData, stripMetadataBlock } from '../../lib/metadata.ts'
-import { HAS_PAGEVIEWS } from '../../lib/analytics.ts'
 
 // 本地 dev 连草稿一起列，线上只渲染公开文章；标了软删除的一律不出现
 const all = await getCollection('posts')
@@ -53,18 +52,6 @@ const groups = groupByYear(posts.map((entry) => ({ ...entry, data: entry.meta })
                           ·
                         </span>
                         <span>{readingMinutes(stripMetadataBlock(post.post.body))} min</span>
-                        {
-                          HAS_PAGEVIEWS ? (
-                            <span
-                              class="post-row-views"
-                              data-pv-path={`/posts/${post.slug}/`}
-                              data-pv-prefix="· "
-                              data-pv-suffix=" 阅"
-                              title="阅读量"
-                              hidden
-                            />
-                          ) : null
-                        }
                         {!post.meta.public ? <span class="tag draft">草稿</span> : null}
                       </span>
                     </a>
