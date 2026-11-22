@@ -36,7 +36,7 @@ Consult these guides before working on related tasks:
 
 ## 文章排印（强制）
 
-文章正文的排版语汇（加粗提色、衬线引用、链接下划线、标题 `#` 锚点、外链图标、行内高亮、文末终端导航）以 **`D:\Darling\Darling\AGENTS.md` 的「文章正文排印」章节**为准，改样式前先读那一节。
+文章正文的排版语汇（加粗提色、衬线引用、链接下划线、标题 `#` 锚点、外链图标、行内高亮、文末终端导航）以 **`../darling-studio/AGENTS.md` 的「文章正文排印」章节**为准，改样式前先读那一节。
 
 ## 并行开发（多 agent · git worktree）
 
